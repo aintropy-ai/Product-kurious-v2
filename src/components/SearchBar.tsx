@@ -59,9 +59,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, disabled, preloa
         <button
           type="submit"
           disabled={disabled || !query.trim()}
-          className="absolute right-2 bottom-2 px-4 py-1.5 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+          className="absolute right-2 bottom-2 w-9 h-9 flex items-center justify-center bg-blue-600 text-white hover:bg-blue-500 disabled:cursor-not-allowed transition-colors rounded-sm"
+          title="Search"
         >
-          Search
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+            <path fillRule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clipRule="evenodd" />
+          </svg>
         </button>
       </form>
 

@@ -42,10 +42,7 @@ const NJ_SOURCES = [
 const INDEX_NAME = 'njopen';
 
 export const NJSearchPage = () => {
-  const [enabledSources, setEnabledSources] = useState<Set<string>>(
-    new Set(NJ_SOURCES.map(s => s.name))
-  );
-
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedFrontierAPI, setSelectedFrontierAPI] = useState<string>('claude');
   const [showComparison, setShowComparison] = useState(false);
 
@@ -56,6 +53,9 @@ export const NJSearchPage = () => {
   const [progressDone, setProgressDone] = useState(true);
   const [frontierLoading, setFrontierLoading] = useState(false);
 
+  const [backendRating, setBackendRating] = useState<number | null>(null);
+  const [frontierRating, setFrontierRating] = useState<number | null>(null);
+
   const [backendError, setBackendError] = useState<string | null>(null);
   const [frontierError, setFrontierError] = useState<string | null>(null);
 
@@ -64,18 +64,6 @@ export const NJSearchPage = () => {
   const [frontierCorrect, setFrontierCorrect] = useState<boolean | null>(null);
   const [backendLatency, setBackendLatency] = useState<number | null>(null);
   const [frontierLatency, setFrontierLatency] = useState<number | null>(null);
-
-  const toggleSource = (name: string) => {
-    setEnabledSources(prev => {
-      const next = new Set(prev);
-      if (next.has(name)) {
-        next.delete(name);
-      } else {
-        next.add(name);
-      }
-      return next;
-    });
-  };
 
   const handleSearch = async (query: string) => {
     setBackendResult(null);
@@ -89,6 +77,8 @@ export const NJSearchPage = () => {
     setFrontierLatency(null);
 
     setProgressDone(false);
+    setBackendRating(null);
+    setFrontierRating(null);
     setBackendLoading(true);
     if (showComparison) {
       setFrontierLoading(true);
@@ -197,31 +187,51 @@ export const NJSearchPage = () => {
   return (
     <div className="min-h-screen bg-gray-900 flex">
       {/* Left Sidebar - NJ Data Sources */}
-      <div className="w-64 bg-gray-850 border-r border-gray-700 flex flex-col flex-shrink-0" style={{ background: '#111827' }}>
-        <div className="px-6 py-4 border-b border-gray-700 flex flex-col justify-center">
-          <div className="text-xl font-bold text-white">NJ Open Data</div>
-          <div className="text-sm text-gray-400">23 agencies · 57M documents</div>
-        </div>
-        <div className="flex-1 overflow-y-auto p-3">
-          <div className="text-xs text-gray-500 uppercase tracking-wide mb-2">Data Sources</div>
-          <div className="space-y-0.5">
-            {NJ_SOURCES.map(source => (
-              <label
-                key={source.name}
-                className="flex items-center gap-2 py-1.5 px-2 hover:bg-gray-700 cursor-pointer rounded"
+      <div
+        className="flex-shrink-0 border-r border-gray-700 flex flex-col transition-all duration-200 overflow-hidden"
+        style={{ background: '#111827', width: sidebarOpen ? '16rem' : '2.25rem' }}
+      >
+        {sidebarOpen ? (
+          <>
+            {/* Header with collapse arrow */}
+            <div className="px-4 py-4 border-b border-gray-700 flex items-start justify-between flex-shrink-0">
+              <div>
+                <div className="text-xl font-bold text-white">NJ Open Data</div>
+                <div className="text-sm text-gray-400">23 agencies · 57M documents</div>
+              </div>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="text-gray-400 hover:text-white transition-colors mt-1 ml-2 flex-shrink-0 text-lg leading-none"
+                title="Collapse"
               >
-                <input
-                  type="checkbox"
-                  checked={enabledSources.has(source.name)}
-                  onChange={() => toggleSource(source.name)}
-                  className="w-3.5 h-3.5 flex-shrink-0"
-                />
-                <span className="text-xs text-gray-300 flex-1 leading-tight">{source.name}</span>
-                <span className="text-xs text-gray-500 flex-shrink-0">{source.documents}</span>
-              </label>
-            ))}
+                ‹
+              </button>
+            </div>
+            {/* Source list */}
+            <div className="flex-1 overflow-y-auto p-3">
+              <div className="text-xs text-gray-500 uppercase tracking-wide mb-2">Data Sources</div>
+              <div className="space-y-0.5">
+                {NJ_SOURCES.map(source => (
+                  <div key={source.name} className="flex items-center gap-2 py-1.5 px-2">
+                    <span className="text-xs text-gray-300 flex-1 leading-tight">{source.name}</span>
+                    <span className="text-xs text-gray-500 flex-shrink-0">{source.documents}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          /* Collapsed — just the expand arrow, vertically centered */
+          <div className="flex-1 flex items-center justify-center">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="text-gray-400 hover:text-white transition-colors text-lg leading-none"
+              title="Expand data sources"
+            >
+              ›
+            </button>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Right Main Area */}
@@ -281,6 +291,9 @@ export const NJSearchPage = () => {
                   error={backendError}
                   isCorrect={backendCorrect}
                   latency={backendLatency}
+                  rating={backendRating}
+                  onRate={setBackendRating}
+                  showProcessSteps
                 />
               )}
 
@@ -293,6 +306,8 @@ export const NJSearchPage = () => {
                   error={frontierError}
                   isCorrect={frontierCorrect}
                   latency={frontierLatency}
+                  rating={frontierRating}
+                  onRate={setFrontierRating}
                 />
               )}
             </div>

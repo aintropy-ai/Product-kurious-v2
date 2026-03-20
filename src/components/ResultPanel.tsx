@@ -1,5 +1,7 @@
 import React from 'react';
 import { SearchResponse } from '../types';
+import { StarRating } from './StarRating';
+import { ProcessStepsSummary } from './ProcessStepsSummary';
 
 interface ResultPanelProps {
   title: string;
@@ -8,9 +10,12 @@ interface ResultPanelProps {
   error: string | null;
   isCorrect?: boolean | null;
   latency?: number | null;
+  rating?: number | null;
+  onRate?: (rating: number, feedback?: string) => void;
+  showProcessSteps?: boolean;
 }
 
-export const ResultPanel: React.FC<ResultPanelProps> = ({ title, result, loading, error, isCorrect, latency }) => {
+export const ResultPanel: React.FC<ResultPanelProps> = ({ title, result, loading, error, isCorrect, latency, rating, onRate, showProcessSteps }) => {
   return (
     <div className="bg-gray-800 shadow-lg p-6 h-full min-h-[300px] flex flex-col border-2 border-gray-700">
       <div className="flex items-center justify-between mb-4 border-b-2 border-gray-700 pb-3">
@@ -27,6 +32,10 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({ title, result, loading
       </div>
 
       <div className="flex-1 overflow-y-auto">
+        {showProcessSteps && !loading && (result || error) && (
+          <ProcessStepsSummary hasError={!!error} />
+        )}
+
         {loading && (
           <div className="flex items-center justify-center h-full">
             <div className="animate-spin h-12 w-12 border-b-2 border-blue-500"></div>
@@ -73,9 +82,16 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({ title, result, loading
         )}
       </div>
 
-      {latency !== null && latency !== undefined && (
-        <div className="mt-4 pt-4 border-t-2 border-gray-700">
-          <p className="text-sm text-gray-400">Latency: {latency.toFixed(2)}s</p>
+      {(latency != null || (onRate && result)) && (
+        <div className="mt-4 pt-4 border-t-2 border-gray-700 flex items-center justify-between gap-4">
+          {latency != null && (
+            <p className="text-sm text-gray-400">Latency: {latency.toFixed(2)}s</p>
+          )}
+          {onRate && result && (
+            <div className="ml-auto">
+              <StarRating rating={rating ?? null} onRate={onRate} />
+            </div>
+          )}
         </div>
       )}
     </div>

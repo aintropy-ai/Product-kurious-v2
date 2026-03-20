@@ -7,5 +7,5 @@ Aggregating structured and unstructured documents
 Expanding the results with knowledge graph
 Ranking results based on relevance
 Selecting top-K results
-Feeding topK documents to the LLM
+Feeding top-K documents to the LLM
 Generating the answer
