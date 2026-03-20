@@ -21,7 +21,7 @@ export const ProcessStepsSummary: React.FC<ProcessStepsSummaryProps> = ({ hasErr
         <span className={`text-gray-500 text-xs transition-transform duration-200 ${expanded ? 'rotate-90' : ''}`}>
           ▶
         </span>
-        <span className="text-xs text-gray-500 font-medium uppercase tracking-wide">Retrieval process</span>
+        <span className="text-xs text-gray-500 font-medium uppercase tracking-wide">Knowledge perception trace</span>
         <span className={`ml-auto text-xs font-medium ${hasError ? 'text-red-400' : 'text-green-500'}`}>
           {completedCount}/{STEPS.length} steps
         </span>

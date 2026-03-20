@@ -43,8 +43,8 @@ const INDEX_NAME = 'njopen';
 
 export const NJSearchPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [comparisonOpen, setComparisonOpen] = useState(true);
   const [selectedFrontierAPI, setSelectedFrontierAPI] = useState<string>('claude');
-  const [showComparison, setShowComparison] = useState(false);
 
   const [backendResult, setBackendResult] = useState<SearchResponse | null>(null);
   const [frontierResult, setFrontierResult] = useState<SearchResponse | null>(null);
@@ -80,7 +80,7 @@ export const NJSearchPage = () => {
     setBackendRating(null);
     setFrontierRating(null);
     setBackendLoading(true);
-    if (showComparison) {
+    if (comparisonOpen) {
       setFrontierLoading(true);
     }
 
@@ -95,7 +95,7 @@ export const NJSearchPage = () => {
       return { response, latency };
     })();
 
-    const frontierRequest = showComparison ? (async () => {
+    const frontierRequest = comparisonOpen ? (async () => {
       let result: SearchResponse;
       switch (selectedFrontierAPI) {
         case 'gpt5':
@@ -154,7 +154,7 @@ export const NJSearchPage = () => {
     }
     setBackendLoading(false);
 
-    if (showComparison && frontierRes && frontierRes.status === 'fulfilled') {
+    if (comparisonOpen && frontierRes && frontierRes.status === 'fulfilled') {
       const { response, latency } = frontierRes.value;
       setFrontierResult(response);
       setFrontierLatency(latency);
@@ -166,21 +166,12 @@ export const NJSearchPage = () => {
         );
         setFrontierCorrect(isCorrect);
       }
-    } else if (showComparison && frontierRes && frontierRes.status === 'rejected') {
+    } else if (comparisonOpen && frontierRes && frontierRes.status === 'rejected') {
       setFrontierError(frontierRes.reason?.message || 'Failed to search frontier API');
     }
 
-    if (showComparison) {
+    if (comparisonOpen) {
       setFrontierLoading(false);
-    }
-  };
-
-  const getFrontierAPIName = () => {
-    switch (selectedFrontierAPI) {
-      case 'gpt5': return 'GPT-3.5 Turbo';
-      case 'gemini3': return 'Gemini 3 Pro';
-      case 'claude': return 'Claude 3.5 Sonnet';
-      default: return 'AI';
     }
   };
 
@@ -234,26 +225,18 @@ export const NJSearchPage = () => {
         )}
       </div>
 
-      {/* Right Main Area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      {/* Main content */}
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Header */}
-        <div className="bg-gray-800 border-b border-gray-700 px-6 py-4 flex items-center justify-between flex-shrink-0">
-          <div>
-            <h1 className="text-xl font-bold text-white">AIntropy Kurious Engine</h1>
-            <p className="text-sm text-gray-400">New Jersey Open Data — 57M documents across 23 agencies</p>
-          </div>
-          <button
-            onClick={() => setShowComparison(!showComparison)}
-            className="px-4 py-1.5 text-sm bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white transition-colors border border-gray-600"
-          >
-            {showComparison ? 'Hide LLM Comparison' : 'Compare with LLM'}
-          </button>
+        <div className="bg-gray-800 border-b border-gray-700 px-6 py-4 flex-shrink-0">
+          <h1 className="text-xl font-bold text-white">AIntropy Kurious Engine</h1>
+          <p className="text-sm text-gray-400">New Jersey Open Data — 57M documents across 23 agencies</p>
         </div>
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-6">
-          <div className={`mx-auto ${showComparison ? 'max-w-6xl' : 'max-w-4xl'}`}>
-            {/* Search Bar */}
+          {/* Search bar + golden answer — centered */}
+          <div className="max-w-4xl mx-auto mb-6">
             <div className="mb-6">
               <SearchBar
                 onSearch={handleSearch}
@@ -261,55 +244,77 @@ export const NJSearchPage = () => {
                 preloadedQuestions={PRELOADED_QUESTIONS}
               />
             </div>
-
-            {/* Golden Answer */}
             <GoldenAnswerBox goldenAnswer={goldenAnswer} />
+          </div>
 
-            {/* Frontier API Selector (when comparison shown) */}
-            {showComparison && (
-              <div className="mb-4">
-                <FrontierAPISelector
-                  selectedAPI={selectedFrontierAPI}
-                  onAPIChange={setSelectedFrontierAPI}
-                />
+          {/* Result row: two equal flex-1 spacers center the panels like mx-auto;
+              arrow lives inside the right spacer so it takes no width from the panels */}
+          <div className="flex items-stretch">
+            <div className="flex-1" />
+
+            <div className="w-full flex items-stretch" style={{ maxWidth: '56rem' }}>
+              {/* Backend panel */}
+              <div className="flex-1 min-w-0">
+                {!progressDone ? (
+                  <SearchProgress
+                    loading={backendLoading}
+                    onComplete={() => setProgressDone(true)}
+                  />
+                ) : (
+                  <ResultPanel
+                    title="Kurious with Llama-3.1-70B"
+                    result={backendResult}
+                    loading={false}
+                    error={backendError}
+                    isCorrect={backendCorrect}
+                    latency={backendLatency}
+                    rating={backendRating}
+                    onRate={setBackendRating}
+                    showProcessSteps
+                  />
+                )}
               </div>
-            )}
 
-            {/* Results */}
-            <div className={`grid grid-cols-1 ${showComparison ? 'lg:grid-cols-2' : ''} gap-6`}>
-              {/* Left panel: show progress until animation completes, then show result */}
-              {!progressDone ? (
-                <SearchProgress
-                  loading={backendLoading}
-                  onComplete={() => setProgressDone(true)}
-                />
-              ) : (
-                <ResultPanel
-                  title="Llama-3.1-70B-Instruct with Kurious"
-                  result={backendResult}
-                  loading={false}
-                  error={backendError}
-                  isCorrect={backendCorrect}
-                  latency={backendLatency}
-                  rating={backendRating}
-                  onRate={setBackendRating}
-                  showProcessSteps
-                />
+              {/* Frontier panel */}
+              {comparisonOpen && (
+                <div className="flex-1 min-w-0 border-l border-gray-700">
+                  <ResultPanel
+                    title=""
+                    result={frontierResult}
+                    loading={frontierLoading}
+                    error={frontierError}
+                    isCorrect={frontierCorrect}
+                    latency={frontierLatency}
+                    rating={frontierRating}
+                    onRate={setFrontierRating}
+                    headerSlot={
+                      <FrontierAPISelector
+                        selectedAPI={selectedFrontierAPI}
+                        onAPIChange={setSelectedFrontierAPI}
+                      />
+                    }
+                  />
+                </div>
               )}
+            </div>
 
-              {/* Right panel: frontier LLM, no progress steps */}
-              {showComparison && (
-                <ResultPanel
-                  title={`${getFrontierAPIName()} without Kurious`}
-                  result={frontierResult}
-                  loading={frontierLoading}
-                  error={frontierError}
-                  isCorrect={frontierCorrect}
-                  latency={frontierLatency}
-                  rating={frontierRating}
-                  onRate={setFrontierRating}
-                />
-              )}
+            {/* Right spacer — equal to left spacer, keeping panels centered;
+                arrow strip lives at its left edge, flush against the panels */}
+            <div className="flex-1 flex items-stretch">
+              <div
+                className="flex-shrink-0 border-l border-gray-700 flex flex-col"
+                style={{ width: '2.25rem', background: '#111827' }}
+              >
+                <div className="flex-1 flex items-center justify-center">
+                  <button
+                    onClick={() => setComparisonOpen(v => !v)}
+                    className="text-gray-400 hover:text-white transition-colors text-lg leading-none"
+                    title={comparisonOpen ? 'Collapse comparison' : 'Compare with LLM'}
+                  >
+                    {comparisonOpen ? '‹' : '›'}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

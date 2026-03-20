@@ -13,15 +13,17 @@ interface ResultPanelProps {
   rating?: number | null;
   onRate?: (rating: number, feedback?: string) => void;
   showProcessSteps?: boolean;
+  headerSlot?: React.ReactNode;
 }
 
-export const ResultPanel: React.FC<ResultPanelProps> = ({ title, result, loading, error, isCorrect, latency, rating, onRate, showProcessSteps }) => {
+export const ResultPanel: React.FC<ResultPanelProps> = ({ title, result, loading, error, isCorrect, latency, rating, onRate, showProcessSteps, headerSlot }) => {
   return (
     <div className="bg-gray-800 shadow-lg p-6 h-full min-h-[300px] flex flex-col border-2 border-gray-700">
-      <div className="flex items-center justify-between mb-4 border-b-2 border-gray-700 pb-3">
-        <h2 className="text-xl font-semibold text-white">{title}</h2>
+      <div className="flex items-center justify-between mb-4 border-b-2 border-gray-700 pb-3 gap-2">
+        {title && <h2 className="text-xl font-semibold text-white flex-shrink-0">{title}</h2>}
+        {headerSlot && <div className="flex-1">{headerSlot}</div>}
         {isCorrect !== null && isCorrect !== undefined && (
-          <div className="text-2xl">
+          <div className="text-2xl flex-shrink-0">
             {isCorrect ? (
               <span className="text-green-500">✓</span>
             ) : (
