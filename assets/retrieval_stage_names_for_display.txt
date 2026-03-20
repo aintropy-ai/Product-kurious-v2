@@ -1,0 +1,11 @@
+Understanding the user intent
+Identifying entities and relationships
+Choosing the perception indices across rich text, tables, images, and videos
+Proceeding with hybrid indices
+Retrieving top-K documents from each index
+Aggregating structured and unstructured documents
+Expanding the results with knowledge graph
+Ranking results based on relevance
+Selecting top-K results
+Feeding topK documents to the LLM
+Generating the answer
