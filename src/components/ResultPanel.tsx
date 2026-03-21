@@ -3,6 +3,11 @@ import { SearchResponse } from '../types';
 import { StarRating } from './StarRating';
 import { ProcessStepsSummary } from './ProcessStepsSummary';
 
+interface Citation {
+  name: string;
+  url: string;
+}
+
 interface ResultPanelProps {
   title: string;
   result: SearchResponse | null;
@@ -14,14 +19,17 @@ interface ResultPanelProps {
   onRate?: (rating: number, feedback?: string) => void;
   showProcessSteps?: boolean;
   headerSlot?: React.ReactNode;
+  titleNote?: string;
+  citations?: Citation[];
 }
 
-export const ResultPanel: React.FC<ResultPanelProps> = ({ title, result, loading, error, isCorrect, latency, rating, onRate, showProcessSteps, headerSlot }) => {
+export const ResultPanel: React.FC<ResultPanelProps> = ({ title, result, loading, error, isCorrect, latency, rating, onRate, showProcessSteps, headerSlot, titleNote, citations }) => {
   return (
     <div className="bg-gray-800 shadow-lg p-6 h-full min-h-[300px] flex flex-col border-2 border-gray-700">
-      <div className="flex items-center justify-between mb-4 border-b-2 border-gray-700 pb-3 gap-2">
+      <div className="flex items-center mb-4 border-b-2 border-gray-700 pb-3 gap-2">
         {title && <h2 className="text-xl font-semibold text-white flex-shrink-0">{title}</h2>}
         {headerSlot && <div className="flex-1">{headerSlot}</div>}
+        {titleNote && <span className="text-xs text-gray-400 ml-auto flex-shrink-0">{titleNote}</span>}
         {isCorrect !== null && isCorrect !== undefined && (
           <div className="text-2xl flex-shrink-0">
             {isCorrect ? (
@@ -72,6 +80,26 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({ title, result, loading
               <div className="mt-6 pt-4 border-t-2 border-gray-700">
                 <p className="font-medium text-white mb-2">Context:</p>
                 <p className="text-sm text-gray-300 whitespace-pre-wrap">{result.context}</p>
+              </div>
+            )}
+
+            {citations && citations.length > 0 && (
+              <div className="mt-6 pt-4 border-t-2 border-gray-700">
+                <p className="font-medium text-white mb-2">Citations:</p>
+                <ul className="space-y-1">
+                  {citations.map((c, idx) => (
+                    <li key={idx} className="text-sm">
+                      <a
+                        href={c.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 hover:text-blue-300 underline"
+                      >
+                        {c.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>

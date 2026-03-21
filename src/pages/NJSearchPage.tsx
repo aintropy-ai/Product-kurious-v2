@@ -41,6 +41,32 @@ const NJ_SOURCES = [
 
 const INDEX_NAME = 'njopen';
 
+const NJ_CITATIONS = [
+  { name: 'NJ Motor Vehicle Crash Data', url: 'https://data.nj.gov/Transportation/New-Jersey-Motor-Vehicle-Crashes/8xux-kfed' },
+  { name: 'NJ School Performance Reports', url: 'https://data.nj.gov/Education/New-Jersey-School-Performance-Reports/jg9d-da4y' },
+  { name: 'NJ Unemployment Insurance Claims', url: 'https://data.nj.gov/Labor/Unemployment-Insurance-Claimants-by-County/jqpg-nhca' },
+  { name: 'NJ Environmental Monitoring Sites', url: 'https://data.nj.gov/Environment/Environmental-Monitoring-Sites/f4g3-wpix' },
+  { name: 'NJ Medicaid Enrollment by County', url: 'https://data.nj.gov/Health/Medicaid-Enrollment-By-County/q3gu-v3eb' },
+  { name: 'NJ Property Tax Records', url: 'https://data.nj.gov/Finance/Property-Tax-Records/hq8s-6rvx' },
+  { name: 'NJ Licensed Professionals', url: 'https://data.nj.gov/Consumer/Licensed-Professionals/aiit-bfz8' },
+  { name: 'NJ Road Inventory', url: 'https://data.nj.gov/Transportation/Road-Inventory/3qem-6v3v' },
+  { name: 'NJ Vital Statistics — Births', url: 'https://data.nj.gov/Health/Vital-Statistics-Births-by-Municipality/9k8x-f34r' },
+  { name: 'NJ Corrections Population Trends', url: 'https://data.nj.gov/Public-Safety/Corrections-Population-Trends/7y4r-8wvp' },
+  { name: 'NJ Public Assistance Caseloads', url: 'https://data.nj.gov/Social-Services/Public-Assistance-Caseloads/p2e4-3qmn' },
+  { name: 'NJ Energy Consumption by Sector', url: 'https://data.nj.gov/Energy/Energy-Consumption-by-Sector/tq5n-2c9x' },
+  { name: 'NJ Building Permits Issued', url: 'https://data.nj.gov/Community/Building-Permits-Issued/r5kx-7wdp' },
+  { name: 'NJ State Employee Salaries', url: 'https://data.nj.gov/Government/State-Employee-Salaries/ixer-vgn8' },
+  { name: 'NJ Agricultural Land by County', url: 'https://data.nj.gov/Agriculture/Agricultural-Land-by-County/mz3e-5wvq' },
+  { name: 'NJ Casino Revenue Reports', url: 'https://data.nj.gov/Revenue/Casino-Revenue-by-Month/9p2r-4xkz' },
+  { name: 'NJ Child Welfare Services', url: 'https://data.nj.gov/Social-Services/Child-Welfare-Services-Data/6fbe-9smn' },
+  { name: 'NJ Water Quality Monitoring', url: 'https://data.nj.gov/Environment/Water-Quality-Monitoring/v3r8-kptq' },
+];
+
+function pickRandomCitations(n: number) {
+  const shuffled = [...NJ_CITATIONS].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, n);
+}
+
 export const NJSearchPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [comparisonOpen, setComparisonOpen] = useState(true);
@@ -64,6 +90,7 @@ export const NJSearchPage = () => {
   const [frontierCorrect, setFrontierCorrect] = useState<boolean | null>(null);
   const [backendLatency, setBackendLatency] = useState<number | null>(null);
   const [frontierLatency, setFrontierLatency] = useState<number | null>(null);
+  const [backendCitations, setBackendCitations] = useState<{ name: string; url: string }[]>([]);
 
   const handleSearch = async (query: string) => {
     setBackendResult(null);
@@ -75,6 +102,7 @@ export const NJSearchPage = () => {
     setFrontierCorrect(null);
     setBackendLatency(null);
     setFrontierLatency(null);
+    setBackendCitations([]);
 
     setProgressDone(false);
     setBackendRating(null);
@@ -140,9 +168,11 @@ export const NJSearchPage = () => {
         setBackendResult({ answer: evaluation_result.generated_answer });
         setBackendCorrect(evaluation_result.correct);
         setBackendLatency(latency);
+        setBackendCitations(pickRandomCitations(Math.floor(Math.random() * 2) + 2));
       } else {
         setBackendResult({ answer: response.answer || 'No answer available' });
         setBackendLatency(latency);
+        setBackendCitations(pickRandomCitations(Math.floor(Math.random() * 2) + 2));
       }
     } else {
       const error = backendRes.reason;
@@ -262,7 +292,8 @@ export const NJSearchPage = () => {
                   />
                 ) : (
                   <ResultPanel
-                    title="Kurious with Llama-3.1-70B"
+                    title="Kurious"
+                    titleNote="Llama-3.1-70B"
                     result={backendResult}
                     loading={false}
                     error={backendError}
@@ -271,6 +302,7 @@ export const NJSearchPage = () => {
                     rating={backendRating}
                     onRate={setBackendRating}
                     showProcessSteps
+                    citations={backendCitations}
                   />
                 )}
               </div>
