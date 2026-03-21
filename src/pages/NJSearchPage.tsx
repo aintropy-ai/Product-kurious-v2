@@ -69,7 +69,7 @@ function pickRandomCitations(n: number) {
 
 export const NJSearchPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [comparisonOpen, setComparisonOpen] = useState(true);
+  const [comparisonOpen, setComparisonOpen] = useState(false);
   const [selectedFrontierAPI, setSelectedFrontierAPI] = useState<string>('claude');
 
   const [backendResult, setBackendResult] = useState<SearchResponse | null>(null);
