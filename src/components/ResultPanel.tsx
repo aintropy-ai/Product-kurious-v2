@@ -162,18 +162,6 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
           </div>
         )}
 
-        {/* Per-source stream errors (partial failures) */}
-        {streamErrors && streamErrors.length > 0 && (
-          <div className="space-y-2 mb-4">
-            {streamErrors.map((se, i) => (
-              <div key={i} className="bg-yellow-900 border border-yellow-700 px-3 py-2 rounded text-sm">
-                <span className="text-yellow-300 font-medium capitalize">{se.source} search unavailable:</span>
-                <span className="text-yellow-400 ml-1">{se.detail}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
         {!loading && !error && result && (
           <div className="space-y-4">
             <div className="prose prose-invert prose-sm max-w-none
@@ -212,6 +200,18 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
         {!loading && !error && !result && !structuredData && (!streamErrors || streamErrors.length === 0) && (
           <div className="flex items-center justify-center h-full text-gray-500">
             <p>No results yet. Enter a query to search.</p>
+          </div>
+        )}
+
+        {/* Per-source stream errors (partial failures) */}
+        {streamErrors && streamErrors.length > 0 && (
+          <div className="space-y-2 mt-4">
+            {streamErrors.map((se, i) => (
+              <details key={i} className="bg-yellow-900 border border-yellow-700 px-3 py-2 rounded text-sm">
+                <summary className="text-yellow-300 font-medium capitalize cursor-pointer">{se.source} search unavailable</summary>
+                <span className="text-yellow-400 mt-1 block">{se.detail}</span>
+              </details>
+            ))}
           </div>
         )}
       </div>

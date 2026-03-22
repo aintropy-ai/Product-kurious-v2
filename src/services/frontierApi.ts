@@ -41,13 +41,20 @@ const callOpenRouter = async (model: string, query: string): Promise<SearchRespo
   }
 };
 
+const MODEL_IDS: Record<string, string> = {
+  gpt4omini: 'openai/gpt-4o-mini',
+  gpt4o: 'openai/gpt-4o',
+  gemini2flash: 'google/gemini-3-pro-preview',
+  gemini15pro: 'google/gemini-pro-1.5',
+  claude: 'anthropic/claude-3.5-sonnet',
+  claude3haiku: 'anthropic/claude-3-haiku',
+  llama70b: 'meta-llama/llama-3.1-70b-instruct',
+};
+
 export const frontierApi = {
-  searchWithGPT5: (query: string): Promise<SearchResponse> =>
-    callOpenRouter('openai/gpt-3.5-turbo', query),
-
-  searchWithGemini3: (query: string): Promise<SearchResponse> =>
-    callOpenRouter('google/gemini-3-pro-preview', query),
-
-  searchWithClaude: (query: string): Promise<SearchResponse> =>
-    callOpenRouter('anthropic/claude-3.5-sonnet', query),
+  search: (apiValue: string, query: string): Promise<SearchResponse> => {
+    const modelId = MODEL_IDS[apiValue];
+    if (!modelId) throw new Error(`Unknown model: ${apiValue}`);
+    return callOpenRouter(modelId, query);
+  },
 };

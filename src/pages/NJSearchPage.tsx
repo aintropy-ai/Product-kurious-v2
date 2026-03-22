@@ -83,20 +83,7 @@ export const NJSearchPage = () => {
     // Run frontier request in parallel (fire-and-forget until done)
     const frontierStartTime = Date.now();
     const frontierRequest = comparisonOpen ? (async () => {
-      let result: SearchResponse;
-      switch (selectedFrontierAPI) {
-        case 'gpt5':
-          result = await frontierApi.searchWithGPT5(query);
-          break;
-        case 'gemini3':
-          result = await frontierApi.searchWithGemini3(query);
-          break;
-        case 'claude':
-          result = await frontierApi.searchWithClaude(query);
-          break;
-        default:
-          throw new Error('Invalid API selected');
-      }
+      const result = await frontierApi.search(selectedFrontierAPI, query);
       const latency = (Date.now() - frontierStartTime) / 1000;
       return { result, latency };
     })() : null;

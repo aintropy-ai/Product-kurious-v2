@@ -1,9 +1,13 @@
 import React from 'react';
 
 const FRONTIER_APIS = [
-  { name: 'GPT-3.5 Turbo', value: 'gpt5' },
-  { name: 'Gemini 3 Pro', value: 'gemini3' },
+  { name: 'GPT-4o mini', value: 'gpt4omini' },
+  { name: 'GPT-4o', value: 'gpt4o' },
+  { name: 'Gemini 2.0 Flash', value: 'gemini2flash' },
+  { name: 'Gemini 1.5 Pro', value: 'gemini15pro' },
   { name: 'Claude 3.5 Sonnet', value: 'claude' },
+  { name: 'Claude 3 Haiku', value: 'claude3haiku' },
+  { name: 'Llama 3.1 70B', value: 'llama70b' },
 ];
 
 interface FrontierAPISelectorProps {

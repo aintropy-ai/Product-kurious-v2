@@ -49,50 +49,92 @@ What is the exact suspension end date for New Jersey-American Water Company's pr
 What is the estimated one-time bill credit amount for a Middlesex Water Company residential customer with a 5/8" meter, and how does it compare to the approximate monthly bill increase for a Gordon’s Corner Water Company residential customer under their stipulated adjustment?
 ---
 What is the total megawatt capacity block being opened in the Community Solar Energy Program, and how does it relate to the number of solicitation phases being considered for the Garden State Energy Storage Program in the same meeting?---
-What is the most recent pledge year recorded in the dataset?
 ---
-Which city has the most registered automotive service facilities?
----
-What is the distribution of facilities across the top 5 New Jersey counties?
----
-What types of healthcare facilities are most common in New Jersey?
----
-What are the different payment types used in this disaster recovery program?
----
-Which city has the most law enforcement agency offices?
----
-How many total office locations does this agency operate across New Jersey?
+Which last employers have the most retired members?
 ---
 Which town has the most community events listed?
 ---
-Which plant families are most represented in this ecological survey?
+How much money has been disbursed versus obligated to date?
 ---
-What types of organizations provide digital inclusion services across New Jersey?
+Which schools in Atlantic County showed the most improvement in their four and five-year cohort graduation rates from 2012 to 2014?
 ---
-Which New Jersey county received the largest total obligated amount?
+How did graduation rates in Atlantic County change between 2012 and 2014 across our school districts?
 ---
-What were the total number of pledges made each year from 2017 to 2022?
+How did graduation rates in Atlantic County change between 2012 and 2014 across our school districts?
 ---
-How many pledges were made in 2022 compared to 2017?
+Which schools in Atlantic County showed the most improvement in their four and five-year cohort graduation rates from 2012 to 2014?
 ---
-Which agency had the highest obligations across all years in this dataset?
+Can you identify all the other locations and businesses that share a postal code with nj25156 so we can understand the competitive and collaborative environment?
 ---
-How have year-to-date expenditures trended from 2003 to 2022?
+What fueling stations and truck stops are located on commercial service properties in New Jersey, and how many acres does each commercial service parcel occupy?
 ---
-How much money was obligated versus actually expended in fiscal year 2020?
+What was the gender breakdown of total enrollment by county?
 ---
-Which funding categories were used most frequently across all state agencies?
+Which municipalities are classified as statewide versus specific locations?
 ---
-Which New Jersey county has the most acute care facilities?
+What types of expenditure categories does the state spend the most on overall?
 ---
-What are the top 5 cities with the most acute care facilities?
+What are the top 5 vendors by disbursed amount across all projects?
 ---
-What are the most common fields of operation for New Jersey registered businesses?
+Which counties have the most active projects in the current dataset?
 ---
-Which facility has the most hospital beds?
+Which federal agencies are administering disaster recovery projects in New Jersey?
 ---
-What is the total length of all waterway channels in the dataset?
+What types of projects were funded through this program?
 ---
-What are the different revenue categories tracked in this dataset?
+What is the total number of Native American students enrolled statewide?
 ---
-What is the average daily traffic volume by station type?
+Which use category had the highest total construction costs?
+---
+What is the difference between four-year and five-year graduation rates for each school?
+---
+Which channels have been updated most recently?
+---
+Which authority had the highest revenue in July 2023?
+---
+Which districts improved their graduation rates the most between 2014 and 2017?
+---
+How much money has been recouped across all social service programs?
+---
+What is the total amount of funds that have been disbursed across all programs?
+---
+What funding sources were used most frequently in the assistance programs?
+---
+What funding sources were used most frequently for housing initiatives?
+---
+Which federal agencies provided the most funding for community development?
+---
+Which authority had the lowest year-to-date revenue in the most recent fiscal year?
+---
+How many schools in each county are included in this dataset?
+---
+Which county has the highest number of community development projects?
+---
+On which date was the largest disbursement amount recorded?
+---
+What is the total amount of funds disbursed across all New Jersey projects?
+---
+What is the name of the rest stop closest to the northern border of New Jersey?
+---
+What are the different project types funded through disaster recovery programs?
+---
+Which schools improved the most from 4-year to 5-year graduation rates?
+---
+Which applicant organization has received the most total funding across all their projects?
+---
+Which New Jersey townships have the most employees with terminal leave benefits?
+---
+What are the top 10 industries by number of registered businesses in New Jersey?
+---
+How many migrant students were enrolled in each school district?
+---
+How does impervious surface area compare across different land use types in 2020?
+---
+How many unique cities are represented in the New Jersey school database?
+---
+Which applicant organization has received the most disaster recovery funding?
+---
+What is the enrollment breakdown by gender across all districts?
+---
+How many projects were funded through CDBG-DR compared to other sources?
+---
