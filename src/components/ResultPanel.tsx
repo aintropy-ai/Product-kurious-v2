@@ -24,28 +24,38 @@ interface ResultPanelProps {
   streamErrors?: StreamErrorEvent[];
 }
 
-const MAX_TABLE_ROWS = 10;
-
 // Strip code fences wrapping pipe tables so remark-gfm renders them as real tables
 function unwrapFencedTables(text: string): string {
   return text.replace(/```[^\n]*\n((?:\|[^\n]+\n)+)```/g, '$1');
 }
 
+const CELL_TRUNCATE_LEN = 80;
+
 function StructuredTable({ data }: { data: StreamStructuredEvent }) {
   const [sqlExpanded, setSqlExpanded] = useState(false);
-  const displayRows = data.rows.slice(0, MAX_TABLE_ROWS);
+  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+
+  const toggleRow = (ri: number) => {
+    setExpandedRows(prev => {
+      const next = new Set(prev);
+      next.has(ri) ? next.delete(ri) : next.add(ri);
+      return next;
+    });
+  };
 
   return (
     <div className="mt-6 pt-4 border-t-2 border-gray-700">
-      <p className="font-medium text-white mb-2">Structured Data</p>
+      <div className="flex items-center gap-3 mb-2">
+        <p className="font-medium text-white">Structured Data</p>
+        <span className="text-xs text-gray-500">{data.row_count} row{data.row_count !== 1 ? 's' : ''}</span>
+        <button
+          onClick={() => setSqlExpanded(v => !v)}
+          className="text-xs text-blue-400 hover:text-blue-300 underline ml-auto"
+        >
+          {sqlExpanded ? 'Hide SQL' : 'Show SQL'}
+        </button>
+      </div>
 
-      {/* SQL toggle */}
-      <button
-        onClick={() => setSqlExpanded(v => !v)}
-        className="text-xs text-blue-400 hover:text-blue-300 mb-2 underline"
-      >
-        {sqlExpanded ? 'Hide SQL' : 'Show SQL'}
-      </button>
       {sqlExpanded && (
         <pre className="text-xs text-gray-300 bg-gray-900 p-3 rounded overflow-x-auto mb-3 whitespace-pre-wrap">
           {data.sql}
@@ -54,32 +64,57 @@ function StructuredTable({ data }: { data: StreamStructuredEvent }) {
 
       {/* Table */}
       {data.columns.length > 0 ? (
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-700">
-                {data.columns.map((col, i) => (
-                  <th key={i} className="px-3 py-2 text-gray-200 font-medium border border-gray-600 whitespace-nowrap">
-                    {col}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {displayRows.map((row, ri) => (
-                <tr key={ri} className={ri % 2 === 0 ? 'bg-gray-800' : 'bg-gray-750'}>
-                  {(row as unknown[]).map((cell, ci) => (
-                    <td key={ci} className="px-3 py-1.5 text-gray-300 border border-gray-700 max-w-xs truncate">
-                      {String(cell ?? '')}
-                    </td>
+        <div className="overflow-x-auto border border-gray-600 rounded">
+          <div className="max-h-96 overflow-y-auto">
+            <table className="w-full text-xs text-left border-collapse">
+              <thead className="sticky top-0 z-10">
+                <tr className="bg-gray-700">
+                  <th className="px-2 py-2 text-gray-400 font-medium border-r border-gray-600 w-8 text-center">#</th>
+                  {data.columns.map((col, i) => (
+                    <th key={i} className="px-3 py-2 text-gray-200 font-medium border-r border-gray-600 whitespace-nowrap last:border-r-0">
+                      {col}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          {data.row_count > MAX_TABLE_ROWS && (
-            <p className="text-xs text-gray-500 mt-1">{data.row_count} rows total, showing first {MAX_TABLE_ROWS}</p>
-          )}
+              </thead>
+              <tbody>
+                {data.rows.map((row, ri) => {
+                  const isExpanded = expandedRows.has(ri);
+                  const cells = row as unknown[];
+                  const hasLongCell = cells.some(cell => String(cell ?? '').length > CELL_TRUNCATE_LEN);
+                  return (
+                    <tr
+                      key={ri}
+                      className={`${ri % 2 === 0 ? 'bg-gray-800' : 'bg-gray-850'} ${hasLongCell ? 'cursor-pointer hover:bg-gray-700' : ''} transition-colors`}
+                      onClick={hasLongCell ? () => toggleRow(ri) : undefined}
+                      title={hasLongCell ? (isExpanded ? 'Click to collapse' : 'Click to expand') : undefined}
+                    >
+                      <td className="px-2 py-1.5 text-gray-600 border-r border-gray-700 text-center select-none">
+                        {hasLongCell ? (
+                          <span className="text-gray-400">{isExpanded ? '▾' : '▸'}</span>
+                        ) : (
+                          <span>{ri + 1}</span>
+                        )}
+                      </td>
+                      {cells.map((cell, ci) => {
+                        const str = String(cell ?? '');
+                        const truncated = !isExpanded && str.length > CELL_TRUNCATE_LEN;
+                        return (
+                          <td key={ci} className="px-3 py-1.5 text-gray-300 border-r border-gray-700 last:border-r-0 align-top">
+                            {truncated ? (
+                              <span title={str}>{str.slice(0, CELL_TRUNCATE_LEN)}<span className="text-gray-500">…</span></span>
+                            ) : (
+                              <span className={isExpanded ? 'whitespace-pre-wrap break-words' : 'whitespace-nowrap'}>{str}</span>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       ) : (
         <p className="text-sm text-gray-400">No data returned.</p>
