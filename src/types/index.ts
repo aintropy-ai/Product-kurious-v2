@@ -4,6 +4,41 @@ export interface SearchResponse {
   context?: string;
 }
 
+export interface StreamSource {
+  title?: string;
+  h1?: string;
+  text?: string;
+  url?: string;
+  catalog_metadata?: string;
+}
+
+export interface StreamUnstructuredEvent {
+  stage: 'unstructured';
+  answer: string;
+  sources: StreamSource[];
+  elapsed_ms: number;
+}
+
+export interface StreamStructuredEvent {
+  stage: 'structured';
+  sql: string;
+  columns: string[];
+  rows: unknown[][];
+  row_count: number;
+  elapsed_ms: number;
+}
+
+export interface StreamErrorEvent {
+  stage: 'error';
+  source: string;
+  detail: string;
+}
+
+export interface StreamDoneEvent {
+  stage: 'done';
+  total_elapsed_ms: number;
+}
+
 export interface BackendSearchResponse {
   request_id: string;
   question: string;
