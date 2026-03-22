@@ -1,12 +1,10 @@
-import React from 'react';
-import { SearchResponse } from '../types';
+import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import { SearchResponse, StreamSource, StreamStructuredEvent, StreamErrorEvent } from '../types';
 import { StarRating } from './StarRating';
 import { ProcessStepsSummary } from './ProcessStepsSummary';
-
-interface Citation {
-  name: string;
-  url: string;
-}
 
 interface ResultPanelProps {
   title: string;
@@ -20,10 +18,149 @@ interface ResultPanelProps {
   showProcessSteps?: boolean;
   headerSlot?: React.ReactNode;
   titleNote?: string;
-  citations?: Citation[];
+  // New streaming props
+  structuredData?: StreamStructuredEvent | null;
+  realSources?: StreamSource[];
+  streamErrors?: StreamErrorEvent[];
 }
 
-export const ResultPanel: React.FC<ResultPanelProps> = ({ title, result, loading, error, isCorrect, latency, rating, onRate, showProcessSteps, headerSlot, titleNote, citations }) => {
+// Strip code fences wrapping pipe tables so remark-gfm renders them as real tables
+function unwrapFencedTables(text: string): string {
+  return text.replace(/```[^\n]*\n((?:\|[^\n]+\n)+)```/g, '$1');
+}
+
+const CELL_TRUNCATE_LEN = 80;
+
+function StructuredTable({ data }: { data: StreamStructuredEvent }) {
+  const [sqlExpanded, setSqlExpanded] = useState(false);
+  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+
+  const toggleRow = (ri: number) => {
+    setExpandedRows(prev => {
+      const next = new Set(prev);
+      next.has(ri) ? next.delete(ri) : next.add(ri);
+      return next;
+    });
+  };
+
+  return (
+    <div className="mt-6 pt-4 border-t-2 border-gray-700">
+      <div className="flex items-center gap-3 mb-2">
+        <p className="font-medium text-white">Structured Data</p>
+        <span className="text-xs text-gray-500">{data.row_count} row{data.row_count !== 1 ? 's' : ''}</span>
+        <button
+          onClick={() => setSqlExpanded(v => !v)}
+          className="text-xs text-blue-400 hover:text-blue-300 underline ml-auto"
+        >
+          {sqlExpanded ? 'Hide SQL' : 'Show SQL'}
+        </button>
+      </div>
+
+      {sqlExpanded && (
+        <pre className="text-xs text-gray-300 bg-gray-900 p-3 rounded overflow-x-auto mb-3 whitespace-pre-wrap">
+          {data.sql}
+        </pre>
+      )}
+
+      {/* Table */}
+      {data.columns.length > 0 ? (
+        <div className="overflow-x-auto border border-gray-600 rounded">
+          <div className="max-h-96 overflow-y-auto">
+            <table className="w-full text-xs text-left border-collapse">
+              <thead className="sticky top-0 z-10">
+                <tr className="bg-gray-700">
+                  <th className="px-2 py-2 text-gray-400 font-medium border-r border-gray-600 w-8 text-center">#</th>
+                  {data.columns.map((col, i) => (
+                    <th key={i} className="px-3 py-2 text-gray-200 font-medium border-r border-gray-600 whitespace-nowrap last:border-r-0">
+                      {col}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {data.rows.map((row, ri) => {
+                  const isExpanded = expandedRows.has(ri);
+                  const cells = row as unknown[];
+                  const hasLongCell = cells.some(cell => String(cell ?? '').length > CELL_TRUNCATE_LEN);
+                  return (
+                    <tr
+                      key={ri}
+                      className={`${ri % 2 === 0 ? 'bg-gray-800' : 'bg-gray-850'} ${hasLongCell ? 'cursor-pointer hover:bg-gray-700' : ''} transition-colors`}
+                      onClick={hasLongCell ? () => toggleRow(ri) : undefined}
+                      title={hasLongCell ? (isExpanded ? 'Click to collapse' : 'Click to expand') : undefined}
+                    >
+                      <td className="px-2 py-1.5 text-gray-600 border-r border-gray-700 text-center select-none">
+                        {hasLongCell ? (
+                          <span className="text-gray-400">{isExpanded ? '▾' : '▸'}</span>
+                        ) : (
+                          <span>{ri + 1}</span>
+                        )}
+                      </td>
+                      {cells.map((cell, ci) => {
+                        const str = String(cell ?? '');
+                        const truncated = !isExpanded && str.length > CELL_TRUNCATE_LEN;
+                        return (
+                          <td key={ci} className="px-3 py-1.5 text-gray-300 border-r border-gray-700 last:border-r-0 align-top">
+                            {truncated ? (
+                              <span title={str}>{str.slice(0, CELL_TRUNCATE_LEN)}<span className="text-gray-500">…</span></span>
+                            ) : (
+                              <span className={isExpanded ? 'whitespace-pre-wrap break-words' : 'whitespace-nowrap'}>{str}</span>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+        <p className="text-sm text-gray-400">No data returned.</p>
+      )}
+    </div>
+  );
+}
+
+function RealSources({ sources }: { sources: StreamSource[] }) {
+  if (sources.length === 0) return null;
+  return (
+    <div className="mt-6 pt-4 border-t-2 border-gray-700">
+      <p className="font-medium text-white mb-2">Sources ({sources.length})</p>
+      <ul className="space-y-2">
+        {sources.map((src, i) => {
+          const label = src.title || src.h1 || '(no title)';
+          return (
+            <li key={i} className="text-sm">
+              {src.url ? (
+                <a
+                  href={src.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 underline"
+                >
+                  {label}
+                </a>
+              ) : (
+                <span className="text-gray-300">{label}</span>
+              )}
+              {src.catalog_metadata && (
+                <span className="text-gray-500 text-xs ml-2">{src.catalog_metadata}</span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+export const ResultPanel: React.FC<ResultPanelProps> = ({
+  title, result, loading, error, isCorrect, latency, rating, onRate,
+  showProcessSteps, headerSlot, titleNote,
+  structuredData, realSources, streamErrors,
+}) => {
   return (
     <div className="bg-gray-800 shadow-lg p-6 h-full min-h-[300px] flex flex-col border-2 border-gray-700">
       <div className="flex items-center mb-4 border-b-2 border-gray-700 pb-3 gap-2">
@@ -52,6 +189,7 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({ title, result, loading
           </div>
         )}
 
+        {/* Hard error (network failure before stream started) */}
         {error && (
           <div className="bg-red-900 border-2 border-red-700 p-4">
             <p className="text-red-300 font-medium">Error:</p>
@@ -61,63 +199,64 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({ title, result, loading
 
         {!loading && !error && result && (
           <div className="space-y-4">
-            <div className="prose max-w-none">
-              <p className="text-gray-200 whitespace-pre-wrap leading-relaxed">{result.answer}</p>
+            <div className="prose prose-invert prose-sm max-w-none
+              prose-p:text-gray-200 prose-p:leading-relaxed
+              prose-headings:text-white prose-headings:font-semibold
+              prose-strong:text-white
+              prose-a:text-blue-400 hover:prose-a:text-blue-300
+              prose-code:text-blue-300 prose-code:bg-gray-900 prose-code:px-1 prose-code:rounded
+              prose-pre:bg-gray-900 prose-pre:text-gray-300
+              prose-li:text-gray-200
+              prose-ol:text-gray-200 prose-ul:text-gray-200
+              prose-blockquote:border-l-blue-500 prose-blockquote:text-gray-400
+              prose-table:text-sm prose-th:text-gray-200 prose-td:text-gray-300">
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                {unwrapFencedTables(result.answer)}
+              </ReactMarkdown>
             </div>
 
-            {result.sources && result.sources.length > 0 && (
-              <div className="mt-6 pt-4 border-t-2 border-gray-700">
-                <p className="font-medium text-white mb-2">Sources:</p>
-                <ul className="list-disc list-inside space-y-1">
-                  {result.sources.map((source, idx) => (
-                    <li key={idx} className="text-sm text-gray-300">{source}</li>
-                  ))}
-                </ul>
-              </div>
+            {/* Real document sources */}
+            {realSources && realSources.length > 0 && (
+              <RealSources sources={realSources} />
             )}
 
-            {result.context && (
-              <div className="mt-6 pt-4 border-t-2 border-gray-700">
-                <p className="font-medium text-white mb-2">Context:</p>
-                <p className="text-sm text-gray-300 whitespace-pre-wrap">{result.context}</p>
-              </div>
-            )}
-
-            {citations && citations.length > 0 && (
-              <div className="mt-6 pt-4 border-t-2 border-gray-700">
-                <p className="font-medium text-white mb-2">Citations:</p>
-                <ul className="space-y-1">
-                  {citations.map((c, idx) => (
-                    <li key={idx} className="text-sm">
-                      <a
-                        href={c.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-400 hover:text-blue-300 underline"
-                      >
-                        {c.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            {/* Structured SQL table (may arrive after unstructured) */}
+            {structuredData && (
+              <StructuredTable data={structuredData} />
             )}
           </div>
         )}
 
-        {!loading && !error && !result && (
+        {/* Show structured table even if no unstructured result */}
+        {!loading && !error && !result && structuredData && (
+          <StructuredTable data={structuredData} />
+        )}
+
+        {!loading && !error && !result && !structuredData && (!streamErrors || streamErrors.length === 0) && (
           <div className="flex items-center justify-center h-full text-gray-500">
             <p>No results yet. Enter a query to search.</p>
           </div>
         )}
+
+        {/* Per-source stream errors (partial failures) */}
+        {streamErrors && streamErrors.length > 0 && (
+          <div className="space-y-2 mt-4">
+            {streamErrors.map((se, i) => (
+              <details key={i} className="bg-yellow-900 border border-yellow-700 px-3 py-2 rounded text-sm">
+                <summary className="text-yellow-300 font-medium capitalize cursor-pointer">{se.source} search unavailable</summary>
+                <span className="text-yellow-400 mt-1 block">{se.detail}</span>
+              </details>
+            ))}
+          </div>
+        )}
       </div>
 
-      {(latency != null || (onRate && result)) && (
+      {(latency != null || (onRate && (result || structuredData))) && (
         <div className="mt-4 pt-4 border-t-2 border-gray-700 flex items-center justify-between gap-4">
           {latency != null && (
             <p className="text-sm text-gray-400">Latency: {latency.toFixed(2)}s</p>
           )}
-          {onRate && result && (
+          {onRate && (result || structuredData) && (
             <div className="ml-auto">
               <StarRating rating={rating ?? null} onRate={onRate} />
             </div>
