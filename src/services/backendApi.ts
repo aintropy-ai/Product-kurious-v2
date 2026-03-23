@@ -3,7 +3,9 @@ import { BackendSearchResponse, StreamUnstructuredEvent, StreamStructuredEvent, 
 
 const API_KEY = import.meta.env.VITE_BACKEND_API_KEY || '';
 const COMPANY_ID = import.meta.env.VITE_BACKEND_COMPANY_ID || 'default-company';
-const BACKEND_URL = import.meta.env.VITE_BACKEND_API_URL || '/api';
+// Always use a relative base so requests route through the Cloudflare proxy (prod)
+// or the Vite dev proxy (dev) — never directly to the backend, which would be blocked by CORS.
+const BACKEND_URL = '/api/v1';
 
 const apiClient = axios.create({
   baseURL: BACKEND_URL,

@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       proxy: {
-        '/api': {
+        '/api/v1': {
           target: backendUrl,
           changeOrigin: true,
           secure: false
