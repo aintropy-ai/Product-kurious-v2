@@ -1,16 +1,16 @@
 import { StreamEvent } from './backendApi';
 
-const ANTHROPIC_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY || '';
+const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || '';
 
 /**
- * Synthesize a final answer using Claude Haiku based on all streaming events
+ * Synthesize a final answer based on all streaming events
  */
 export async function synthesizeAnswer(
   query: string,
   events: StreamEvent[]
 ): Promise<string> {
-  if (!ANTHROPIC_API_KEY) {
-    console.warn('VITE_ANTHROPIC_API_KEY not configured');
+  if (!OPENROUTER_API_KEY) {
+    console.warn('VITE_OPENROUTER_API_KEY not configured');
     return '';
   }
 
@@ -32,15 +32,14 @@ ${context}
 Please provide a comprehensive answer based on the context above.`;
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-3-5-haiku-20241022',
+        model: 'anthropic/claude-3.5-haiku',
         max_tokens: 1024,
         system: systemPrompt,
         messages: [
@@ -54,13 +53,12 @@ Please provide a comprehensive answer based on the context above.`;
 
     if (!response.ok) {
       const error = await response.text();
-      console.error('Anthropic API error:', error);
+      console.error('OpenRouter API error:', error);
       return '';
     }
 
-    const data = (await response.json()) as { content: Array<{ type: string; text: string }> };
-    const textContent = data.content.find(c => c.type === 'text');
-    return textContent?.text || '';
+    const data = (await response.json()) as { choices: Array<{ message: { content: string } }> };
+    return data.choices[0]?.message?.content || '';
   } catch (error) {
     console.error('Failed to synthesize answer:', error);
     return '';

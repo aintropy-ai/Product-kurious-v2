@@ -104,7 +104,7 @@ export const SearchProgress: React.FC<SearchProgressProps> = ({
             <span className={`text-sm font-medium ${
               synthesizing ? 'text-purple-300' : 'text-green-400'
             }`}>
-              Answer Synthesis (Claude Haiku)
+              Answer Synthesis
             </span>
           </div>
         )}

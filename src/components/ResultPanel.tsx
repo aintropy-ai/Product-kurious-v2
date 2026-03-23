@@ -242,7 +242,7 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
                   <div className="w-5 h-5 rounded-full bg-purple-600 animate-pulse flex-shrink-0" />
                   <div>
                     <p className="text-sm font-medium text-purple-300">AI Synthesis</p>
-                    <p className="text-xs text-gray-400 mt-0.5">Claude Haiku is synthesizing a comprehensive answer</p>
+                    <p className="text-xs text-gray-400 mt-0.5">synthesizing a comprehensive answer</p>
                   </div>
                 </div>
               )}
@@ -290,11 +290,11 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
               <StructuredTable data={structuredData} />
             )}
 
-            {/* Synthesized answer from Claude Haiku */}
+            {/* Synthesized answer */}
             {synthesizedAnswer && (
               <div className="mt-6 pt-4 border-t-2 border-gray-700">
                 <div className="flex items-center gap-2 mb-3">
-                  <p className="font-medium text-white">Claude Haiku Synthesis</p>
+                  <p className="font-medium text-white">Final Answer</p>
                   <span className="text-xs text-gray-500">AI-Generated Summary</span>
                 </div>
                 <div className="prose prose-invert prose-sm max-w-none
@@ -318,7 +318,7 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
               <div className="mt-6 pt-4 border-t-2 border-gray-700">
                 <div className="flex items-center gap-3">
                   <div className="animate-spin h-4 w-4 border-2 border-purple-400 border-t-transparent rounded-full flex-shrink-0" />
-                  <span className="text-sm text-purple-300 font-medium">Synthesizing answer with Claude Haiku…</span>
+                  <span className="text-sm text-purple-300 font-medium">Synthesizing answer …</span>
                 </div>
               </div>
             )}
@@ -336,17 +336,6 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
           </div>
         )}
 
-        {/* Per-source stream errors (partial failures) */}
-        {streamErrors && streamErrors.length > 0 && (
-          <div className="space-y-2 mt-4">
-            {streamErrors.map((se, i) => (
-              <details key={i} className="bg-yellow-900 border border-yellow-700 px-3 py-2 rounded text-sm">
-                <summary className="text-yellow-300 font-medium capitalize cursor-pointer">{se.source} search unavailable</summary>
-                <span className="text-yellow-400 mt-1 block">{se.detail}</span>
-              </details>
-            ))}
-          </div>
-        )}
       </div>
 
       {(latency != null || (onRate && (result || structuredData))) && (
