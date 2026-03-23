@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { SearchBar } from '../components/SearchBar';
 import { ResultPanel } from '../components/ResultPanel';
 import { SearchProgress } from '../components/SearchProgress';
 import { FrontierAPISelector } from '../components/FrontierAPISelector';
-import { GoldenAnswerBox } from '../components/GoldenAnswerBox';
-import { backendApi } from '../services/backendApi';
+import { backendApi, StreamEvent, SearchLogPayload } from '../services/backendApi';
 import { frontierApi } from '../services/frontierApi';
 import { SearchResponse } from '../types';
 
@@ -38,9 +37,6 @@ const NJ_SOURCES = [
   { name: 'Office of the Governor', documents: '130K' },
 ];
 
-
-const INDEX_NAME = 'njopen';
-
 const NJ_CITATIONS = [
   { name: 'NJ Motor Vehicle Crash Data', url: 'https://data.nj.gov/Transportation/New-Jersey-Motor-Vehicle-Crashes/8xux-kfed' },
   { name: 'NJ School Performance Reports', url: 'https://data.nj.gov/Education/New-Jersey-School-Performance-Reports/jg9d-da4y' },
@@ -67,6 +63,18 @@ function pickRandomCitations(n: number) {
   return shuffled.slice(0, n);
 }
 
+// Map SSE stage names to human-readable labels shown in SearchProgress
+const STAGE_LABELS: Record<string, string> = {
+  schema_retrieved: 'Identifying relevant database tables',
+  sql_generated: 'Generating SQL query',
+  sql_executed: 'Executing query against database',
+  retrieval_done: 'Searching across 23 agency data sources',
+  unstructured: 'Generating answer from documents',
+  structured: 'Generating answer from structured data',
+  error: 'Retrying with fallback path',
+  done: 'Complete',
+};
+
 export const NJSearchPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [comparisonOpen, setComparisonOpen] = useState(false);
@@ -75,8 +83,8 @@ export const NJSearchPage = () => {
   const [backendResult, setBackendResult] = useState<SearchResponse | null>(null);
   const [frontierResult, setFrontierResult] = useState<SearchResponse | null>(null);
 
-  const [backendLoading, setBackendLoading] = useState(false);
   const [progressDone, setProgressDone] = useState(true);
+  const [streamStage, setStreamStage] = useState<string | null>(null);
   const [frontierLoading, setFrontierLoading] = useState(false);
 
   const [backendRating, setBackendRating] = useState<number | null>(null);
@@ -85,124 +93,118 @@ export const NJSearchPage = () => {
   const [backendError, setBackendError] = useState<string | null>(null);
   const [frontierError, setFrontierError] = useState<string | null>(null);
 
-  const [goldenAnswer, setGoldenAnswer] = useState<string | string[] | null>(null);
-  const [backendCorrect, setBackendCorrect] = useState<boolean | null>(null);
-  const [frontierCorrect, setFrontierCorrect] = useState<boolean | null>(null);
   const [backendLatency, setBackendLatency] = useState<number | null>(null);
   const [frontierLatency, setFrontierLatency] = useState<number | null>(null);
   const [backendCitations, setBackendCitations] = useState<{ name: string; url: string }[]>([]);
 
+  const [searchLogId, setSearchLogId] = useState<number>(-1);
+
+  // Abort controller for the in-flight stream
+  const streamAbortRef = useRef<AbortController | null>(null);
+
   const handleSearch = async (query: string) => {
+    // Cancel any previous in-flight stream
+    streamAbortRef.current?.abort();
+    const controller = new AbortController();
+    streamAbortRef.current = controller;
+
+    // Reset state
     setBackendResult(null);
     setFrontierResult(null);
     setBackendError(null);
     setFrontierError(null);
-    setGoldenAnswer(null);
-    setBackendCorrect(null);
-    setFrontierCorrect(null);
     setBackendLatency(null);
     setFrontierLatency(null);
     setBackendCitations([]);
-
-    setProgressDone(false);
     setBackendRating(null);
     setFrontierRating(null);
-    setBackendLoading(true);
-    if (comparisonOpen) {
-      setFrontierLoading(true);
+    setSearchLogId(-1);
+    setStreamStage(null);
+    setProgressDone(false);
+
+    if (comparisonOpen) setFrontierLoading(true);
+
+    const t0 = Date.now();
+
+    // Collected results from both stream paths
+    let structuredAnswer: string | null = null;
+    let unstructuredAnswer: string | null = null;
+    let finalRouting = 'unstructured';
+
+    // Start frontier request in parallel (doesn't block stream)
+    const frontierPromise = comparisonOpen
+      ? (async () => {
+          let result: SearchResponse;
+          const ft0 = Date.now();
+          switch (selectedFrontierAPI) {
+            case 'gpt5':
+              result = await frontierApi.searchWithGPT5(query);
+              break;
+            case 'gemini3':
+              result = await frontierApi.searchWithGemini3(query);
+              break;
+            case 'claude':
+            default:
+              result = await frontierApi.searchWithClaude(query);
+              break;
+          }
+          return { response: result, latency: (Date.now() - ft0) / 1000 };
+        })()
+      : null;
+
+    // Consume the SSE stream
+    try {
+      await backendApi.searchStream(
+        query,
+        (event: StreamEvent) => {
+          const label = STAGE_LABELS[event.stage];
+          if (label) setStreamStage(label);
+
+          if (event.stage === 'structured') {
+            structuredAnswer = event.answer;
+            finalRouting = 'structured';
+          } else if (event.stage === 'unstructured') {
+            unstructuredAnswer = event.answer;
+          } else if (event.stage === 'done') {
+            const answer = structuredAnswer ?? unstructuredAnswer ?? 'No answer available';
+            const latency = (Date.now() - t0) / 1000;
+            setBackendResult({ answer });
+            setBackendLatency(latency);
+            setBackendCitations(pickRandomCitations(Math.floor(Math.random() * 2) + 2));
+            setProgressDone(true);
+          }
+        },
+        controller.signal
+      );
+    } catch (err: any) {
+      if (err.name !== 'AbortError') {
+        setBackendError(err.message || 'Stream error');
+        setProgressDone(true);
+      }
     }
 
-    let currentGoldenAnswers: string[] = [];
-
-    const backendStartTime = Date.now();
-    const frontierStartTime = Date.now();
-
-    const backendRequest = (async () => {
-      const response = await backendApi.search(query, INDEX_NAME);
-      const latency = (Date.now() - backendStartTime) / 1000;
-      return { response, latency };
-    })();
-
-    const frontierRequest = comparisonOpen ? (async () => {
-      let result: SearchResponse;
-      switch (selectedFrontierAPI) {
-        case 'gpt5':
-          result = await frontierApi.searchWithGPT5(query);
-          break;
-        case 'gemini3':
-          result = await frontierApi.searchWithGemini3(query);
-          break;
-        case 'claude':
-          result = await frontierApi.searchWithClaude(query);
-          break;
-        default:
-          throw new Error('Invalid API selected');
+    // Handle frontier result
+    if (comparisonOpen && frontierPromise) {
+      try {
+        const { response, latency } = await frontierPromise;
+        setFrontierResult(response);
+        setFrontierLatency(latency);
+      } catch (err: any) {
+        setFrontierError(err.message || 'Failed to search frontier API');
       }
-      const latency = (Date.now() - frontierStartTime) / 1000;
-      return { response: result, latency };
-    })() : null;
-
-    const results = await Promise.allSettled([
-      backendRequest,
-      ...(frontierRequest ? [frontierRequest] : []),
-    ]);
-    const [backendRes, frontierRes] = results;
-
-    if (backendRes.status === 'fulfilled') {
-      const { response, latency } = backendRes.value;
-      const { evaluation_result } = response;
-
-      if (evaluation_result) {
-        const goldenAnswerDisplay =
-          evaluation_result.golden_answer_texts ||
-          evaluation_result.golden_answer ||
-          null;
-
-        if (evaluation_result.golden_answer_texts) {
-          currentGoldenAnswers = evaluation_result.golden_answer_texts;
-        } else if (evaluation_result.golden_answer) {
-          currentGoldenAnswers = [evaluation_result.golden_answer];
-        }
-
-        setGoldenAnswer(goldenAnswerDisplay);
-        setBackendResult({ answer: evaluation_result.generated_answer });
-        setBackendCorrect(evaluation_result.correct);
-        setBackendLatency(latency);
-        setBackendCitations(pickRandomCitations(Math.floor(Math.random() * 2) + 2));
-      } else {
-        setBackendResult({ answer: response.answer || 'No answer available' });
-        setBackendLatency(latency);
-        setBackendCitations(pickRandomCitations(Math.floor(Math.random() * 2) + 2));
-      }
-    } else {
-      const error = backendRes.reason;
-      const errorMsg =
-        error?.response?.data?.detail ||
-        error?.message ||
-        'Network Error - Check console for details';
-      setBackendError(errorMsg);
-    }
-    setBackendLoading(false);
-
-    if (comparisonOpen && frontierRes && frontierRes.status === 'fulfilled') {
-      const { response, latency } = frontierRes.value;
-      setFrontierResult(response);
-      setFrontierLatency(latency);
-
-      if (currentGoldenAnswers.length > 0) {
-        const frontierAnswer = response.answer.toLowerCase().trim();
-        const isCorrect = currentGoldenAnswers.some(golden =>
-          frontierAnswer.includes(golden.toLowerCase().trim())
-        );
-        setFrontierCorrect(isCorrect);
-      }
-    } else if (comparisonOpen && frontierRes && frontierRes.status === 'rejected') {
-      setFrontierError(frontierRes.reason?.message || 'Failed to search frontier API');
-    }
-
-    if (comparisonOpen) {
       setFrontierLoading(false);
     }
+
+    // Log search event (fire-and-forget)
+    const finalAnswer = structuredAnswer ?? unstructuredAnswer ?? null;
+    const logPayload: SearchLogPayload = {
+      question: query,
+      kurious_answer: finalAnswer ?? undefined,
+      kurious_latency_ms: backendLatency != null ? Math.round(backendLatency * 1000) : Math.round(Date.now() - t0),
+      kurious_routing: finalRouting,
+    };
+    const { id: logId } = await backendApi.createSearchLog(logPayload);
+    setSearchLogId(logId);
   };
 
   return (
@@ -214,7 +216,6 @@ export const NJSearchPage = () => {
       >
         {sidebarOpen ? (
           <>
-            {/* Header with collapse arrow */}
             <div className="px-4 py-4 border-b border-gray-700 flex items-start justify-between flex-shrink-0">
               <div>
                 <div className="text-xl font-bold text-white">NJ Open Data</div>
@@ -228,7 +229,6 @@ export const NJSearchPage = () => {
                 ‹
               </button>
             </div>
-            {/* Source list */}
             <div className="flex-1 overflow-y-auto p-3">
               <div className="text-xs text-gray-500 uppercase tracking-wide mb-2">Data Sources</div>
               <div className="space-y-0.5">
@@ -242,7 +242,6 @@ export const NJSearchPage = () => {
             </div>
           </>
         ) : (
-          /* Collapsed — just the expand arrow, vertically centered */
           <div className="flex-1 flex items-center justify-center">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -265,31 +264,24 @@ export const NJSearchPage = () => {
 
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto p-6">
-          {/* Search bar + golden answer — centered */}
+          {/* Search bar — centered */}
           <div className="max-w-4xl mx-auto mb-6">
-            <div className="mb-6">
-              <SearchBar
-                onSearch={handleSearch}
-                disabled={backendLoading || frontierLoading}
-                preloadedQuestions={PRELOADED_QUESTIONS}
-              />
-            </div>
-            <GoldenAnswerBox goldenAnswer={goldenAnswer} />
+            <SearchBar
+              onSearch={handleSearch}
+              disabled={!progressDone || frontierLoading}
+              preloadedQuestions={PRELOADED_QUESTIONS}
+            />
           </div>
 
-          {/* Result row: two equal flex-1 spacers center the panels like mx-auto;
-              arrow lives inside the right spacer so it takes no width from the panels */}
+          {/* Result row */}
           <div className="flex items-stretch">
             <div className="flex-1" />
 
             <div className="w-full flex items-stretch" style={{ maxWidth: '56rem' }}>
-              {/* Backend panel */}
+              {/* Kurious panel */}
               <div className="flex-1 min-w-0">
                 {!progressDone ? (
-                  <SearchProgress
-                    loading={backendLoading}
-                    onComplete={() => setProgressDone(true)}
-                  />
+                  <SearchProgress currentStage={streamStage} />
                 ) : (
                   <ResultPanel
                     title="Kurious"
@@ -297,10 +289,15 @@ export const NJSearchPage = () => {
                     result={backendResult}
                     loading={false}
                     error={backendError}
-                    isCorrect={backendCorrect}
                     latency={backendLatency}
                     rating={backendRating}
-                    onRate={setBackendRating}
+                    onRate={(rating, feedbackText) => {
+                      setBackendRating(rating);
+                      backendApi.submitFeedback(searchLogId, {
+                        kurious_rating: rating,
+                        kurious_feedback_text: feedbackText,
+                      });
+                    }}
                     showProcessSteps
                     citations={backendCitations}
                   />
@@ -315,10 +312,15 @@ export const NJSearchPage = () => {
                     result={frontierResult}
                     loading={frontierLoading}
                     error={frontierError}
-                    isCorrect={frontierCorrect}
                     latency={frontierLatency}
                     rating={frontierRating}
-                    onRate={setFrontierRating}
+                    onRate={(rating, feedbackText) => {
+                      setFrontierRating(rating);
+                      backendApi.submitFeedback(searchLogId, {
+                        frontier_rating: rating,
+                        frontier_feedback_text: feedbackText,
+                      });
+                    }}
                     headerSlot={
                       <FrontierAPISelector
                         selectedAPI={selectedFrontierAPI}
@@ -330,8 +332,7 @@ export const NJSearchPage = () => {
               )}
             </div>
 
-            {/* Right spacer — equal to left spacer, keeping panels centered;
-                arrow strip lives at its left edge, flush against the panels */}
+            {/* Right spacer with comparison toggle */}
             <div className="flex-1 flex items-stretch">
               <div
                 className="flex-shrink-0 border-l border-gray-700 flex flex-col"

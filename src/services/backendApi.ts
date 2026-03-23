@@ -13,6 +13,87 @@ const apiClient = axios.create({
   }
 });
 
+// ─── SSE stream types ────────────────────────────────────────────────────────
+
+export interface StreamEventSchemaRetrieved {
+  stage: 'schema_retrieved';
+  tables: { name: string; description: string }[];
+  table_count: number;
+}
+export interface StreamEventSqlGenerated {
+  stage: 'sql_generated';
+  sql: string;
+}
+export interface StreamEventSqlExecuted {
+  stage: 'sql_executed';
+  columns: string[];
+  rows: unknown[][];
+  row_count: number;
+}
+export interface StreamEventStructured {
+  stage: 'structured';
+  sql: string;
+  columns: string[];
+  rows: unknown[][];
+  row_count: number;
+  answer: string;
+  elapsed_ms: number;
+}
+export interface StreamEventRetrievalDone {
+  stage: 'retrieval_done';
+  source: string;
+  hit_count: number;
+}
+export interface StreamEventUnstructured {
+  stage: 'unstructured';
+  answer: string;
+  sources: unknown[];
+  elapsed_ms: number;
+}
+export interface StreamEventError {
+  stage: 'error';
+  source: string;
+  detail: string;
+}
+export interface StreamEventDone {
+  stage: 'done';
+  total_elapsed_ms: number;
+}
+
+export type StreamEvent =
+  | StreamEventSchemaRetrieved
+  | StreamEventSqlGenerated
+  | StreamEventSqlExecuted
+  | StreamEventStructured
+  | StreamEventRetrievalDone
+  | StreamEventUnstructured
+  | StreamEventError
+  | StreamEventDone;
+
+// ─── Search log types ─────────────────────────────────────────────────────────
+
+export interface SearchLogPayload {
+  session_id?: string;
+  question: string;
+  kurious_answer?: string;
+  kurious_latency_ms?: number;
+  kurious_routing?: string;
+  frontier_answer?: string;
+  frontier_model?: string;
+  frontier_latency_ms?: number;
+  is_correct?: boolean;
+  golden_answer?: string;
+}
+
+export interface SearchFeedbackPayload {
+  kurious_rating?: number;
+  kurious_feedback_text?: string;
+  frontier_rating?: number;
+  frontier_feedback_text?: string;
+}
+
+// ─── API client ───────────────────────────────────────────────────────────────
+
 export const backendApi = {
   search: async (query: string, indexName: string): Promise<BackendSearchResponse> => {
     try {
@@ -24,5 +105,96 @@ export const backendApi = {
       const errorMessage = error.response?.data?.detail || error.message || 'Failed to search backend API';
       throw new Error(errorMessage);
     }
-  }
+  },
+
+  /**
+   * Stream search via the intelligent/_search/stream SSE endpoint.
+   * Parses `data: {...}\n\n` events and calls onEvent for each.
+   * Resolves when the `done` event is received or the stream ends.
+   */
+  searchStream: async (
+    query: string,
+    onEvent: (event: StreamEvent) => void,
+    signal?: AbortSignal
+  ): Promise<void> => {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (API_KEY) headers['X-API-Key'] = API_KEY;
+    if (COMPANY_ID) headers['X-Company-ID'] = COMPANY_ID;
+
+    const response = await fetch('/api/v1/intelligent/_search/stream', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ query, limit: 20 }),
+      signal,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Stream request failed: ${response.status} ${response.statusText}`);
+    }
+
+    if (!response.body) {
+      throw new Error('Response body is null');
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+
+      // SSE events are separated by double newlines
+      const parts = buffer.split('\n\n');
+      buffer = parts.pop() ?? '';
+
+      for (const part of parts) {
+        const line = part.trim();
+        if (!line.startsWith('data:')) continue;
+        const json = line.slice('data:'.length).trim();
+        if (!json) continue;
+        try {
+          const event = JSON.parse(json) as StreamEvent;
+          onEvent(event);
+        } catch {
+          // Ignore malformed events
+        }
+      }
+    }
+
+    // Flush remaining buffer
+    if (buffer.trim().startsWith('data:')) {
+      const json = buffer.trim().slice('data:'.length).trim();
+      if (json) {
+        try {
+          onEvent(JSON.parse(json) as StreamEvent);
+        } catch {
+          // ignore
+        }
+      }
+    }
+  },
+
+  createSearchLog: async (payload: SearchLogPayload): Promise<{ id: number }> => {
+    try {
+      const response = await apiClient.post('/v1/search-log', payload);
+      return response.data;
+    } catch (error: any) {
+      console.warn('Failed to create search log:', error.message);
+      return { id: -1 };
+    }
+  },
+
+  submitFeedback: async (logId: number, payload: SearchFeedbackPayload): Promise<void> => {
+    if (logId < 0) return;
+    try {
+      await apiClient.post(`/v1/search-log/${logId}/feedback`, payload);
+    } catch (error: any) {
+      console.warn('Failed to submit feedback:', error.message);
+    }
+  },
 };
