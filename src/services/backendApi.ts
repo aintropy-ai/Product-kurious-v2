@@ -205,6 +205,7 @@ export interface StreamSearchCallbacks {
   onStructured: (event: StreamStructuredEvent) => void;
   onError: (event: StreamErrorEvent) => void;
   onDone: (event: StreamDoneEvent) => void;
+  onEvent?: (event: StreamEvent) => void; // Track all events
 }
 
 export async function intelligentStreamSearch(
@@ -248,6 +249,11 @@ export async function intelligentStreamSearch(
       const json = line.slice(5).trim();
       if (!json) continue;
       const event = JSON.parse(json);
+
+      // Track all events
+      callbacks.onEvent?.(event);
+
+      // Dispatch specific callbacks
       switch (event.stage) {
         case 'unstructured': callbacks.onUnstructured(event); break;
         case 'structured': callbacks.onStructured(event); break;

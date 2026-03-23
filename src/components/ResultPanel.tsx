@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { SearchResponse, StreamSource, StreamStructuredEvent, StreamErrorEvent } from '../types';
+import { StreamEvent } from '../services/backendApi';
 import { StarRating } from './StarRating';
 import { ProcessStepsSummary } from './ProcessStepsSummary';
 
@@ -22,6 +23,11 @@ interface ResultPanelProps {
   structuredData?: StreamStructuredEvent | null;
   realSources?: StreamSource[];
   streamErrors?: StreamErrorEvent[];
+  synthesizedAnswer?: string;
+  synthesizingAnswer?: boolean;
+  streamingEvents?: StreamEvent[];
+  currentStage?: string | null;
+  showPipelineProgress?: boolean;
 }
 
 // Strip code fences wrapping pipe tables so remark-gfm renders them as real tables
@@ -160,7 +166,25 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
   title, result, loading, error, isCorrect, latency, rating, onRate,
   showProcessSteps, headerSlot, titleNote,
   structuredData, realSources, streamErrors,
+  synthesizedAnswer, synthesizingAnswer,
+  streamingEvents = [],
+  currentStage,
+  showPipelineProgress = true,
 }) => {
+  // Track completed stages from streaming events
+  const completedStages = useMemo(() => {
+    return new Set(streamingEvents.map(e => e.stage).filter(s => s !== 'done'));
+  }, [streamingEvents]);
+
+  const pipelineStages = [
+    { stage: 'retrieval_done', label: 'Retrieving Documents', desc: 'Searching across NJ Open Data sources' },
+    { stage: 'schema_retrieved', label: 'Analyzing Schema', desc: 'Identifying relevant datasets and tables' },
+    { stage: 'sql_generated', label: 'Generating Query', desc: 'Creating optimized SQL queries' },
+    { stage: 'sql_executed', label: 'Executing Query', desc: 'Running structured data queries' },
+    { stage: 'unstructured', label: 'Processing Documents', desc: 'Extracting insights from unstructured content' },
+    { stage: 'structured', label: 'Aggregating Results', desc: 'Combining structured and unstructured findings' },
+  ];
+
   return (
     <div className="bg-gray-800 shadow-lg p-6 h-full min-h-[300px] flex flex-col border-2 border-gray-700">
       <div className="flex items-center mb-4 border-b-2 border-gray-700 pb-3 gap-2">
@@ -179,14 +203,55 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {showProcessSteps && !loading && (result || error) && (
-          <ProcessStepsSummary hasError={!!error} />
+        {/* Live Pipeline Progress */}
+        {showPipelineProgress && (loading || synthesizingAnswer) && (
+          <div className="mb-6 p-4 bg-gradient-to-r from-blue-900/30 to-blue-800/30 border border-blue-700/50 rounded-lg">
+            <div className="space-y-3">
+              {/* Pipeline stages with detailed descriptions */}
+              <div className="space-y-2.5">
+                {pipelineStages.map((item) => {
+                  const isCompleted = completedStages.has(item.stage as any);
+                  const isActive = currentStage === item.stage;
+                  return (
+                    <div key={item.stage} className="flex items-start gap-3">
+                      <div className="flex-shrink-0 mt-1">
+                        {isCompleted ? (
+                          <div className="w-5 h-5 rounded-full bg-green-600 flex items-center justify-center">
+                            <span className="text-xs text-white">✓</span>
+                          </div>
+                        ) : isActive ? (
+                          <div className="w-5 h-5 rounded-full bg-blue-500 animate-pulse" />
+                        ) : (
+                          <div className="w-5 h-5 rounded-full border-2 border-gray-600" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-medium ${isActive ? 'text-blue-300' : isCompleted ? 'text-green-400' : 'text-gray-500'}`}>
+                          {item.label}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Synthesis stage */}
+              {synthesizingAnswer && (
+                <div className="mt-3 pt-3 border-t border-blue-700/30 flex items-center gap-3">
+                  <div className="w-5 h-5 rounded-full bg-purple-600 animate-pulse flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-purple-300">AI Synthesis</p>
+                    <p className="text-xs text-gray-400 mt-0.5">Claude Haiku is synthesizing a comprehensive answer</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         )}
 
-        {loading && (
-          <div className="flex items-center justify-center h-full">
-            <div className="animate-spin h-12 w-12 border-b-2 border-blue-500"></div>
-          </div>
+        {showProcessSteps && !loading && (result || error) && (
+          <ProcessStepsSummary hasError={!!error} />
         )}
 
         {/* Hard error (network failure before stream started) */}
@@ -223,6 +288,39 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
             {/* Structured SQL table (may arrive after unstructured) */}
             {structuredData && (
               <StructuredTable data={structuredData} />
+            )}
+
+            {/* Synthesized answer from Claude Haiku */}
+            {synthesizedAnswer && (
+              <div className="mt-6 pt-4 border-t-2 border-gray-700">
+                <div className="flex items-center gap-2 mb-3">
+                  <p className="font-medium text-white">Claude Haiku Synthesis</p>
+                  <span className="text-xs text-gray-500">AI-Generated Summary</span>
+                </div>
+                <div className="prose prose-invert prose-sm max-w-none
+                  prose-p:text-gray-200 prose-p:leading-relaxed
+                  prose-headings:text-white prose-headings:font-semibold
+                  prose-strong:text-white
+                  prose-a:text-blue-400 hover:prose-a:text-blue-300
+                  prose-code:text-blue-300 prose-code:bg-gray-900 prose-code:px-1 prose-code:rounded
+                  prose-pre:bg-gray-900 prose-pre:text-gray-300
+                  prose-li:text-gray-200
+                  prose-ol:text-gray-200 prose-ul:text-gray-200
+                  prose-blockquote:border-l-purple-500 prose-blockquote:text-gray-400">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                    {unwrapFencedTables(synthesizedAnswer)}
+                  </ReactMarkdown>
+                </div>
+              </div>
+            )}
+
+            {synthesizingAnswer && (
+              <div className="mt-6 pt-4 border-t-2 border-gray-700">
+                <div className="flex items-center gap-3">
+                  <div className="animate-spin h-4 w-4 border-2 border-purple-400 border-t-transparent rounded-full flex-shrink-0" />
+                  <span className="text-sm text-purple-300 font-medium">Synthesizing answer with Claude Haiku…</span>
+                </div>
+              </div>
             )}
           </div>
         )}

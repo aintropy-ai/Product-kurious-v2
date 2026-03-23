@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { SearchBar } from '../components/SearchBar';
 import { ResultPanel } from '../components/ResultPanel';
-import { SearchProgress } from '../components/SearchProgress';
 import { FrontierAPISelector } from '../components/FrontierAPISelector';
-import { intelligentStreamSearch, backendApi } from '../services/backendApi';
+import { intelligentStreamSearch, backendApi, StreamEvent } from '../services/backendApi';
+import { synthesizeAnswer } from '../services/anthropicApi';
 import { frontierApi } from '../services/frontierApi';
 import { SearchResponse, StreamUnstructuredEvent, StreamStructuredEvent, StreamErrorEvent } from '../types';
 
@@ -54,7 +54,6 @@ export const NJSearchPage = () => {
   const [frontierError, setFrontierError] = useState<string | null>(null);
   const [frontierLoading, setFrontierLoading] = useState(false);
   const [frontierRating, setFrontierRating] = useState<number | null>(null);
-  const [frontierCorrect, setFrontierCorrect] = useState<boolean | null>(null);
   const [frontierLatency, setFrontierLatency] = useState<number | null>(null);
 
   const [progressDone, setProgressDone] = useState(true);
@@ -63,8 +62,12 @@ export const NJSearchPage = () => {
 
   const [searchLogId, setSearchLogId] = useState<number>(-1);
 
-  // Abort controller for the in-flight stream
-  const streamAbortRef = useRef<AbortController | null>(null);
+  // Streaming events and synthesis
+  const [streamingEvents, setStreamingEvents] = useState<StreamEvent[]>([]);
+  const [currentStage, setCurrentStage] = useState<string | null>(null);
+  const [synthesizingAnswer, setSynthesizingAnswer] = useState(false);
+  const [synthesizedAnswer, setSynthesizedAnswer] = useState<string>('');
+  const [lastQuery, setLastQuery] = useState<string>('');
 
   const handleSearch = async (query: string) => {
     // Reset all state
@@ -74,11 +77,15 @@ export const NJSearchPage = () => {
     setBackendError(null);
     setFrontierResult(null);
     setFrontierError(null);
-    setFrontierCorrect(null);
     setBackendLatency(null);
     setFrontierLatency(null);
     setBackendRating(null);
     setFrontierRating(null);
+    setStreamingEvents([]);
+    setCurrentStage(null);
+    setSynthesizingAnswer(false);
+    setSynthesizedAnswer('');
+    setLastQuery(query);
 
     setProgressDone(false);
     setBackendLoading(true);
@@ -98,6 +105,10 @@ export const NJSearchPage = () => {
 
     try {
       await intelligentStreamSearch(query, {
+        onEvent: (event: StreamEvent) => {
+          setStreamingEvents(prev => [...prev, event]);
+          setCurrentStage(event.stage === 'done' ? null : event.stage);
+        },
         onUnstructured: (event) => {
           setUnstructuredResult(event);
           setBackendLoading(false);
@@ -153,6 +164,24 @@ export const NJSearchPage = () => {
       // Silently fail logging
     }
   };
+
+  // Synthesize answer when search is done
+  useEffect(() => {
+    if (progressDone && streamingEvents.length > 0 && !synthesizedAnswer && lastQuery) {
+      const synthesize = async () => {
+        setSynthesizingAnswer(true);
+        try {
+          const answer = await synthesizeAnswer(lastQuery, streamingEvents);
+          setSynthesizedAnswer(answer);
+        } catch (err) {
+          console.error('Failed to synthesize answer:', err);
+        } finally {
+          setSynthesizingAnswer(false);
+        }
+      };
+      synthesize();
+    }
+  }, [progressDone, streamingEvents.length]);
 
   // Derive a SearchResponse-compatible object from unstructured result for ResultPanel
   const backendResult: SearchResponse | null = unstructuredResult
@@ -244,38 +273,66 @@ export const NJSearchPage = () => {
                   rating={backendRating}
                   onRate={(rating, feedbackText) => {
                     setBackendRating(rating);
+                    backendApi.submitFeedback(searchLogId, {
+                      kurious_rating: rating,
+                      kurious_feedback_text: feedbackText,
+                    });
                   }}
                   showProcessSteps
                   structuredData={structuredResult}
                   realSources={unstructuredResult?.sources}
                   streamErrors={streamErrors}
+                  synthesizedAnswer={synthesizedAnswer}
+                  synthesizingAnswer={synthesizingAnswer}
+                  streamingEvents={streamingEvents}
+                  currentStage={currentStage}
                 />
               </div>
 
-              {/* Frontier panel */}
+              {/* Right panel: Frontier comparison */}
               {comparisonOpen && (
                 <div className="flex-1 min-w-0 border-l border-gray-700">
-                  <ResultPanel
-                    title=""
-                    result={frontierResult}
-                    loading={frontierLoading}
-                    error={frontierError}
-                    latency={frontierLatency}
-                    rating={frontierRating}
-                    onRate={(rating, feedbackText) => {
-                      setFrontierRating(rating);
-                      backendApi.submitFeedback(searchLogId, {
-                        frontier_rating: rating,
-                        frontier_feedback_text: feedbackText,
-                      });
-                    }}
-                    headerSlot={
-                      <FrontierAPISelector
-                        selectedAPI={selectedFrontierAPI}
-                        onAPIChange={setSelectedFrontierAPI}
-                      />
-                    }
-                  />
+                  {frontierLoading ? (
+                    <div className="bg-gray-800 shadow-lg p-6 h-full min-h-[300px] flex flex-col border-2 border-gray-700">
+                      <div className="flex items-center gap-2 mb-5 border-b-2 border-gray-700 pb-3">
+                        <h2 className="text-xl font-semibold text-white">
+                          <FrontierAPISelector
+                            selectedAPI={selectedFrontierAPI}
+                            onAPIChange={setSelectedFrontierAPI}
+                          />
+                        </h2>
+                      </div>
+                      <div className="flex-1 flex items-center justify-center">
+                        <div className="flex flex-col items-center gap-4">
+                          <div className="animate-spin h-12 w-12 border-b-2 border-blue-500"></div>
+                          <p className="text-sm text-gray-400">Generating with {selectedFrontierAPI}…</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <ResultPanel
+                      title=""
+                      result={frontierResult}
+                      loading={frontierLoading}
+                      error={frontierError}
+                      latency={frontierLatency}
+                      rating={frontierRating}
+                      onRate={(rating, feedbackText) => {
+                        setFrontierRating(rating);
+                        backendApi.submitFeedback(searchLogId, {
+                          frontier_rating: rating,
+                          frontier_feedback_text: feedbackText,
+                        });
+                      }}
+                      headerSlot={
+                        <FrontierAPISelector
+                          selectedAPI={selectedFrontierAPI}
+                          onAPIChange={setSelectedFrontierAPI}
+                        />
+                      }
+                      showPipelineProgress={false}
+                    />
+                  )}
                 </div>
               )}
             </div>
