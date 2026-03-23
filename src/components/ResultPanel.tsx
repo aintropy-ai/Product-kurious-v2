@@ -131,32 +131,57 @@ function StructuredTable({ data }: { data: StreamStructuredEvent }) {
 
 function RealSources({ sources }: { sources: StreamSource[] }) {
   if (sources.length === 0) return null;
+
+  // Deduplicate sources by linkUrl + linkText
+  const seen = new Set<string>();
+  const uniqueSources: Array<{ linkUrl: string | undefined; linkText: string }> = [];
+
+  sources.forEach((src) => {
+    let linkUrl = src.url;
+    let linkText = src.title || src.h1 || '(no title)';
+
+    // Parse catalog_metadata if it's JSON with link info
+    if (src.catalog_metadata) {
+      try {
+        const metadata = JSON.parse(src.catalog_metadata);
+        if (metadata.portal_url) {
+          linkUrl = metadata.portal_url;
+        }
+        if (metadata.link_text) {
+          linkText = metadata.link_text;
+        }
+      } catch {
+        // If not valid JSON, keep original values
+      }
+    }
+
+    const key = linkUrl || linkText;
+    if (!seen.has(key)) {
+      seen.add(key);
+      uniqueSources.push({ linkUrl, linkText });
+    }
+  });
+
   return (
     <div className="mt-6 pt-4 border-t-2 border-gray-700">
-      <p className="font-medium text-white mb-2">Sources ({sources.length})</p>
+      <p className="font-medium text-white mb-2">Sources ({uniqueSources.length})</p>
       <ul className="space-y-2">
-        {sources.map((src, i) => {
-          const label = src.title || src.h1 || '(no title)';
-          return (
-            <li key={i} className="text-sm">
-              {src.url ? (
-                <a
-                  href={src.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 underline"
-                >
-                  {label}
-                </a>
-              ) : (
-                <span className="text-gray-300">{label}</span>
-              )}
-              {src.catalog_metadata && (
-                <span className="text-gray-500 text-xs ml-2">{src.catalog_metadata}</span>
-              )}
-            </li>
-          );
-        })}
+        {uniqueSources.map(({ linkUrl, linkText }, i) => (
+          <li key={i} className="text-sm">
+            {linkUrl ? (
+              <a
+                href={linkUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 underline"
+              >
+                {linkText}
+              </a>
+            ) : (
+              <span className="text-gray-300">{linkText}</span>
+            )}
+          </li>
+        ))}
       </ul>
     </div>
   );
@@ -204,7 +229,7 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
 
       <div className="flex-1 overflow-y-auto">
         {/* Live Pipeline Progress */}
-        {showPipelineProgress && (loading || synthesizingAnswer) && (
+        {showPipelineProgress && (loading || synthesizingAnswer || streamingEvents.length > 0) && (
           <div className="mb-6 p-4 bg-gradient-to-r from-blue-900/30 to-blue-800/30 border border-blue-700/50 rounded-lg">
             <div className="space-y-3">
               {/* Pipeline stages with detailed descriptions */}
