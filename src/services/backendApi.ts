@@ -2,15 +2,15 @@ import axios from 'axios';
 import { BackendSearchResponse, StreamUnstructuredEvent, StreamStructuredEvent, StreamErrorEvent, StreamDoneEvent } from '../types';
 
 const API_KEY = import.meta.env.VITE_BACKEND_API_KEY || '';
-const COMPANY_ID = import.meta.env.VITE_BACKEND_COMPANY_ID || '';
-const USER_ID = import.meta.env.VITE_BACKEND_USER_ID || '';
+const COMPANY_ID = import.meta.env.VITE_BACKEND_COMPANY_ID || 'default-company';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_API_URL || '/api';
 
 const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: BACKEND_URL,
   headers: {
     'Content-Type': 'application/json',
     ...(API_KEY && { 'X-API-Key': API_KEY }),
-    ...(COMPANY_ID && { 'X-Company-ID': COMPANY_ID })
+    'X-Company-ID': COMPANY_ID
   }
 });
 
@@ -98,7 +98,7 @@ export interface SearchFeedbackPayload {
 export const backendApi = {
   search: async (query: string, indexName: string): Promise<BackendSearchResponse> => {
     try {
-      const response = await apiClient.post(`/v1/blended/${indexName}/_search`, {
+      const response = await apiClient.post(`blended/${indexName}/_search`, {
         question: query
       });
       return response.data;
@@ -120,11 +120,11 @@ export const backendApi = {
   ): Promise<void> => {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
+      'X-Company-ID': COMPANY_ID,
     };
     if (API_KEY) headers['X-API-Key'] = API_KEY;
-    if (COMPANY_ID) headers['X-Company-ID'] = COMPANY_ID;
 
-    const response = await fetch('/api/v1/intelligent/_search/stream', {
+    const response = await fetch(`${BACKEND_URL}/intelligent/_search/stream`, {
       method: 'POST',
       headers,
       body: JSON.stringify({ query, limit: 20 }),
@@ -182,7 +182,7 @@ export const backendApi = {
 
   createSearchLog: async (payload: SearchLogPayload): Promise<{ id: number }> => {
     try {
-      const response = await apiClient.post('/v1/search-log', payload);
+      const response = await apiClient.post('search-log', payload);
       return response.data;
     } catch (error: any) {
       console.warn('Failed to create search log:', error.message);
@@ -193,7 +193,7 @@ export const backendApi = {
   submitFeedback: async (logId: number, payload: SearchFeedbackPayload): Promise<void> => {
     if (logId < 0) return;
     try {
-      await apiClient.post(`/v1/search-log/${logId}/feedback`, payload);
+      await apiClient.post(`search-log/${logId}/feedback`, payload);
     } catch (error: any) {
       console.warn('Failed to submit feedback:', error.message);
     }
@@ -215,11 +215,10 @@ export async function intelligentStreamSearch(
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(API_KEY && { 'X-API-Key': API_KEY }),
-    ...(COMPANY_ID && { 'X-Company-ID': COMPANY_ID }),
-    ...(USER_ID && { 'X-User-ID': USER_ID }),
+    'X-Company-ID': COMPANY_ID,
   };
 
-  const response = await fetch('/api/v1/intelligent/_search/stream', {
+  const response = await fetch(`${BACKEND_URL}/intelligent/_search/stream`, {
     method: 'POST',
     headers,
     body: JSON.stringify({ query }),

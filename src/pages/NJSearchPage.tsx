@@ -3,7 +3,7 @@ import { SearchBar } from '../components/SearchBar';
 import { ResultPanel } from '../components/ResultPanel';
 import { SearchProgress } from '../components/SearchProgress';
 import { FrontierAPISelector } from '../components/FrontierAPISelector';
-import { intelligentStreamSearch } from '../services/backendApi';
+import { intelligentStreamSearch, backendApi } from '../services/backendApi';
 import { frontierApi } from '../services/frontierApi';
 import { SearchResponse, StreamUnstructuredEvent, StreamStructuredEvent, StreamErrorEvent } from '../types';
 
@@ -139,6 +139,19 @@ export const NJSearchPage = () => {
       }
       setFrontierLoading(false);
     }
+
+    // Log search event (fire-and-forget)
+    try {
+      const logPayload = {
+        question: query,
+        kurious_answer: unstructuredResult?.answer ?? undefined,
+        kurious_latency_ms: backendLatency != null ? Math.round(backendLatency * 1000) : undefined,
+      };
+      const { id: logId } = await backendApi.createSearchLog(logPayload);
+      setSearchLogId(logId);
+    } catch (err) {
+      // Silently fail logging
+    }
   };
 
   // Derive a SearchResponse-compatible object from unstructured result for ResultPanel
@@ -264,6 +277,7 @@ export const NJSearchPage = () => {
                     }
                   />
                 </div>
+              )}
             </div>
 
             <div className="flex-1 flex items-stretch">
