@@ -44,7 +44,7 @@ export const NJSearchPage = () => {
 
   // Streaming result state
   const [unstructuredResult, setUnstructuredResult] = useState<StreamUnstructuredEvent | null>(null);
-  const [structuredResult, setStructuredResult] = useState<StreamStructuredEvent | null>(null);
+  const [_structuredResult, setStructuredResult] = useState<StreamStructuredEvent | null>(null);
   const [streamErrors, setStreamErrors] = useState<StreamErrorEvent[]>([]);
   const [backendError, setBackendError] = useState<string | null>(null);
   const [backendLoading, setBackendLoading] = useState(false);
@@ -165,28 +165,38 @@ export const NJSearchPage = () => {
     }
   };
 
-  // Synthesize answer when search is done
+  const NO_ANSWER_PHRASE = 'does not contain the answer';
+
+  // Only synthesize when the unstructured answer has no useful content
   useEffect(() => {
-    if (progressDone && streamingEvents.length > 0 && !synthesizedAnswer && lastQuery) {
-      const synthesize = async () => {
-        setSynthesizingAnswer(true);
-        try {
-          const answer = await synthesizeAnswer(lastQuery, streamingEvents);
-          setSynthesizedAnswer(answer);
-        } catch (err) {
-          console.error('Failed to synthesize answer:', err);
-        } finally {
-          setSynthesizingAnswer(false);
-        }
-      };
-      synthesize();
-    }
+    if (!progressDone || streamingEvents.length === 0 || synthesizedAnswer || !lastQuery) return;
+    const unstructuredIsUseful = unstructuredResult != null &&
+      !unstructuredResult.answer.toLowerCase().includes(NO_ANSWER_PHRASE);
+    if (unstructuredIsUseful) return;
+
+    const synthesize = async () => {
+      setSynthesizingAnswer(true);
+      try {
+        const answer = await synthesizeAnswer(lastQuery, streamingEvents);
+        setSynthesizedAnswer(answer);
+      } catch (err) {
+        console.error('Failed to synthesize answer:', err);
+      } finally {
+        setSynthesizingAnswer(false);
+      }
+    };
+    synthesize();
   }, [progressDone, streamingEvents.length]);
 
-  // Derive a SearchResponse-compatible object from unstructured result for ResultPanel
-  const backendResult: SearchResponse | null = unstructuredResult
-    ? { answer: unstructuredResult.answer }
-    : null;
+  // Single resolved answer: prefer good unstructured answer, fall back to synthesis
+  const unstructuredIsUseful = unstructuredResult != null &&
+    !unstructuredResult.answer.toLowerCase().includes(NO_ANSWER_PHRASE);
+
+  const backendResult: SearchResponse | null = unstructuredIsUseful
+    ? { answer: unstructuredResult!.answer }
+    : synthesizedAnswer
+      ? { answer: synthesizedAnswer }
+      : null;
 
   return (
     <div className="min-h-screen bg-gray-900 flex">
@@ -278,11 +288,8 @@ export const NJSearchPage = () => {
                       kurious_feedback_text: feedbackText,
                     });
                   }}
-                  showProcessSteps
-                  structuredData={structuredResult}
                   realSources={unstructuredResult?.sources}
                   streamErrors={streamErrors}
-                  synthesizedAnswer={synthesizedAnswer}
                   synthesizingAnswer={synthesizingAnswer}
                   streamingEvents={streamingEvents}
                   currentStage={currentStage}

@@ -7,8 +7,12 @@ export interface SearchResponse {
 export interface StreamSource {
   title?: string;
   h1?: string;
+  h2?: string;
+  h3?: string;
   text?: string;
   url?: string;
+  source?: string;
+  source_parent?: string;
   catalog_metadata?: string;
 }
 

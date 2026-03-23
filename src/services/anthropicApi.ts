@@ -20,16 +20,16 @@ export async function synthesizeAnswer(
 
   const context = buildContextFromEvents(events, unstructuredEvent, structuredEvent);
 
-  const systemPrompt = `You are a helpful assistant that synthesizes search results into clear, concise answers.
-Given a user's question and context from multiple sources, provide a comprehensive but concise answer.
-Format your response in markdown with clear sections if needed.`;
+  const systemPrompt = `You are a helpful assistant that answers questions based on structured data query results.
+Given a user's question and structured query results, provide a clear and concise answer.
+Format your response in markdown. Do not mention SQL or databases — just answer the question directly.`;
 
   const userPrompt = `Question: ${query}
 
-Context from search results:
+Data from search:
 ${context}
 
-Please provide a comprehensive answer based on the context above.`;
+Answer the question based on the data above.`;
 
   try {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -69,36 +69,26 @@ Please provide a comprehensive answer based on the context above.`;
  * Build context string from all available streaming events
  */
 function buildContextFromEvents(
-  events: StreamEvent[],
-  unstructuredEvent: any,
+  _events: StreamEvent[],
+  _unstructuredEvent: any,
   structuredEvent: any
 ): string {
   const sections: string[] = [];
 
-  // Unstructured results
-  if (unstructuredEvent?.answer) {
-    sections.push(`## Unstructured Search Results\n${unstructuredEvent.answer}`);
-
-    if (unstructuredEvent.sources && Array.isArray(unstructuredEvent.sources)) {
-      const topSources = unstructuredEvent.sources.slice(0, 3);
-      sections.push(`### Sources\n${topSources
-        .map((s: any) => `- ${s.title || s.pdf_file || 'Unknown'}: ${s.text?.substring(0, 100) || ''}...`)
-        .join('\n')}`);
-    }
-  }
-
-  // Structured results
+  // Primary context: structured query results (this runs when unstructured found nothing useful)
   if (structuredEvent?.answer) {
-    sections.push(`## Structured Query Results\n${structuredEvent.answer}`);
+    sections.push(structuredEvent.answer);
   }
 
-  // Data summary from retrieved tables
-  const schemaEvent = events.find(e => e.stage === 'schema_retrieved') as any;
-  if (schemaEvent?.tables?.length) {
-    sections.push(`### Available Datasets\n${schemaEvent.tables
-      .map((t: any) => `- **${t.name}**: ${t.description}`)
-      .join('\n')}`);
+  if (structuredEvent?.columns?.length && structuredEvent?.rows?.length) {
+    const header = structuredEvent.columns.join(' | ');
+    const divider = structuredEvent.columns.map(() => '---').join(' | ');
+    const rows = (structuredEvent.rows as unknown[][])
+      .slice(0, 20)
+      .map((row: unknown[]) => row.join(' | '))
+      .join('\n');
+    sections.push(`${header}\n${divider}\n${rows}`);
   }
 
-  return sections.join('\n\n') || 'No search results available.';
+  return sections.join('\n\n') || 'No structured data available.';
 }
