@@ -49,7 +49,7 @@ function RealSources({ sources }: { sources: StreamSource[] }) {
   const uniqueSources: Array<{ linkUrl: string | undefined; linkText: string }> = [];
 
   sources.forEach((src) => {
-    const linkUrl = src.source || src.url;
+    const linkUrl = src.source_parent || src.source || src.url;
     const linkText = src.title || src.h1 || '(no title)';
     const key = linkUrl || linkText;
     if (!seen.has(key)) {
