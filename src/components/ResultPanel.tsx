@@ -59,7 +59,7 @@ function RealSources({ sources }: { sources: StreamSource[] }) {
   });
 
   return (
-    <div className="mt-4 pt-3 border-t border-gray-700">
+    <div className="mt-4 pt-1">
       <ol className="space-y-1">
         {uniqueSources.map(({ linkUrl, linkText }, i) => (
           <li key={i} className="flex items-start gap-1.5 text-xs text-gray-500">
@@ -131,7 +131,7 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
 
   return (
     <div className="bg-gray-800 shadow-lg p-6 h-full min-h-[300px] flex flex-col border-2 border-gray-700">
-      <div className="flex items-center mb-4 border-b-2 border-gray-700 pb-3 gap-2">
+      <div className="flex items-center mb-4 pb-1 gap-2">
         {title && <h2 className="text-xl font-semibold text-white flex-shrink-0">{title}</h2>}
         {headerSlot && <div className="flex-1">{headerSlot}</div>}
         {titleNote && <span className="text-xs text-gray-400 ml-auto flex-shrink-0">{titleNote}</span>}
@@ -224,7 +224,7 @@ export const ResultPanel: React.FC<ResultPanelProps> = ({
       </div>
 
       {(latency != null || (onRate && result)) && (
-        <div className="mt-4 pt-4 border-t-2 border-gray-700 flex items-center justify-between gap-4">
+        <div className="mt-4 pt-2 flex items-center justify-between gap-4">
           {latency != null && (
             <p className="text-sm text-gray-400">Latency: {latency.toFixed(2)}s</p>
           )}
