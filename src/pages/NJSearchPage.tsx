@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { SearchBar } from '../components/SearchBar';
 import SuggestionCards from '../components/SuggestionCards';
 import ThinkingState from '../components/ThinkingState';
@@ -17,6 +17,8 @@ import njQuestions from '../../assets/njopendata_questions_preloaded.txt?raw';
 const PRELOADED_QUESTIONS = njQuestions.split('\n---\n').filter(q => q.trim());
 const SUGGESTION_CARDS = PRELOADED_QUESTIONS.slice(0, 4);
 const NO_ANSWER_PHRASE = 'does not contain the answer';
+
+const WAITLIST_URL = 'https://script.google.com/macros/s/AKfycbw7wr9buR8gMmQ4Pwfyuo0gw7xX_nwXQlFzYu6SRx6kW5S2RpuqXUhqVi-9nRpyXFiG/exec';
 
 const FRONTIER_MODEL_NAMES: Record<string, string> = {
   gpt4o: 'GPT-4o',
@@ -63,6 +65,9 @@ export const NJSearchPage = () => {
   const firstName = getFirstNameFromJWT();
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [profileOpen, setProfileOpen] = useState(false);
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
+  const [waitlistEmail, setWaitlistEmail] = useState('');
+  const [waitlistState, setWaitlistState] = useState<'idle' | 'submitting' | 'done'>('idle');
 
   // Conversation history
   const [conversations, setConversations] = useState<ConversationEntry[]>([]);
@@ -257,6 +262,22 @@ export const NJSearchPage = () => {
     );
   };
 
+  const handleWaitlistSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!waitlistEmail.trim()) return;
+    setWaitlistState('submitting');
+    try {
+      await fetch(WAITLIST_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ email: waitlistEmail.trim() }),
+      });
+    } catch {
+      // no-cors swallows the response — treat as success
+    }
+    setWaitlistState('done');
+  };
+
   const isSearching = pendingQuery !== null;
 
   return (
@@ -273,6 +294,13 @@ export const NJSearchPage = () => {
         </span>
 
         <div className="flex items-center gap-3 ml-auto flex-shrink-0">
+          <button
+            onClick={() => { setWaitlistOpen(true); setWaitlistState('idle'); setWaitlistEmail(''); }}
+            className="text-xs font-medium px-4 py-1.5 rounded-full bg-k-cyan text-k-bg hover:bg-cyan-300 transition-colors flex-shrink-0"
+          >
+            Join Waitlist
+          </button>
+
           <div className="relative">
             <button
               onClick={() => setProfileOpen(v => !v)}
@@ -452,6 +480,65 @@ export const NJSearchPage = () => {
           <div ref={bottomRef} />
         </div>
       </main>
+
+      {/* Waitlist modal */}
+      {waitlistOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 animate-fade-in"
+          onClick={() => setWaitlistOpen(false)}
+        >
+          <div
+            className="bg-k-card border border-k-border rounded-2xl p-8 w-full max-w-md mx-4 shadow-2xl"
+            onClick={e => e.stopPropagation()}
+          >
+            {waitlistState === 'done' ? (
+              <div className="text-center py-4">
+                <p className="text-2xl mb-3">🎉</p>
+                <p className="text-lg font-semibold text-k-text mb-2">You're on the list!</p>
+                <p className="text-sm text-k-muted mb-6">We'll be in touch when access opens up.</p>
+                <button
+                  onClick={() => setWaitlistOpen(false)}
+                  className="px-6 py-2 rounded-full bg-k-cyan text-k-bg text-sm font-medium hover:bg-cyan-300 transition-colors"
+                >
+                  Done
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <h2 className="text-lg font-semibold text-k-text">Join the Waitlist</h2>
+                    <p className="text-sm text-k-muted mt-1">Get early access to Kurious.</p>
+                  </div>
+                  <button
+                    onClick={() => setWaitlistOpen(false)}
+                    className="text-k-muted hover:text-k-text transition-colors text-lg leading-none ml-4"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <form onSubmit={handleWaitlistSubmit}>
+                  <input
+                    type="email"
+                    value={waitlistEmail}
+                    onChange={e => setWaitlistEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    required
+                    className="w-full bg-k-bg border border-k-border rounded-xl px-4 py-3 text-sm text-k-text placeholder-k-muted/60 focus:outline-none focus:border-k-cyan transition-colors mb-4"
+                  />
+                  <button
+                    type="submit"
+                    disabled={waitlistState === 'submitting' || !waitlistEmail.trim()}
+                    className="w-full py-3 rounded-xl bg-k-cyan text-k-bg text-sm font-medium hover:bg-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {waitlistState === 'submitting' ? 'Submitting…' : 'Request Access'}
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
