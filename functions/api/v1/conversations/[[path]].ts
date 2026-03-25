@@ -1,20 +1,21 @@
-// Cloudflare Pages Function to proxy intelligent search API requests
-// Streams SSE response body directly — does NOT buffer (unlike blended proxy)
+// Cloudflare Pages Function to proxy conversations API requests
 
 export async function onRequest(context: any) {
   const { request, env } = context;
   const url = new URL(request.url);
-  const path = url.pathname.replace('/api/v1/intelligent/', '');
+  const path = url.pathname.replace('/api/v1/conversations/', '').replace('/api/v1/conversations', '');
 
   const BACKEND_URL = env.VITE_BACKEND_API_URL || env.BACKEND_API_URL || 'https://kurious-backend-api.centralus.cloudapp.azure.com';
   const BACKEND_API_KEY = env.VITE_BACKEND_API_KEY || env.BACKEND_API_KEY;
   const BACKEND_COMPANY_ID = env.VITE_BACKEND_COMPANY_ID || env.BACKEND_COMPANY_ID;
   const BACKEND_USER_ID = env.VITE_BACKEND_USER_ID || env.BACKEND_USER_ID;
 
-  const backendUrl = `${BACKEND_URL}/api/v1/intelligent/${path}`;
+  const backendUrl = path
+    ? `${BACKEND_URL}/api/v1/conversations/${path}${url.search}`
+    : `${BACKEND_URL}/api/v1/conversations${url.search}`;
 
   try {
-    const body = request.method !== 'GET' ? await request.text() : undefined;
+    const body = request.method !== 'GET' && request.method !== 'DELETE' ? await request.text() : undefined;
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -29,17 +30,16 @@ export async function onRequest(context: any) {
       body,
     });
 
-    const contentType = backendResponse.headers.get('Content-Type') || 'text/event-stream';
+    const contentType = backendResponse.headers.get('Content-Type') || 'application/json';
+    const responseBody = await backendResponse.text();
 
-    // Pass SSE stream body through directly without buffering
-    return new Response(backendResponse.body, {
+    return new Response(responseBody, {
       status: backendResponse.status,
       headers: {
         'Content-Type': contentType,
         'Cache-Control': 'no-cache',
-        'X-Accel-Buffering': 'no',
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, X-API-Key, X-Company-ID, X-User-ID',
       },
     });
@@ -58,7 +58,7 @@ export async function onRequestOptions() {
   return new Response(null, {
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, X-API-Key, X-Company-ID, X-User-ID',
     },
   });
