@@ -89,7 +89,8 @@ export const ChatPage = () => {
 
   // Scroll: when a new user message arrives, scroll to it (not the bottom)
   // so the question stays visible. For all other state changes scroll to bottom.
-  const lastUserMsgId = messages.filter(m => m.role === 'user').at(-1)?.id;
+  const userMsgs = messages.filter(m => m.role === 'user');
+  const lastUserMsgId = userMsgs[userMsgs.length - 1]?.id;
   const lastUserMsgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
