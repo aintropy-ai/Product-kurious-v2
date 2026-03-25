@@ -388,7 +388,13 @@ export const NJSearchPage = () => {
                     ) : entry.answer ? (
                       <AnswerBlock
                         answer={entry.answer}
-                        sources={entry.sources}
+                        sources={entry.sources.map(s => ({
+                          source_type: 'unstructured' as const,
+                          category: 'supporting' as const,
+                          title: s.title || s.h1 || undefined,
+                          url: s.source_parent || s.source || s.url || undefined,
+                          excerpt: s.text || undefined,
+                        }))}
                         latency={entry.latency}
                         onAskAnotherAI={model => handleAskAnotherAI(idx, model)}
                         hideAskButton={hasFrontier}

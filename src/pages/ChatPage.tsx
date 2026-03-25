@@ -6,13 +6,10 @@ import { WelcomeScreen } from '../components/WelcomeScreen';
 import { ChatInputArea } from '../components/ChatInputArea';
 import { ChatMessageComponent } from '../components/ChatMessage';
 import ThinkingState from '../components/ThinkingState';
-import SuggestionCards from '../components/SuggestionCards';
 import {
   conversationApi,
   chatStreamSearch,
   backendApi,
-  intelligentStreamSearch,
-  StreamEvent,
 } from '../services/backendApi';
 import { frontierApi } from '../services/frontierApi';
 import {
@@ -53,6 +50,7 @@ export const ChatPage = () => {
   const [sidebarConversations, setSidebarConversations] = useState<ConversationSummary[]>([]);
   const [sidebarLoading, setSidebarLoading] = useState(false);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(urlConversationId || null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Chat messages for the active conversation
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -205,11 +203,17 @@ export const ChatPage = () => {
     let convId = activeConversationId;
     if (!convId) {
       try {
-        const conv = await conversationApi.create(searchMode);
+        const title = query.length > 60 ? query.slice(0, 60).trimEnd() + '…' : query;
+        const conv = await conversationApi.create(searchMode, title);
         convId = conv.id;
         pendingConvIdRef.current = convId;
         setActiveConversationId(convId);
         navigate(`/chat/${convId}`, { replace: true });
+        // Optimistically add to sidebar immediately with the title
+        setSidebarConversations(prev => [
+          { id: conv.id, title, mode: searchMode, created_at: conv.created_at, updated_at: conv.updated_at },
+          ...prev,
+        ]);
       } catch {
         // Continue without conversation tracking
       }
@@ -219,44 +223,23 @@ export const ChatPage = () => {
     const timeout = setTimeout(() => controller.abort(), 120_000);
 
     try {
-      if (searchMode === 'deep_think') {
-        // Use new streaming API for deep think
-        await chatStreamSearch(
-          { query, mode: 'deep_think', conversation_id: convId ?? undefined },
-          {
-            onEvent: (event: NewStreamEvent) => {
-              setPendingEvents(prev => [...prev, event]);
-            },
-            onAnswer: (_evt: SSEEventAnswer) => {},
-            onDone: (evt: SSEEventDone) => {
-              setPendingLatency(evt.total_elapsed_ms / 1000);
-            },
-            onError: (evt) => {
-              setPendingError(evt.detail);
-              setPendingEvents(prev => [...prev, { stage: 'done', total_elapsed_ms: 0 } as NewStreamEvent]);
-            },
+      await chatStreamSearch(
+        { query, mode: searchMode, conversation_id: convId ?? undefined },
+        {
+          onEvent: (event: NewStreamEvent) => {
+            setPendingEvents(prev => [...prev, event]);
           },
-          controller.signal
-        );
-      } else {
-        // Use legacy streaming for quick mode (compatible with current backend)
-        await intelligentStreamSearch(
-          query,
-          {
-            onEvent: (event: StreamEvent) => {
-              // Map legacy events to new format for display
-              setPendingEvents(prev => [...prev, event as unknown as NewStreamEvent]);
-            },
-            onUnstructured: () => {},
-            onStructured: () => {},
-            onError: (_event) => {},
-            onDone: event => {
-              setPendingLatency(event.total_elapsed_ms / 1000);
-            },
+          onAnswer: (_evt: SSEEventAnswer) => {},
+          onDone: (evt: SSEEventDone) => {
+            setPendingLatency(evt.total_elapsed_ms / 1000);
           },
-          controller.signal
-        );
-      }
+          onError: (evt) => {
+            setPendingError(evt.detail);
+            setPendingEvents(prev => [...prev, { stage: 'done', total_elapsed_ms: 0 } as NewStreamEvent]);
+          },
+        },
+        controller.signal
+      );
     } catch (err: any) {
       if (err.name !== 'AbortError') {
         setPendingError(err.message || 'Network error');
@@ -351,8 +334,6 @@ export const ChatPage = () => {
     }
   };
 
-  const assistantMessages = messages.filter(m => m.role === 'assistant');
-
   return (
     <div className="min-h-screen bg-k-bg flex flex-col">
       <ChatHeader
@@ -362,14 +343,27 @@ export const ChatPage = () => {
       />
 
       <div className="flex flex-1 overflow-hidden">
-        <ChatSidebar
-          conversations={sidebarConversations}
-          activeConversationId={activeConversationId}
-          loading={sidebarLoading}
-          onNewChat={handleNewChat}
-          onSelectConversation={handleSelectConversation}
-          onDeleteConversation={handleDeleteConversation}
-        />
+        {sidebarOpen && (
+          <ChatSidebar
+            conversations={sidebarConversations}
+            activeConversationId={activeConversationId}
+            loading={sidebarLoading}
+            onNewChat={handleNewChat}
+            onSelectConversation={handleSelectConversation}
+            onDeleteConversation={handleDeleteConversation}
+            onToggleSidebar={() => setSidebarOpen(false)}
+          />
+        )}
+
+        {!sidebarOpen && (
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="flex-shrink-0 w-12 border-r border-k-border bg-k-nav flex items-center justify-center text-k-muted hover:text-k-text transition-colors text-lg font-light"
+            title="Open sidebar"
+          >
+            &gt;
+          </button>
+        )}
 
         <main className="flex-1 flex flex-col overflow-hidden">
           {/* Scrollable content */}
@@ -386,7 +380,7 @@ export const ChatPage = () => {
               )}
 
               {/* Committed messages */}
-              {messages.map((msg, idx) => {
+              {messages.map((msg) => {
                 if (msg.role === 'user') {
                   return (
                     <ChatMessageComponent
@@ -403,12 +397,6 @@ export const ChatPage = () => {
                 const hasFrontier = !!msg.frontierResult;
                 return (
                   <div key={msg.id}>
-                    {/* Question label (from preceding user message) */}
-                    {idx > 0 && messages[idx - 1]?.role === 'user' && (
-                      <h2 className="text-base font-semibold text-k-text mb-4">
-                        {messages[idx - 1].content}
-                      </h2>
-                    )}
                     <ChatMessageComponent
                       message={msg}
                       showFrontierComparison={hasFrontier}
@@ -421,16 +409,6 @@ export const ChatPage = () => {
                 );
               })}
 
-              {/* Suggestion cards after last answer */}
-              {hasStarted && !isSearching && assistantMessages.length > 0 && (() => {
-                const askedSet = new Set(messages.filter(m => m.role === 'user').map(m => m.content));
-                const remaining = SUGGESTION_CARDS.filter(s => !askedSet.has(s));
-                return remaining.length > 0 ? (
-                  <div className="mb-8">
-                    <SuggestionCards suggestions={remaining} onSelect={handleSearch} />
-                  </div>
-                ) : null;
-              })()}
 
               {/* In-flight ThinkingState */}
               {isSearching && (
@@ -440,6 +418,7 @@ export const ChatPage = () => {
                     mode={searchMode === 'deep_think' ? 'deeper' : 'quick'}
                     isDone={streamDone}
                     onComplete={handleThinkingComplete}
+                    streamEvents={pendingEvents}
                   />
                 </div>
               )}
@@ -456,6 +435,18 @@ export const ChatPage = () => {
             onModeChange={setSearchMode}
             preloadedQuestions={PRELOADED_QUESTIONS}
           />
+
+          {/* Copyright footer */}
+          <div className="py-1 px-4 text-right">
+            <a
+              href="https://aintropy.ai/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-k-muted hover:text-k-text transition-colors cursor-pointer inline-block"
+            >
+              © 2026 AIntropy — Advanced AI Search
+            </a>
+          </div>
         </main>
       </div>
     </div>

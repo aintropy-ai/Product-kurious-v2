@@ -8,6 +8,7 @@ interface ChatSidebarProps {
   onNewChat: () => void;
   onSelectConversation: (id: string) => void;
   onDeleteConversation: (id: string) => void;
+  onToggleSidebar: () => void;
 }
 
 function getGroup(updatedAt: string): 'Today' | 'Yesterday' | 'Last 7 Days' | 'Older' {
@@ -29,6 +30,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   onNewChat,
   onSelectConversation,
   onDeleteConversation,
+  onToggleSidebar,
 }) => {
   const [search, setSearch] = useState('');
   const [hoveredId, setHoveredId] = useState<string | null>(null);
@@ -51,7 +53,16 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   }, [filtered]);
 
   return (
-    <div className="flex-shrink-0 border-r border-k-border flex flex-col bg-k-nav" style={{ width: '16rem' }}>
+    <div className="flex-shrink-0 border-r border-k-border flex flex-col bg-k-nav relative" style={{ width: '16rem' }}>
+      {/* Close button at right boundary */}
+      <button
+        onClick={onToggleSidebar}
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-5 h-12 bg-k-nav border-r border-k-border flex items-center justify-center text-k-muted hover:text-k-text transition-colors z-10 text-lg font-light"
+        title="Close sidebar"
+      >
+        &lt;
+      </button>
+
       {/* Header */}
       <div className="px-4 py-4 border-b border-k-border flex items-center justify-between flex-shrink-0">
         <span className="text-sm font-semibold text-k-text">My Chats</span>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Zap, BrainCircuit } from 'lucide-react';
 import { SearchBar } from './SearchBar';
 import { SearchMode } from '../types';
 
@@ -37,7 +38,8 @@ export const ChatInputArea: React.FC<ChatInputAreaProps> = ({
                 : 'border-k-border text-k-muted hover:border-k-muted hover:text-k-text'
             }`}
           >
-            ⚡ Quick
+            <Zap className={`w-3 h-3 transition-all duration-200 ${mode === 'quick' ? '[filter:drop-shadow(0_0_4px_currentColor)]' : ''}`} />
+            Quick
           </button>
           <button
             type="button"
@@ -48,11 +50,9 @@ export const ChatInputArea: React.FC<ChatInputAreaProps> = ({
                 : 'border-k-border text-k-muted hover:border-k-muted hover:text-k-text'
             }`}
           >
-            🧠 Deep Dive
+            <BrainCircuit className={`w-3 h-3 transition-all duration-200 ${mode === 'deep_think' ? '[filter:drop-shadow(0_0_4px_currentColor)]' : ''}`} />
+            Deep Dive
           </button>
-          <span className="text-xs text-k-muted/50 ml-1">
-            {mode === 'quick' ? '~1–3s' : '~5–15s, multi-step reasoning'}
-          </span>
         </div>
       </div>
     </div>

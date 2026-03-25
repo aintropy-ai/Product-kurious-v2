@@ -71,7 +71,7 @@ export const ChatMessageComponent: React.FC<ChatMessageProps> = ({
             {message.content ? (
               <AnswerBlock
                 answer={message.content}
-                sources={[]}
+                sources={message.sources}
                 latency={message.elapsed_ms != null ? message.elapsed_ms / 1000 : null}
                 onAskAnotherAI={hasFrontier ? undefined : (model) => onAskAnotherAI(message.id, model)}
                 hideAskButton={hasFrontier}

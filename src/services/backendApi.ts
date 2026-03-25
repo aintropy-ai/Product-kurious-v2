@@ -211,8 +211,8 @@ export const backendApi = {
 // ─── Conversation API ──────────────────────────────────────────────────────────
 
 export const conversationApi = {
-  create: async (mode: SearchMode = 'quick'): Promise<ConversationResponse> => {
-    const response = await apiClient.post('conversations', { mode });
+  create: async (mode: SearchMode = 'quick', title?: string): Promise<ConversationResponse> => {
+    const response = await apiClient.post('conversations', { mode, ...(title && { title }) });
     return response.data;
   },
 
@@ -288,10 +288,38 @@ export async function chatStreamSearch(
     const { done, value } = await reader.read();
     if (done) break;
     buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop() ?? '';
 
-    for (const line of lines) {
+    // SSE events are separated by double newlines
+    const parts = buffer.split('\n\n');
+    buffer = parts.pop() ?? '';
+
+    for (const part of parts) {
+      for (const line of part.split('\n')) {
+        if (!line.startsWith('data:')) continue;
+        const json = line.slice(5).trim();
+        if (!json) continue;
+        try {
+          const event = JSON.parse(json) as NewStreamEvent;
+          callbacks.onEvent?.(event);
+          switch (event.stage) {
+            case 'searching':   callbacks.onSearching?.(event); break;
+            case 'tool_call':   callbacks.onToolCall?.(event); break;
+            case 'tool_result': callbacks.onToolResult?.(event); break;
+            case 'thinking':    callbacks.onThinking?.(event); break;
+            case 'answer':      callbacks.onAnswer(event); break;
+            case 'done':        callbacks.onDone(event); break;
+            case 'error':       callbacks.onError?.(event); break;
+          }
+        } catch {
+          // Ignore malformed events
+        }
+      }
+    }
+  }
+
+  // Flush remaining buffer
+  if (buffer.trim()) {
+    for (const line of buffer.split('\n')) {
       if (!line.startsWith('data:')) continue;
       const json = line.slice(5).trim();
       if (!json) continue;
@@ -308,7 +336,7 @@ export async function chatStreamSearch(
           case 'error':       callbacks.onError?.(event); break;
         }
       } catch {
-        // Ignore malformed events
+        // ignore
       }
     }
   }

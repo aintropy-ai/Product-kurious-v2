@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { StreamSource } from '../types';
+import { SourceAttribution } from '../types';
 import FeedbackBar from './FeedbackBar';
 
 const FRONTIER_MODELS = [
@@ -38,7 +38,7 @@ function MarkdownAnswer({ text }: { text: string }) {
 
 interface AnswerBlockProps {
   answer: string;
-  sources?: StreamSource[];
+  sources?: SourceAttribution[];
   latency?: number | null;
   label?: string;
   onAskAnotherAI?: (modelValue: string) => void;
@@ -58,14 +58,17 @@ export default function AnswerBlock({
   const [sourcesOpen, setSourcesOpen] = useState(false);
   const [modelPickerOpen, setModelPickerOpen] = useState(false);
 
-  const seenUrls = new Set<string>();
+  const seenKeys = new Set<string>();
   const uniqueSources = sources.map(src => ({
-    linkUrl: src.source_parent || src.source || src.url,
-    linkText: src.title || src.h1 || '(no title)',
-  })).filter(({ linkUrl }) => {
-    if (!linkUrl) return true; // no URL — always include, don't deduplicate by name
-    if (seenUrls.has(linkUrl)) return false;
-    seenUrls.add(linkUrl);
+    linkUrl: src.url ?? null,
+    linkText: src.title ?? src.table_name ?? (src.source_type === 'structured' ? 'Government database' : 'Document'),
+    excerpt: src.excerpt,
+    category: src.category,
+    sourceType: src.source_type,
+  })).filter(({ linkUrl, linkText }) => {
+    const key = linkUrl ?? linkText;
+    if (seenKeys.has(key)) return false;
+    seenKeys.add(key);
     return true;
   });
 
@@ -90,20 +93,42 @@ export default function AnswerBlock({
           </button>
           <div
             className="sources-panel"
-            style={{ maxHeight: sourcesOpen ? '20rem' : '0', opacity: sourcesOpen ? 1 : 0 }}
+            style={{ maxHeight: sourcesOpen ? '32rem' : '0', opacity: sourcesOpen ? 1 : 0 }}
           >
-            <ol className="mt-3 space-y-1.5">
-              {uniqueSources.map(({ linkUrl, linkText }, i) => (
-                <li key={i} className="flex items-start gap-1.5 text-xs text-k-muted">
-                  <span className="flex-shrink-0">{i + 1}.</span>
-                  {linkUrl ? (
-                    <a href={linkUrl} target="_blank" rel="noopener noreferrer"
-                      className="text-k-muted hover:text-k-cyan underline underline-offset-2 transition-colors">
-                      {linkText}
-                    </a>
-                  ) : (
-                    <span>{linkText}</span>
-                  )}
+            <ol className="mt-3 space-y-2">
+              {uniqueSources.map(({ linkUrl, linkText, excerpt, category, sourceType }, i) => (
+                <li key={i} className="flex items-start gap-2 text-xs">
+                  <span className="flex-shrink-0 text-k-muted mt-0.5">{i + 1}.</span>
+                  <div className="flex flex-col gap-0.5 min-w-0">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {/* type icon */}
+                      <span className="text-k-muted/60" title={sourceType}>
+                        {sourceType === 'structured' ? '⛁' : '📄'}
+                      </span>
+                      {linkUrl ? (
+                        <a href={linkUrl} target="_blank" rel="noopener noreferrer"
+                          className="text-k-cyan hover:text-cyan-300 underline underline-offset-2 transition-colors truncate max-w-xs">
+                          {linkText}
+                        </a>
+                      ) : (
+                        <span className="text-k-text">{linkText}</span>
+                      )}
+                      {category === 'primary' && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-k-cyan/10 text-k-cyan border border-k-cyan/20 flex-shrink-0">primary</span>
+                      )}
+                    </div>
+                    {excerpt && (
+                      <p className="text-k-muted/70 leading-relaxed line-clamp-2">
+                        {excerpt
+  .replace(/^#+\s*/, '')           // strip leading markdown headings
+  .replace(/<[^>]+>/g, ' ')        // strip HTML tags
+  .replace(/\|[-:\s|]+\|/g, ' ')  // strip markdown table separator rows (|---|---|)
+  .replace(/\s+/g, ' ')
+  .trim()
+}
+                      </p>
+                    )}
+                  </div>
                 </li>
               ))}
             </ol>
