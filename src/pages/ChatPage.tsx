@@ -263,6 +263,13 @@ export const ChatPage = () => {
       }
     }
 
+    try {
+      const { id } = await backendApi.createSearchLog({ question: query });
+      pendingLogIdRef.current = id;
+    } catch {
+      // silent
+    }
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 120_000);
 
@@ -305,12 +312,6 @@ export const ChatPage = () => {
       clearTimeout(timeout);
     }
 
-    try {
-      const { id } = await backendApi.createSearchLog({ question: query });
-      pendingLogIdRef.current = id;
-    } catch {
-      // silent
-    }
   };
 
   const handleAskAnotherAI = async (messageId: string, modelValue: string) => {
@@ -355,6 +356,7 @@ export const ChatPage = () => {
   const handleFeedback = (messageId: string, side: 'kurious' | 'frontier', rating: number, text: string) => {
     const msg = messages.find(m => m.id === messageId);
     const logId = msg?.searchLogId ?? -1;
+    console.log('[handleFeedback] messageId:', messageId, 'side:', side, 'rating:', rating, 'logId:', logId, 'msg?.searchLogId:', msg?.searchLogId);
     if (side === 'kurious') {
       backendApi.submitFeedback(logId, { kurious_rating: rating, kurious_feedback_text: text });
     } else {

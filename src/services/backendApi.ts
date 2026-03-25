@@ -200,11 +200,16 @@ export const backendApi = {
   },
 
   submitFeedback: async (logId: number, payload: SearchFeedbackPayload): Promise<void> => {
-    if (logId < 0) return;
+    console.log('[submitFeedback] logId:', logId, 'payload:', payload);
+    if (logId < 0) {
+      console.warn('[submitFeedback] skipping — logId is negative');
+      return;
+    }
     try {
       await apiClient.post(`search-log/${logId}/feedback`, payload);
+      console.log('[submitFeedback] success for logId:', logId);
     } catch (error: any) {
-      console.warn('Failed to submit feedback:', error.message);
+      console.warn('[submitFeedback] failed:', error.message);
     }
   },
 };

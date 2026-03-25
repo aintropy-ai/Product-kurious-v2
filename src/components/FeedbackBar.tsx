@@ -22,6 +22,7 @@ export default function FeedbackBar({ onFeedback }: FeedbackBarProps) {
 
   const handleTagClick = (tag: string) => {
     setSelectedTag(tag);
+    // console.log('[FeedbackBar] handleTagClick, calling onFeedback with rating=5, tag:', tag);
     onFeedback?.(5, tag);
     setTimeout(() => setState('done'), 400);
   };
@@ -117,7 +118,7 @@ export default function FeedbackBar({ onFeedback }: FeedbackBarProps) {
   return (
     <div className="flex items-center gap-3">
       <span className="text-sm text-k-muted">Was this helpful?</span>
-      <button onClick={() => { onFeedback?.(5, ''); setState('thumbs_up'); }} className="text-xl hover:scale-110 transition-transform active:scale-95" title="Yes">👍</button>
+      <button onClick={() => { console.log('[FeedbackBar] 👍 clicked'); onFeedback?.(5, ''); setState('thumbs_up'); }} className="text-xl hover:scale-110 transition-transform active:scale-95" title="Yes">👍</button>
       <button onClick={() => setState('thumbs_down')} className="text-xl hover:scale-110 transition-transform active:scale-95" title="No">👎</button>
     </div>
   );

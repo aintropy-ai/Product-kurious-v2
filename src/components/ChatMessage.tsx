@@ -28,7 +28,7 @@ function streamDone(events: NewStreamEvent[]): boolean {
 
 export const ChatMessageComponent: React.FC<ChatMessageProps> = ({
   message,
-  showFrontierComparison,
+  showFrontierComparison: _showFrontierComparison,
   selectedFrontierAPI: _selectedFrontierAPI,
   onAskAnotherAI,
   onCloseFrontier,
@@ -68,19 +68,17 @@ export const ChatMessageComponent: React.FC<ChatMessageProps> = ({
             {hasFrontier && (
               <p className="text-xs text-k-muted uppercase tracking-widest mb-2 font-medium">Kurious</p>
             )}
-            {message.content ? (
-              <AnswerBlock
-                answer={message.content}
-                sources={message.sources}
-                latency={message.elapsed_ms != null ? message.elapsed_ms / 1000 : null}
-                onAskAnotherAI={hasFrontier ? undefined : (model) => onAskAnotherAI(message.id, model)}
-                hideAskButton={hasFrontier}
-                onFeedback={(rating, text) => onFeedback(message.id, 'kurious', rating, text)}
-              />
-            ) : null}
+            <AnswerBlock
+              answer={message.content}
+              sources={message.sources}
+              latency={message.elapsed_ms != null ? message.elapsed_ms / 1000 : null}
+              onAskAnotherAI={hasFrontier ? undefined : (model: string) => onAskAnotherAI(message.id, model)}
+              hideAskButton={hasFrontier}
+              onFeedback={(rating: number, text: string) => onFeedback(message.id, 'kurious', rating, text)}
+            />
           </div>
 
-          {/* Frontier comparison */}
+          {/* Frontier comparison or loading */}
           {hasFrontier && message.frontierResult && (
             <div className="flex flex-col">
               <div className="flex items-center justify-between mb-2">
@@ -100,27 +98,19 @@ export const ChatMessageComponent: React.FC<ChatMessageProps> = ({
                 <div className="border border-k-error/40 rounded-xl bg-k-card p-4 text-sm text-k-error">
                   {message.frontierResult.error}
                 </div>
+              ) : !message.frontierResult.answer ? (
+                <div className="border border-k-border rounded-2xl bg-k-card p-6 flex-1 flex items-center gap-2.5 text-sm text-k-muted">
+                  <div className="w-3.5 h-3.5 border-2 border-k-muted border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                  Generating…
+                </div>
               ) : (
                 <AnswerBlock
                   answer={message.frontierResult.answer}
                   latency={message.frontierResult.latency}
                   hideAskButton
-                  onFeedback={(rating, text) => onFeedback(message.id, 'frontier', rating, text)}
+                  onFeedback={(rating: number, text: string) => onFeedback(message.id, 'frontier', rating, text)}
                 />
               )}
-            </div>
-          )}
-
-          {/* Frontier loading */}
-          {showFrontierComparison && message.frontierResult && !message.frontierResult.answer && !message.frontierResult.error && (
-            <div className="flex flex-col">
-              <p className="text-xs text-k-muted uppercase tracking-widest mb-2 font-medium">
-                {FRONTIER_MODEL_NAMES[_selectedFrontierAPI] ?? _selectedFrontierAPI}
-              </p>
-              <div className="border border-k-border rounded-2xl bg-k-card p-6 flex-1 flex items-center gap-2.5 text-sm text-k-muted">
-                <div className="w-3.5 h-3.5 border-2 border-k-muted border-t-transparent rounded-full animate-spin flex-shrink-0" />
-                Generating…
-              </div>
             </div>
           )}
         </div>
