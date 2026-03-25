@@ -5,7 +5,9 @@ export async function onRequest(context: any) {
   const url = new URL(request.url);
   const path = url.pathname.replace('/api/v1/search-log', '');
 
-  const BACKEND_URL = env.VITE_BACKEND_API_URL || 'https://kurious-backend-api.centralus.cloudapp.azure.com';
+  const BACKEND_URL = env.VITE_BACKEND_API_URL || env.BACKEND_API_URL || 'https://kurious-backend-api.centralus.cloudapp.azure.com';
+  const BACKEND_API_KEY = env.VITE_BACKEND_API_KEY || env.BACKEND_API_KEY;
+  const BACKEND_COMPANY_ID = env.VITE_BACKEND_COMPANY_ID || env.BACKEND_COMPANY_ID;
   const backendUrl = `${BACKEND_URL}/api/v1/search-log${path}`;
 
   const body = request.method !== 'GET' ? await request.text() : undefined;
@@ -15,8 +17,8 @@ export async function onRequest(context: any) {
       method: request.method,
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': env.VITE_BACKEND_API_KEY,
-        'X-Company-ID': env.VITE_BACKEND_COMPANY_ID,
+        'X-API-Key': BACKEND_API_KEY,
+        'X-Company-ID': BACKEND_COMPANY_ID,
       },
       body,
     });

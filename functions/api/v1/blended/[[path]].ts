@@ -9,9 +9,9 @@ export async function onRequest(context: any) {
   const path = url.pathname.replace('/api/v1/blended/', '');
 
   // Backend configuration
-  const BACKEND_URL = env.VITE_BACKEND_API_URL || 'https://kurious-backend-api.centralus.cloudapp.azure.com';
-  const BACKEND_API_KEY = env.VITE_BACKEND_API_KEY;
-  const BACKEND_COMPANY_ID = env.VITE_BACKEND_COMPANY_ID;
+  const BACKEND_URL = env.VITE_BACKEND_API_URL || env.BACKEND_API_URL || 'https://kurious-backend-api.centralus.cloudapp.azure.com';
+  const BACKEND_API_KEY = env.VITE_BACKEND_API_KEY || env.BACKEND_API_KEY;
+  const BACKEND_COMPANY_ID = env.VITE_BACKEND_COMPANY_ID || env.BACKEND_COMPANY_ID;
 
   // Construct backend URL (backend expects /api prefix)
   const backendUrl = `${BACKEND_URL}/api/v1/blended/${path}`;
