@@ -1,5 +1,11 @@
 import axios from 'axios';
-import { BackendSearchResponse, StreamUnstructuredEvent, StreamStructuredEvent, StreamErrorEvent, StreamDoneEvent } from '../types';
+import {
+  BackendSearchResponse, StreamUnstructuredEvent, StreamStructuredEvent, StreamErrorEvent, StreamDoneEvent,
+  ConversationResponse, ListConversationsResponse, GetMessagesResponse,
+  IntelligentQueryRequest, IntelligentSearchResponse,
+  NewStreamEvent, SSEEventSearching, SSEEventToolCall, SSEEventToolResult,
+  SSEEventAnswer, SSEEventThinking, SSEEventDone, SSEEventError, SearchMode,
+} from '../types';
 
 const API_KEY = import.meta.env.VITE_BACKEND_API_KEY || '';
 const COMPANY_ID = import.meta.env.VITE_BACKEND_COMPANY_ID || 'default-company';
@@ -201,6 +207,114 @@ export const backendApi = {
     }
   },
 };
+
+// ─── Conversation API ──────────────────────────────────────────────────────────
+
+export const conversationApi = {
+  create: async (mode: SearchMode = 'quick'): Promise<ConversationResponse> => {
+    const response = await apiClient.post('conversations', { mode });
+    return response.data;
+  },
+
+  list: async (skip = 0, limit = 20): Promise<ListConversationsResponse> => {
+    const response = await apiClient.get('conversations', { params: { skip, limit } });
+    return response.data;
+  },
+
+  getMessages: async (conversationId: string, skip = 0, limit = 50): Promise<GetMessagesResponse> => {
+    const response = await apiClient.get(`conversations/${conversationId}/messages`, {
+      params: { skip, limit },
+    });
+    return response.data;
+  },
+
+  delete: async (conversationId: string): Promise<void> => {
+    await apiClient.delete(`conversations/${conversationId}`);
+  },
+};
+
+// ─── New intelligent search (non-streaming) ────────────────────────────────────
+
+export const intelligentSearch = async (
+  request: IntelligentQueryRequest
+): Promise<IntelligentSearchResponse> => {
+  const response = await apiClient.post('intelligent/_search', request);
+  return response.data;
+};
+
+// ─── New SSE streaming search (updated event shapes) ──────────────────────────
+
+export interface ChatStreamCallbacks {
+  onSearching?: (event: SSEEventSearching) => void;
+  onToolCall?: (event: SSEEventToolCall) => void;
+  onToolResult?: (event: SSEEventToolResult) => void;
+  onThinking?: (event: SSEEventThinking) => void;
+  onAnswer: (event: SSEEventAnswer) => void;
+  onDone: (event: SSEEventDone) => void;
+  onError?: (event: SSEEventError) => void;
+  onEvent?: (event: NewStreamEvent) => void;
+}
+
+export async function chatStreamSearch(
+  request: IntelligentQueryRequest,
+  callbacks: ChatStreamCallbacks,
+  signal?: AbortSignal
+): Promise<void> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(API_KEY && { 'X-API-Key': API_KEY }),
+    'X-Company-ID': COMPANY_ID,
+  };
+
+  const response = await fetch(`${BACKEND_URL}/intelligent/_search/stream`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(request),
+    signal,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    let detail = `HTTP ${response.status}`;
+    try { detail = JSON.parse(errorText)?.detail || detail; } catch {}
+    throw new Error(detail);
+  }
+
+  const reader = response.body!.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() ?? '';
+
+    for (const line of lines) {
+      if (!line.startsWith('data:')) continue;
+      const json = line.slice(5).trim();
+      if (!json) continue;
+      try {
+        const event = JSON.parse(json) as NewStreamEvent;
+        callbacks.onEvent?.(event);
+        switch (event.stage) {
+          case 'searching':   callbacks.onSearching?.(event); break;
+          case 'tool_call':   callbacks.onToolCall?.(event); break;
+          case 'tool_result': callbacks.onToolResult?.(event); break;
+          case 'thinking':    callbacks.onThinking?.(event); break;
+          case 'answer':      callbacks.onAnswer(event); break;
+          case 'done':        callbacks.onDone(event); break;
+          case 'error':       callbacks.onError?.(event); break;
+        }
+      } catch {
+        // Ignore malformed events
+      }
+    }
+  }
+}
+
+// ─── Legacy streaming search callbacks ────────────────────────────────────────
 
 export interface StreamSearchCallbacks {
   onUnstructured: (event: StreamUnstructuredEvent) => void;
