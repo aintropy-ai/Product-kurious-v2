@@ -112,7 +112,7 @@ export const ChatMessageComponent: React.FC<ChatMessageProps> = ({
           )}
 
           {/* Frontier loading */}
-          {showFrontierComparison && !hasFrontier && message.streaming && (
+          {showFrontierComparison && message.frontierResult && !message.frontierResult.answer && !message.frontierResult.error && (
             <div className="flex flex-col">
               <p className="text-xs text-k-muted uppercase tracking-widest mb-2 font-medium">
                 {FRONTIER_MODEL_NAMES[_selectedFrontierAPI] ?? _selectedFrontierAPI}

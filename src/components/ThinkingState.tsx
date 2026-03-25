@@ -111,7 +111,7 @@ function toolLabel(tool: string, query?: string): string {
   return query ? `${base}: "${query.length > 60 ? query.slice(0, 60) + '…' : query}"` : base;
 }
 
-function buildLiveSteps(events: NewStreamEvent[]): LiveStep[] {
+function buildLiveSteps(events: NewStreamEvent[], isDone = false): LiveStep[] {
   // Ordered list of steps built as events arrive — mutations happen in place
   const ordered: LiveStep[] = [];
   const byId = new Map<string, LiveStep>();
@@ -184,7 +184,7 @@ function buildLiveSteps(events: NewStreamEvent[]): LiveStep[] {
   const hasAnswer = events.some(e => e.stage === 'answer' || e.stage === 'answer_start' || e.stage === 'answer_token' || e.stage === 'answer_end');
   const allDone = ordered.length > 0 && ordered.every(s => s.status !== 'active');
   if (allDone && !hasAnswer) {
-    const gen: LiveStep = { id: 'generating', label: 'Generating answer', status: 'active' };
+    const gen: LiveStep = { id: 'generating', label: 'Generating answer', status: isDone ? 'done' : 'active' };
     ordered.push(gen);
   }
 
@@ -208,7 +208,7 @@ const DEEPER_STEPS = [
 ];
 
 export default function ThinkingState({ mode, isDone, onComplete, streamEvents = [] }: ThinkingStateProps) {
-  const liveSteps = buildLiveSteps(streamEvents);
+  const liveSteps = buildLiveSteps(streamEvents, isDone);
   const hasLiveSteps = liveSteps.length > 0;
 
   // Fallback animation (shown until first live event arrives)
@@ -274,7 +274,7 @@ export default function ThinkingState({ mode, isDone, onComplete, streamEvents =
                 }`}>
                   {step.label}{step.status === 'active' ? '…' : ''}
                 </span>
-                {step.status === 'active' && mode === 'quick' && <CyclingText stepId={step.id} />}
+                {step.status === 'active' && <CyclingText stepId={step.id} />}
               </span>
             </div>
           ))

@@ -289,10 +289,6 @@ export const NJSearchPage = () => {
           <span className="text-xs font-semibold text-k-cyan border border-k-cyan/50 rounded-full px-2 py-0.5 leading-none">beta</span>
         </div>
 
-        <span className="flex-1 text-center text-sm text-k-muted hidden sm:block">
-          New Jersey Open Data — 57M documents across 23 agencies
-        </span>
-
         <div className="flex items-center gap-3 ml-auto flex-shrink-0">
           <button
             onClick={() => { setWaitlistOpen(true); setWaitlistState('idle'); setWaitlistEmail(''); }}

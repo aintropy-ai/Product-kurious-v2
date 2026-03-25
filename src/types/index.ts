@@ -53,6 +53,7 @@ export interface SourceAttribution {
   category: 'primary' | 'supporting' | 'additional';
   title?: string;
   url?: string;
+  source_parent?: string;
   relevance_score?: number;
   excerpt?: string;
   table_name?: string;

@@ -19,7 +19,7 @@ export const ChatInputArea: React.FC<ChatInputAreaProps> = ({
   preloadedQuestions,
 }) => {
   return (
-    <div className="flex-shrink-0 border-t border-k-border px-4 py-4 bg-k-nav">
+    <div className="flex-shrink-0 border-b border-k-border px-4 py-4 bg-k-nav">
       <div className="max-w-5xl mx-auto">
         <SearchBar
           onSearch={onSubmit}

@@ -372,7 +372,7 @@ export const ChatPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-k-bg flex flex-col">
+    <div className="h-screen bg-k-bg flex flex-col">
       <ChatHeader
         firstName={firstName}
         theme={theme}
@@ -403,6 +403,15 @@ export const ChatPage = () => {
         )}
 
         <main className="flex-1 flex flex-col overflow-hidden">
+          {/* Sticky input area */}
+          <ChatInputArea
+            onSubmit={handleSearch}
+            disabled={isSearching}
+            mode={searchMode}
+            onModeChange={setSearchMode}
+            preloadedQuestions={PRELOADED_QUESTIONS}
+          />
+
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto">
             <div className="max-w-5xl mx-auto px-4 py-8">
@@ -470,7 +479,6 @@ export const ChatPage = () => {
               {/* In-flight ThinkingState or Streaming Answer */}
               {isSearching && (
                 <div className="mb-12">
-                  <h2 className="text-base font-semibold text-k-text mb-4">{pendingQuery}</h2>
                   {pendingAnswerTokens ? (
                     // Show streaming answer with sources once tokens start arriving
                     <div className="border border-k-border rounded-2xl bg-k-card p-6 animate-fade-in">
@@ -504,15 +512,6 @@ export const ChatPage = () => {
               <div ref={bottomRef} />
             </div>
           </div>
-
-          {/* Sticky input area */}
-          <ChatInputArea
-            onSubmit={handleSearch}
-            disabled={isSearching}
-            mode={searchMode}
-            onModeChange={setSearchMode}
-            preloadedQuestions={PRELOADED_QUESTIONS}
-          />
 
           {/* Copyright footer */}
           <div className="py-1 px-4 text-right">

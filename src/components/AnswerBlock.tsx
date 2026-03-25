@@ -17,6 +17,10 @@ function unwrapFencedTables(text: string): string {
   return text.replace(/```[^\n]*\n((?:\|[^\n]+\n)+)```/g, '$1');
 }
 
+function stripSourcesBlock(text: string): string {
+  return text.replace(/<sources>[\s\S]*?<\/sources>/g, '').trimEnd();
+}
+
 function MarkdownAnswer({ text }: { text: string }) {
   return (
     <div className="prose prose-sm prose-invert max-w-none
@@ -30,7 +34,7 @@ function MarkdownAnswer({ text }: { text: string }) {
       prose-blockquote:border-l-k-border prose-blockquote:text-k-muted
       prose-table:text-sm prose-th:text-k-muted prose-td:text-k-text">
       <ReactMarkdown remarkPlugins={[remarkGfm]}>
-        {unwrapFencedTables(text)}
+        {stripSourcesBlock(unwrapFencedTables(text))}
       </ReactMarkdown>
     </div>
   );
@@ -60,7 +64,7 @@ export default function AnswerBlock({
 
   const seenKeys = new Set<string>();
   const uniqueSources = sources.map(src => ({
-    linkUrl: src.url ?? null,
+    linkUrl: src.source_parent ?? src.url ?? null,
     linkText: src.title ?? src.table_name ?? (src.source_type === 'structured' ? 'Government database' : 'Document'),
     excerpt: src.excerpt,
     category: src.category,
