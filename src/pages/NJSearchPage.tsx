@@ -1,368 +1,457 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { SearchBar } from '../components/SearchBar';
-import { ResultPanel } from '../components/ResultPanel';
-import { FrontierAPISelector } from '../components/FrontierAPISelector';
+import SuggestionCards from '../components/SuggestionCards';
+import ThinkingState from '../components/ThinkingState';
+import AnswerBlock from '../components/AnswerBlock';
 import { intelligentStreamSearch, backendApi, StreamEvent } from '../services/backendApi';
 import { synthesizeAnswer } from '../services/anthropicApi';
 import { frontierApi } from '../services/frontierApi';
-import { SearchResponse, StreamUnstructuredEvent, StreamStructuredEvent, StreamErrorEvent } from '../types';
+import {
+  StreamSource,
+  StreamUnstructuredEvent,
+  StreamErrorEvent,
+} from '../types';
 
 import njQuestions from '../../assets/njopendata_questions_preloaded.txt?raw';
 
 const PRELOADED_QUESTIONS = njQuestions.split('\n---\n').filter(q => q.trim());
+const SUGGESTION_CARDS = PRELOADED_QUESTIONS.slice(0, 4);
+const NO_ANSWER_PHRASE = 'does not contain the answer';
 
-const NJ_SOURCES = [
-  { name: 'Department of Transportation', documents: '8.5M' },
-  { name: 'Department of Health', documents: '7.2M' },
-  { name: 'Department of Education', documents: '6.8M' },
-  { name: 'Department of Human Services', documents: '5.3M' },
-  { name: 'Department of Environmental Protection', documents: '4.9M' },
-  { name: 'Department of the Treasury', documents: '4.1M' },
-  { name: 'Attorney General / Law & Public Safety', documents: '3.7M' },
-  { name: 'Department of Labor & Workforce Development', documents: '3.2M' },
-  { name: 'Motor Vehicle Commission', documents: '2.9M' },
-  { name: 'Department of Corrections', documents: '2.4M' },
-  { name: 'Department of Children & Families', documents: '1.8M' },
-  { name: 'Department of Community Affairs', documents: '1.5M' },
-  { name: 'Board of Public Utilities', documents: '1.2M' },
-  { name: 'Department of Banking and Insurance', documents: '980K' },
-  { name: 'Economic Development Authority', documents: '850K' },
-  { name: 'State Police', documents: '720K' },
-  { name: 'Department of Veterans Affairs', documents: '580K' },
-  { name: 'Civil Service Commission', documents: '450K' },
-  { name: 'Department of Agriculture', documents: '320K' },
-  { name: 'Casino Control Commission', documents: '280K' },
-  { name: 'Department of State', documents: '220K' },
-  { name: 'Department of Military Affairs', documents: '180K' },
-  { name: 'Office of the Governor', documents: '130K' },
-];
+const FRONTIER_MODEL_NAMES: Record<string, string> = {
+  gpt4o: 'GPT-4o',
+  gpt4omini: 'GPT-4o mini',
+  gemini2flash: 'Gemini 2.0 Flash',
+  gemini15pro: 'Gemini 1.5 Pro',
+  claude: 'Claude 3.5 Sonnet',
+  claude3haiku: 'Claude 3 Haiku',
+  llama70b: 'Llama 3.1 70B',
+};
+
+function getFirstNameFromJWT(): string | null {
+  try {
+    const match = document.cookie.match(/(?:^|;\s*)CF_Authorization=([^;]+)/);
+    if (!match) return null;
+    const token = match[1];
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const name: string = payload.name || payload.given_name || payload.email || '';
+    return name.split(/[\s@]/)[0] || null;
+  } catch {
+    return null;
+  }
+}
+
+interface FrontierState {
+  model: string;
+  loading: boolean;
+  answer: string | null;
+  latency: number | null;
+  error: string | null;
+}
+
+interface ConversationEntry {
+  question: string;
+  answer: string | null;
+  sources: StreamSource[];
+  latency: number | null;
+  error: string | null;
+  frontier: FrontierState | null;
+  logId: number;
+}
 
 export const NJSearchPage = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [comparisonOpen, setComparisonOpen] = useState(false);
-  const [selectedFrontierAPI, setSelectedFrontierAPI] = useState<string>('claude');
+  const firstName = getFirstNameFromJWT();
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [profileOpen, setProfileOpen] = useState(false);
 
-  // Streaming result state
-  const [unstructuredResult, setUnstructuredResult] = useState<StreamUnstructuredEvent | null>(null);
-  const [_structuredResult, setStructuredResult] = useState<StreamStructuredEvent | null>(null);
-  const [streamErrors, setStreamErrors] = useState<StreamErrorEvent[]>([]);
-  const [backendError, setBackendError] = useState<string | null>(null);
-  const [backendLoading, setBackendLoading] = useState(false);
+  // Conversation history
+  const [conversations, setConversations] = useState<ConversationEntry[]>([]);
+  const [hasStarted, setHasStarted] = useState(false);
 
-  // Frontier state
-  const [frontierResult, setFrontierResult] = useState<SearchResponse | null>(null);
-  const [frontierError, setFrontierError] = useState<string | null>(null);
-  const [frontierLoading, setFrontierLoading] = useState(false);
-  const [frontierRating, setFrontierRating] = useState<number | null>(null);
-  const [frontierLatency, setFrontierLatency] = useState<number | null>(null);
-
-  const [progressDone, setProgressDone] = useState(true);
-  const [backendRating, setBackendRating] = useState<number | null>(null);
-  const [backendLatency, setBackendLatency] = useState<number | null>(null);
-
-  const [searchLogId, setSearchLogId] = useState<number>(-1);
-
-  // Streaming events and synthesis
-  const [streamingEvents, setStreamingEvents] = useState<StreamEvent[]>([]);
-  const [currentStage, setCurrentStage] = useState<string | null>(null);
+  // ── In-flight search state ────────────────────────────────────────────────
+  const [pendingQuery, setPendingQuery] = useState<string | null>(null);
+  const [pendingEvents, setPendingEvents] = useState<StreamEvent[]>([]);
+  const [pendingAnswer, setPendingAnswer] = useState<string | null>(null);
+  const [pendingSources, setPendingSources] = useState<StreamSource[]>([]);
+  const [pendingLatency, setPendingLatency] = useState<number | null>(null);
+  const [pendingError, setPendingError] = useState<string | null>(null);
   const [synthesizingAnswer, setSynthesizingAnswer] = useState(false);
-  const [synthesizedAnswer, setSynthesizedAnswer] = useState<string>('');
-  const [lastQuery, setLastQuery] = useState<string>('');
+  const [animDone, setAnimDone] = useState(false);
 
-  const handleSearch = async (query: string) => {
-    // Reset all state
-    setUnstructuredResult(null);
-    setStructuredResult(null);
-    setStreamErrors([]);
-    setBackendError(null);
-    setFrontierResult(null);
-    setFrontierError(null);
-    setBackendLatency(null);
-    setFrontierLatency(null);
-    setBackendRating(null);
-    setFrontierRating(null);
-    setStreamingEvents([]);
-    setCurrentStage(null);
-    setSynthesizingAnswer(false);
-    setSynthesizedAnswer('');
-    setLastQuery(query);
+  // Derived: stream has sent the 'done' event
+  const streamDone = pendingEvents.some(e => e.stage === 'done');
 
-    setProgressDone(false);
-    setBackendLoading(true);
-    if (comparisonOpen) setFrontierLoading(true);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const pendingLogIdRef = useRef<number>(-1);
 
-    // Run frontier request in parallel (fire-and-forget until done)
-    const frontierStartTime = Date.now();
-    const frontierRequest = comparisonOpen ? (async () => {
-      const result = await frontierApi.search(selectedFrontierAPI, query);
-      const latency = (Date.now() - frontierStartTime) / 1000;
-      return { result, latency };
-    })() : null;
-
-    // Streaming backend request
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 120_000);
-
-    try {
-      await intelligentStreamSearch(query, {
-        onEvent: (event: StreamEvent) => {
-          setStreamingEvents(prev => [...prev, event]);
-          setCurrentStage(event.stage === 'done' ? null : event.stage);
-        },
-        onUnstructured: (event) => {
-          setUnstructuredResult(event);
-          setBackendLoading(false);
-        },
-        onStructured: (event) => {
-          setStructuredResult(event);
-        },
-        onError: (event) => {
-          setStreamErrors(prev => [...prev, event]);
-          // If unstructured failed and we haven't shown any result yet, clear loading
-          if (event.source === 'unstructured') {
-            setBackendLoading(false);
-          }
-        },
-        onDone: (event) => {
-          setBackendLatency(event.total_elapsed_ms / 1000);
-          setProgressDone(true);
-          setBackendLoading(false);
-        },
-      }, controller.signal);
-    } catch (err: any) {
-      if (err.name !== 'AbortError') {
-        setBackendError(err.message || 'Network error');
-      }
-      setBackendLoading(false);
-      setProgressDone(true);
-    } finally {
-      clearTimeout(timeout);
-    }
-
-    // Resolve frontier
-    if (frontierRequest) {
-      try {
-        const { result, latency } = await frontierRequest;
-        setFrontierResult(result);
-        setFrontierLatency(latency);
-      } catch (err: any) {
-        setFrontierError(err.message || 'Failed to search frontier API');
-      }
-      setFrontierLoading(false);
-    }
-
-    // Log search event (fire-and-forget)
-    try {
-      const logPayload = {
-        question: query,
-        kurious_answer: unstructuredResult?.answer ?? undefined,
-        kurious_latency_ms: backendLatency != null ? Math.round(backendLatency * 1000) : undefined,
-      };
-      const { id: logId } = await backendApi.createSearchLog(logPayload);
-      setSearchLogId(logId);
-    } catch (err) {
-      // Silently fail logging
-    }
-  };
-
-  const NO_ANSWER_PHRASE = 'does not contain the answer';
-
-  // Only synthesize when the unstructured answer has no useful content
+  // Theme
   useEffect(() => {
-    if (!progressDone || streamingEvents.length === 0 || synthesizedAnswer || !lastQuery) return;
-    const unstructuredIsUseful = unstructuredResult != null &&
-      !unstructuredResult.answer.toLowerCase().includes(NO_ANSWER_PHRASE);
-    if (unstructuredIsUseful) return;
+    document.documentElement.classList.toggle('light', theme === 'light');
+  }, [theme]);
+
+  // Scroll to bottom
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [conversations.length, pendingQuery, pendingAnswer, animDone]);
+
+  // Answer resolution: once stream done, determine answer
+  useEffect(() => {
+    if (!streamDone || pendingAnswer || pendingError || synthesizingAnswer) return;
+    if (!pendingQuery) return;
+
+    const unstructuredEvt = pendingEvents.find(
+      e => e.stage === 'unstructured'
+    ) as StreamUnstructuredEvent | undefined;
+
+    const unstructuredIsUseful =
+      !!unstructuredEvt &&
+      !unstructuredEvt.answer.toLowerCase().includes(NO_ANSWER_PHRASE);
+
+    // Sources come from the unstructured event regardless of which answer path is taken
+    if (unstructuredEvt) {
+      setPendingSources(unstructuredEvt.sources as StreamSource[]);
+    }
+
+    if (unstructuredIsUseful) {
+      setPendingAnswer(unstructuredEvt!.answer);
+      return;
+    }
 
     const synthesize = async () => {
       setSynthesizingAnswer(true);
       try {
-        const answer = await synthesizeAnswer(lastQuery, streamingEvents);
-        setSynthesizedAnswer(answer);
-      } catch (err) {
-        console.error('Failed to synthesize answer:', err);
+        const answer = await synthesizeAnswer(pendingQuery!, pendingEvents);
+        setPendingAnswer(answer);
+      } catch {
+        setPendingError('Failed to synthesize answer');
       } finally {
         setSynthesizingAnswer(false);
       }
     };
     synthesize();
-  }, [progressDone, streamingEvents.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [streamDone, pendingEvents.length]);
 
-  // Single resolved answer: prefer good unstructured answer, fall back to synthesis
-  const unstructuredIsUseful = unstructuredResult != null &&
-    !unstructuredResult.answer.toLowerCase().includes(NO_ANSWER_PHRASE);
+  // Commit: when animation done AND answer ready → add to conversation list
+  useEffect(() => {
+    if (!animDone || !pendingQuery) return;
+    if (synthesizingAnswer) return;
+    if (!pendingAnswer && !pendingError) return;
 
-  const backendResult: SearchResponse | null = unstructuredIsUseful
-    ? { answer: unstructuredResult!.answer }
-    : synthesizedAnswer
-      ? { answer: synthesizedAnswer }
-      : null;
+    const entry: ConversationEntry = {
+      question: pendingQuery,
+      answer: pendingAnswer,
+      sources: pendingSources,
+      latency: pendingLatency,
+      error: pendingError,
+      frontier: null,
+      logId: pendingLogIdRef.current,
+    };
+
+    setConversations(prev => [...prev, entry]);
+    setPendingQuery(null);
+    setPendingEvents([]);
+    setPendingAnswer(null);
+    setPendingSources([]);
+    setPendingLatency(null);
+    setPendingError(null);
+    setAnimDone(false);
+    setSynthesizingAnswer(false);
+  }, [animDone, pendingQuery, pendingAnswer, pendingError, synthesizingAnswer]);
+
+  const handleThinkingComplete = useCallback(() => {
+    setAnimDone(true);
+  }, []);
+
+  // Search
+  const handleSearch = async (query: string) => {
+    setHasStarted(true);
+    setPendingQuery(query);
+    setPendingEvents([]);
+    setPendingAnswer(null);
+    setPendingSources([]);
+    setPendingLatency(null);
+    setPendingError(null);
+    setAnimDone(false);
+    setSynthesizingAnswer(false);
+    pendingLogIdRef.current = -1;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 120_000);
+
+    try {
+      await intelligentStreamSearch(
+        query,
+        {
+          onEvent: (event: StreamEvent) => {
+            setPendingEvents(prev => [...prev, event]);
+          },
+          onUnstructured: () => {},
+          onStructured: () => {},
+          onError: (_event: StreamErrorEvent) => {},
+          onDone: event => {
+            setPendingLatency(event.total_elapsed_ms / 1000);
+          },
+        },
+        controller.signal
+      );
+    } catch (err: any) {
+      if (err.name !== 'AbortError') {
+        setPendingError(err.message || 'Network error');
+        setPendingEvents(prev => [
+          ...prev,
+          { stage: 'done', total_elapsed_ms: 0 } as StreamEvent,
+        ]);
+      }
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    try {
+      const { id } = await backendApi.createSearchLog({ question: query });
+      pendingLogIdRef.current = id;
+    } catch {
+      // silent
+    }
+  };
+
+  // Ask another AI for a specific conversation entry
+  const handleAskAnotherAI = async (entryIdx: number, modelValue: string) => {
+    const entry = conversations[entryIdx];
+    if (!entry) return;
+
+    // Set frontier loading state on this entry
+    setConversations(prev =>
+      prev.map((c, i) =>
+        i === entryIdx
+          ? { ...c, frontier: { model: modelValue, loading: true, answer: null, latency: null, error: null } }
+          : c
+      )
+    );
+
+    const startTime = Date.now();
+    try {
+      const result = await frontierApi.search(modelValue, entry.question);
+      const latency = (Date.now() - startTime) / 1000;
+      setConversations(prev =>
+        prev.map((c, i) =>
+          i === entryIdx
+            ? { ...c, frontier: { model: modelValue, loading: false, answer: result.answer, latency, error: null } }
+            : c
+        )
+      );
+    } catch (err: any) {
+      setConversations(prev =>
+        prev.map((c, i) =>
+          i === entryIdx
+            ? { ...c, frontier: { model: modelValue, loading: false, answer: null, latency: null, error: err.message || 'Failed' } }
+            : c
+        )
+      );
+    }
+  };
+
+  const handleCloseFrontier = (entryIdx: number) => {
+    setConversations(prev =>
+      prev.map((c, i) => i === entryIdx ? { ...c, frontier: null } : c)
+    );
+  };
+
+  const isSearching = pendingQuery !== null;
 
   return (
-    <div className="min-h-screen bg-gray-900 flex">
-      {/* Left Sidebar - NJ Data Sources */}
-      <div
-        className="flex-shrink-0 border-r border-gray-700 flex flex-col transition-all duration-200 overflow-hidden"
-        style={{ background: '#111827', width: sidebarOpen ? '16rem' : '2.25rem' }}
-      >
-        {sidebarOpen ? (
-          <>
-            <div className="px-4 py-4 border-b border-gray-700 flex items-start justify-between flex-shrink-0">
-              <div>
-                <div className="text-xl font-bold text-white">NJ Open Data</div>
-                <div className="text-sm text-gray-400">23 agencies · 57M documents</div>
-              </div>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className="text-gray-400 hover:text-white transition-colors mt-1 ml-2 flex-shrink-0 text-lg leading-none"
-                title="Collapse"
-              >
-                ‹
-              </button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-3">
-              <div className="text-xs text-gray-500 uppercase tracking-wide mb-2">Data Sources</div>
-              <div className="space-y-0.5">
-                {NJ_SOURCES.map(source => (
-                  <div key={source.name} className="flex items-center gap-2 py-1.5 px-2">
-                    <span className="text-xs text-gray-300 flex-1 leading-tight">{source.name}</span>
-                    <span className="text-xs text-gray-500 flex-shrink-0">{source.documents}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="flex-1 flex items-center justify-center">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="text-gray-400 hover:text-white transition-colors text-lg leading-none"
-              title="Expand data sources"
-            >
-              ›
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        {/* Header */}
-        <div className="bg-gray-800 border-b border-gray-700 px-6 py-4 flex-shrink-0">
-          <h1 className="text-xl font-bold text-white">AIntropy Kurious Engine</h1>
-          <p className="text-sm text-gray-400">New Jersey Open Data — 57M documents across 23 agencies</p>
+    <div className="min-h-screen bg-k-bg flex flex-col">
+      {/* Nav */}
+      <header className="sticky top-0 z-30 bg-k-nav border-b border-k-border flex items-center px-6 h-14 gap-4">
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <img src="/logo.png" alt="AIntropy" className="h-7 w-auto" />
+          <span className="text-xs font-semibold text-k-cyan border border-k-cyan/50 rounded-full px-2 py-0.5 leading-none">beta</span>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-6">
-          {/* Search bar — centered */}
-          <div className="max-w-4xl mx-auto mb-6">
-            <div className="mb-6">
+        <span className="flex-1 text-center text-sm text-k-muted hidden sm:block">
+          New Jersey Open Data — 57M documents across 23 agencies
+        </span>
+
+        <div className="flex items-center gap-3 ml-auto flex-shrink-0">
+          <div className="relative">
+            <button
+              onClick={() => setProfileOpen(v => !v)}
+              className="w-8 h-8 rounded-full bg-k-card border border-k-border flex items-center justify-center text-k-muted hover:text-k-text transition-colors text-sm font-medium"
+            >
+              {firstName ? firstName[0].toUpperCase() : '?'}
+            </button>
+            {profileOpen && (
+              <div className="absolute right-0 top-full mt-2 w-48 bg-k-card border border-k-border rounded-xl shadow-xl py-1 animate-fade-in z-50">
+                {firstName && (
+                  <div className="px-4 py-2 border-b border-k-border">
+                    <p className="text-sm font-medium text-k-text">{firstName}</p>
+                  </div>
+                )}
+                <button
+                  onClick={() => { setTheme(t => t === 'dark' ? 'light' : 'dark'); setProfileOpen(false); }}
+                  className="w-full text-left px-4 py-2 text-sm text-k-muted hover:text-k-text hover:bg-k-border/20 transition-colors"
+                >
+                  {theme === 'dark' ? '☀️ Light mode' : '🌙 Dark mode'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* Sticky search bar — shown after first search, below nav */}
+      {hasStarted && (
+        <div className="sticky top-14 z-20 bg-k-nav border-b border-k-border px-4 py-3">
+          <div className="max-w-5xl mx-auto">
+            <SearchBar
+              onSearch={handleSearch}
+              disabled={isSearching}
+              preloadedQuestions={PRELOADED_QUESTIONS}
+              compact
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Main scrollable area */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="max-w-5xl mx-auto px-4 py-8">
+
+          {/* Welcome / idle screen */}
+          {!hasStarted && (
+            <div className="animate-fade-in">
+              <h1 className="text-3xl font-bold text-k-text mb-2">
+                {firstName ? `Welcome to Kurious, ${firstName}.` : 'Welcome to Kurious.'}
+              </h1>
+              <p className="text-k-muted mb-10 text-base leading-relaxed">
+                Your AI-powered knowledge engine — what do you want to explore?
+              </p>
               <SearchBar
                 onSearch={handleSearch}
-                disabled={backendLoading || frontierLoading}
+                disabled={isSearching}
                 preloadedQuestions={PRELOADED_QUESTIONS}
               />
-            </div>
-          </div>
-
-          {/* Result row */}
-          <div className="flex items-stretch">
-            <div className="flex-1" />
-
-            <div className="w-full flex items-stretch" style={{ maxWidth: '56rem' }}>
-              {/* Kurious panel */}
-              <div className="flex-1 min-w-0">
-                <ResultPanel
-                  title="Kurious"
-                  titleNote="Intelligent Search"
-                  result={backendResult}
-                  loading={backendLoading}
-                  error={backendError}
-                  latency={backendLatency}
-                  rating={backendRating}
-                  onRate={(rating, feedbackText) => {
-                    setBackendRating(rating);
-                    backendApi.submitFeedback(searchLogId, {
-                      kurious_rating: rating,
-                      kurious_feedback_text: feedbackText,
-                    });
-                  }}
-                  realSources={unstructuredResult?.sources}
-                  streamErrors={streamErrors}
-                  synthesizingAnswer={synthesizingAnswer}
-                  streamingEvents={streamingEvents}
-                  currentStage={currentStage}
+              <div className="mt-8">
+                <SuggestionCards
+                  suggestions={SUGGESTION_CARDS}
+                  onSelect={s => handleSearch(s)}
                 />
               </div>
+            </div>
+          )}
 
-              {/* Right panel: Frontier comparison */}
-              {comparisonOpen && (
-                <div className="flex-1 min-w-0 border-l border-gray-700">
-                  {frontierLoading ? (
-                    <div className="bg-gray-800 shadow-lg p-6 h-full min-h-[300px] flex flex-col border-2 border-gray-700">
-                      <div className="flex items-center gap-2 mb-5 border-b-2 border-gray-700 pb-3">
-                        <h2 className="text-xl font-semibold text-white">
-                          <FrontierAPISelector
-                            selectedAPI={selectedFrontierAPI}
-                            onAPIChange={setSelectedFrontierAPI}
-                          />
-                        </h2>
+          {/* Committed conversations */}
+          {conversations.map((entry, idx) => {
+            const hasFrontier = entry.frontier !== null;
+            return (
+              <div key={idx} className={`mb-12 ${hasFrontier ? 'max-w-none' : ''}`}>
+                <h2 className="text-base font-semibold text-k-text mb-4">{entry.question}</h2>
+
+                <div className={hasFrontier ? 'grid grid-cols-2 gap-4 items-stretch' : ''}>
+                  {/* Kurious answer */}
+                  <div className={hasFrontier ? 'flex flex-col' : ''}>
+                    {hasFrontier && (
+                      <p className="text-xs text-k-muted uppercase tracking-widest mb-2 font-medium">Kurious</p>
+                    )}
+                    {entry.error ? (
+                      <div className="border border-k-error/40 rounded-xl bg-k-card p-4 text-sm text-k-error">
+                        {entry.error}
                       </div>
-                      <div className="flex-1 flex items-center justify-center">
-                        <div className="flex flex-col items-center gap-4">
-                          <div className="animate-spin h-12 w-12 border-b-2 border-blue-500"></div>
-                          <p className="text-sm text-gray-400">Generating with {selectedFrontierAPI}…</p>
+                    ) : entry.answer ? (
+                      <AnswerBlock
+                        answer={entry.answer}
+                        sources={entry.sources}
+                        latency={entry.latency}
+                        onAskAnotherAI={model => handleAskAnotherAI(idx, model)}
+                        hideAskButton={hasFrontier}
+                        onFeedback={(rating, text) =>
+                          backendApi.submitFeedback(entry.logId, {
+                            kurious_rating: rating,
+                            kurious_feedback_text: text,
+                          })
+                        }
+                      />
+                    ) : null}
+                  </div>
+
+                  {/* Frontier comparison */}
+                  {hasFrontier && entry.frontier && (
+                    <div className="flex flex-col">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs text-k-muted uppercase tracking-widest font-medium">
+                          {FRONTIER_MODEL_NAMES[entry.frontier.model] ?? entry.frontier.model}
+                        </p>
+                        <button
+                          onClick={() => handleCloseFrontier(idx)}
+                          className="text-k-muted hover:text-k-text transition-colors text-sm leading-none"
+                          title="Close comparison"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      {entry.frontier.loading ? (
+                        <div className="border border-k-border rounded-2xl bg-k-card p-6 flex-1 flex items-center gap-2.5 text-sm text-k-muted">
+                          <div className="w-3.5 h-3.5 border-2 border-k-muted border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                          Generating…
                         </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <ResultPanel
-                      title=""
-                      result={frontierResult}
-                      loading={frontierLoading}
-                      error={frontierError}
-                      latency={frontierLatency}
-                      rating={frontierRating}
-                      onRate={(rating, feedbackText) => {
-                        setFrontierRating(rating);
-                        backendApi.submitFeedback(searchLogId, {
-                          frontier_rating: rating,
-                          frontier_feedback_text: feedbackText,
-                        });
-                      }}
-                      headerSlot={
-                        <FrontierAPISelector
-                          selectedAPI={selectedFrontierAPI}
-                          onAPIChange={setSelectedFrontierAPI}
+                      ) : entry.frontier.error ? (
+                        <div className="border border-k-error/40 rounded-xl bg-k-card p-4 text-sm text-k-error">
+                          {entry.frontier.error}
+                        </div>
+                      ) : entry.frontier.answer ? (
+                        <AnswerBlock
+                          answer={entry.frontier.answer}
+                          latency={entry.frontier.latency}
+                          hideAskButton
                         />
-                      }
-                      showPipelineProgress={false}
-                    />
+                      ) : null}
+                    </div>
                   )}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Suggestion cards after last answer — filtered to unasked questions */}
+          {hasStarted && !isSearching && conversations.length > 0 && (() => {
+            const askedSet = new Set(conversations.map(c => c.question));
+            const remaining = SUGGESTION_CARDS.filter(s => !askedSet.has(s));
+            return remaining.length > 0 ? (
+              <div className="mb-8 animate-fade-in">
+                <SuggestionCards
+                  suggestions={remaining}
+                  onSelect={s => handleSearch(s)}
+                />
+              </div>
+            ) : null;
+          })()}
+
+          {/* In-flight ThinkingState */}
+          {isSearching && (
+            <div className="mb-12">
+              <h2 className="text-base font-semibold text-k-text mb-4">{pendingQuery}</h2>
+
+              {!animDone && (
+                <ThinkingState
+                  mode="quick"
+                  isDone={streamDone}
+                  onComplete={handleThinkingComplete}
+                />
+              )}
+
+              {animDone && synthesizingAnswer && (
+                <div className="flex items-center gap-2.5 text-sm text-k-muted animate-fade-in">
+                  <div className="w-3.5 h-3.5 border-2 border-k-muted border-t-transparent rounded-full animate-spin flex-shrink-0" />
+                  Synthesizing answer…
                 </div>
               )}
             </div>
+          )}
 
-            <div className="flex-1 flex items-stretch">
-              <div
-                className="flex-shrink-0 border-l border-gray-700 flex flex-col"
-                style={{ width: '2.25rem', background: '#111827' }}
-              >
-                <div className="flex-1 flex items-center justify-center">
-                  <button
-                    onClick={() => setComparisonOpen(v => !v)}
-                    className="text-gray-400 hover:text-white transition-colors text-lg leading-none"
-                    title={comparisonOpen ? 'Collapse comparison' : 'Compare with LLM'}
-                  >
-                    {comparisonOpen ? '‹' : '›'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div ref={bottomRef} />
         </div>
-      </div>
+      </main>
     </div>
   );
 };
