@@ -4,7 +4,8 @@ import {
   ConversationResponse, ListConversationsResponse, GetMessagesResponse,
   IntelligentQueryRequest, IntelligentSearchResponse,
   NewStreamEvent, SSEEventSearching, SSEEventToolCall, SSEEventToolResult,
-  SSEEventAnswer, SSEEventThinking, SSEEventDone, SSEEventError, SearchMode,
+  SSEEventAnswer, SSEEventAnswerStart, SSEEventAnswerToken, SSEEventAnswerEnd,
+  SSEEventThinking, SSEEventDone, SSEEventError, SearchMode,
 } from '../types';
 
 const API_KEY = import.meta.env.VITE_BACKEND_API_KEY || '';
@@ -249,7 +250,10 @@ export interface ChatStreamCallbacks {
   onToolCall?: (event: SSEEventToolCall) => void;
   onToolResult?: (event: SSEEventToolResult) => void;
   onThinking?: (event: SSEEventThinking) => void;
-  onAnswer: (event: SSEEventAnswer) => void;
+  onAnswer?: (event: SSEEventAnswer) => void;
+  onAnswerStart?: (event: SSEEventAnswerStart) => void;
+  onAnswerToken?: (event: SSEEventAnswerToken) => void;
+  onAnswerEnd?: (event: SSEEventAnswerEnd) => void;
   onDone: (event: SSEEventDone) => void;
   onError?: (event: SSEEventError) => void;
   onEvent?: (event: NewStreamEvent) => void;
@@ -302,13 +306,16 @@ export async function chatStreamSearch(
           const event = JSON.parse(json) as NewStreamEvent;
           callbacks.onEvent?.(event);
           switch (event.stage) {
-            case 'searching':   callbacks.onSearching?.(event); break;
-            case 'tool_call':   callbacks.onToolCall?.(event); break;
-            case 'tool_result': callbacks.onToolResult?.(event); break;
-            case 'thinking':    callbacks.onThinking?.(event); break;
-            case 'answer':      callbacks.onAnswer(event); break;
-            case 'done':        callbacks.onDone(event); break;
-            case 'error':       callbacks.onError?.(event); break;
+            case 'searching':    callbacks.onSearching?.(event); break;
+            case 'tool_call':    callbacks.onToolCall?.(event); break;
+            case 'tool_result':  callbacks.onToolResult?.(event); break;
+            case 'thinking':     callbacks.onThinking?.(event); break;
+            case 'answer':       callbacks.onAnswer?.(event); break;
+            case 'answer_start': callbacks.onAnswerStart?.(event); break;
+            case 'answer_token': callbacks.onAnswerToken?.(event); break;
+            case 'answer_end':   callbacks.onAnswerEnd?.(event); break;
+            case 'done':         callbacks.onDone(event); break;
+            case 'error':        callbacks.onError?.(event); break;
           }
         } catch {
           // Ignore malformed events
@@ -327,13 +334,16 @@ export async function chatStreamSearch(
         const event = JSON.parse(json) as NewStreamEvent;
         callbacks.onEvent?.(event);
         switch (event.stage) {
-          case 'searching':   callbacks.onSearching?.(event); break;
-          case 'tool_call':   callbacks.onToolCall?.(event); break;
-          case 'tool_result': callbacks.onToolResult?.(event); break;
-          case 'thinking':    callbacks.onThinking?.(event); break;
-          case 'answer':      callbacks.onAnswer(event); break;
-          case 'done':        callbacks.onDone(event); break;
-          case 'error':       callbacks.onError?.(event); break;
+          case 'searching':    callbacks.onSearching?.(event); break;
+          case 'tool_call':    callbacks.onToolCall?.(event); break;
+          case 'tool_result':  callbacks.onToolResult?.(event); break;
+          case 'thinking':     callbacks.onThinking?.(event); break;
+          case 'answer':       callbacks.onAnswer?.(event); break;
+          case 'answer_start': callbacks.onAnswerStart?.(event); break;
+          case 'answer_token': callbacks.onAnswerToken?.(event); break;
+          case 'answer_end':   callbacks.onAnswerEnd?.(event); break;
+          case 'done':         callbacks.onDone(event); break;
+          case 'error':        callbacks.onError?.(event); break;
         }
       } catch {
         // ignore

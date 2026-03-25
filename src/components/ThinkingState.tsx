@@ -171,13 +171,17 @@ function buildLiveSteps(events: NewStreamEvent[]): LiveStep[] {
           s.status = 'done';
         }
       }
-    } else if (e.stage === 'answer') {
+    } else if (e.stage === 'answer' || e.stage === 'answer_start') {
+      ordered.forEach(s => { if (s.status === 'active') s.status = 'done'; });
+    } else if (e.stage === 'answer_token' || e.stage === 'answer_end') {
+      // Token streaming or end - these are handled as the answer streams in
+      // Mark any remaining active steps as done
       ordered.forEach(s => { if (s.status === 'active') s.status = 'done'; });
     }
   }
 
   // If all steps are resolved but no answer yet, add a live "generating" step
-  const hasAnswer = events.some(e => e.stage === 'answer');
+  const hasAnswer = events.some(e => e.stage === 'answer' || e.stage === 'answer_start' || e.stage === 'answer_token' || e.stage === 'answer_end');
   const allDone = ordered.length > 0 && ordered.every(s => s.status !== 'active');
   if (allDone && !hasAnswer) {
     const gen: LiveStep = { id: 'generating', label: 'Generating answer', status: 'active' };

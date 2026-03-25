@@ -149,6 +149,20 @@ export interface SSEEventAnswer {
   iterations?: number;
 }
 
+export interface SSEEventAnswerStart {
+  stage: 'answer_start';
+}
+
+export interface SSEEventAnswerToken {
+  stage: 'answer_token';
+  token: string;
+}
+
+export interface SSEEventAnswerEnd {
+  stage: 'answer_end';
+  attributed_sources: SourceAttribution[];
+}
+
 export interface SSEEventThinking {
   stage: 'thinking';
   iteration: number;
@@ -169,6 +183,9 @@ export type NewStreamEvent =
   | SSEEventToolCall
   | SSEEventToolResult
   | SSEEventAnswer
+  | SSEEventAnswerStart
+  | SSEEventAnswerToken
+  | SSEEventAnswerEnd
   | SSEEventThinking
   | SSEEventDone
   | SSEEventError;
