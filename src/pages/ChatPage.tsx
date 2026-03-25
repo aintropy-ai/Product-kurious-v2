@@ -29,7 +29,12 @@ import {
 import njQuestions from '../../assets/njopendata_questions_preloaded.txt?raw';
 
 const PRELOADED_QUESTIONS = njQuestions.split('\n---\n').filter(q => q.trim());
-const SUGGESTION_CARDS = PRELOADED_QUESTIONS.slice(0, 4);
+const SUGGESTION_CARDS = [
+  "In the 2014 report, how many inmates participated in mandatory education programming, and what was their pass rate on the High School Equivalency (HSE) exam? How does this compare with the 2013 cohort's mandatory education group's - HSE pass rate?",
+  "Which authority had the lowest year-to-date revenue in the most recent fiscal year?",
+  "Which New Jersey townships have the most employees with terminal leave benefits?",
+  "Which use category had the highest total construction costs?",
+];
 
 function getFirstNameFromJWT(): string | null {
   try {
