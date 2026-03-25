@@ -36,12 +36,16 @@ const THINKING_PHRASES = [
 ];
 
 const GENERATING_PHRASES = [
-  'Reading through sources…',
-  'Connecting the dots…',
-  'Drafting a response…',
-  'Weighing the evidence…',
-  'Checking for gaps…',
-  'Structuring the answer…',
+  'Thinking…',
+  'Pondering…',
+  'Processing…',
+  'Analyzing…',
+  'Reflecting…',
+  'Synthesizing…',
+  'Composing…',
+  'Formulating…',
+  'Calculating…',
+  'Brewing…',
 ];
 
 function phrasesForStep(id: string): string[] {
@@ -54,7 +58,7 @@ function phrasesForStep(id: string): string[] {
 
 const ALMOST_THERE = 'Almost there…';
 
-function CyclingText({ stepId }: { stepId: string }) {
+function CyclingText({ stepId, primary = false }: { stepId: string; primary?: boolean }) {
   const phrases = phrasesForStep(stepId);
   const [idx, setIdx] = useState(0);
   const [visible, setVisible] = useState(true);
@@ -77,9 +81,20 @@ function CyclingText({ stepId }: { stepId: string }) {
         }
         setVisible(true);
       }, 300);
-    }, 2800);
+    }, primary ? 1200 : 2800);
     return () => clearInterval(iv);
   }, [stepId]);
+
+  if (primary) {
+    return (
+      <span
+        className="text-sm text-k-cyan transition-opacity duration-300"
+        style={{ opacity: visible ? 1 : 0 }}
+      >
+        {finished ? ALMOST_THERE : phrases[idx]}
+      </span>
+    );
+  }
 
   return (
     <span
@@ -180,10 +195,11 @@ function buildLiveSteps(events: NewStreamEvent[], isDone = false): LiveStep[] {
     }
   }
 
-  // If all steps are resolved but no answer yet, add a live "generating" step
-  const hasAnswer = events.some(e => e.stage === 'answer' || e.stage === 'answer_start' || e.stage === 'answer_token' || e.stage === 'answer_end');
+  // Show a generating step whenever all search steps are done but no tokens have arrived yet
+  // This covers both: (a) gap before answer_start, and (b) gap between answer_start and first token
+  const hasTokens = events.some(e => e.stage === 'answer_token' || e.stage === 'answer_end' || e.stage === 'answer');
   const allDone = ordered.length > 0 && ordered.every(s => s.status !== 'active');
-  if (allDone && !hasAnswer) {
+  if (allDone && !hasTokens) {
     const gen: LiveStep = { id: 'generating', label: 'Generating answer', status: isDone ? 'done' : 'active' };
     ordered.push(gen);
   }
@@ -267,14 +283,20 @@ export default function ThinkingState({ mode, isDone, onComplete, streamEvents =
                 {step.status === 'active' && <div className="w-3 h-3 border-2 border-k-cyan border-t-transparent rounded-full animate-spin" />}
               </div>
               <span className="flex items-baseline gap-0">
-                <span className={`text-sm transition-colors ${
-                  step.status === 'done'  ? 'text-k-text' :
-                  step.status === 'error' ? 'text-red-400' :
-                  'text-k-cyan'
-                }`}>
-                  {step.label}{step.status === 'active' ? '…' : ''}
-                </span>
-                {step.status === 'active' && <CyclingText stepId={step.id} />}
+                {step.id === 'generating' && step.status === 'active' ? (
+                  <CyclingText stepId={step.id} primary />
+                ) : (
+                  <>
+                    <span className={`text-sm transition-colors ${
+                      step.status === 'done'  ? 'text-k-text' :
+                      step.status === 'error' ? 'text-red-400' :
+                      'text-k-cyan'
+                    }`}>
+                      {step.label}{step.status === 'active' ? '…' : ''}
+                    </span>
+                    {step.status === 'active' && <CyclingText stepId={step.id} />}
+                  </>
+                )}
               </span>
             </div>
           ))

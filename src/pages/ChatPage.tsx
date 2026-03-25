@@ -87,10 +87,20 @@ export const ChatPage = () => {
     document.documentElement.classList.toggle('light', theme === 'light');
   }, [theme]);
 
-  // Scroll to bottom on new messages / pending state changes
+  // Scroll: when a new user message arrives, scroll to it (not the bottom)
+  // so the question stays visible. For all other state changes scroll to bottom.
+  const lastUserMsgId = messages.filter(m => m.role === 'user').at(-1)?.id;
+  const lastUserMsgRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages.length, pendingQuery, pendingAnswer, animDone]);
+  }, [pendingAnswer, animDone]);
+
+  useEffect(() => {
+    if (lastUserMsgRef.current) {
+      lastUserMsgRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [lastUserMsgId]);
 
   // Load sidebar conversations on mount
   useEffect(() => {
@@ -107,6 +117,11 @@ export const ChatPage = () => {
       setActiveConversationId(null);
       setHasStarted(false);
       setMessagesLoading(false);
+      return;
+    }
+    // If this conversation was just created by us, skip loading — we already have the messages in state
+    if (urlConversationId === pendingConvIdRef.current) {
+      setActiveConversationId(urlConversationId);
       return;
     }
     setActiveConversationId(urlConversationId);
@@ -414,7 +429,7 @@ export const ChatPage = () => {
 
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto">
-            <div className="max-w-5xl mx-auto px-4 py-8">
+            <div className="max-w-5xl mx-auto px-4 pt-4 pb-8">
 
               {/* Loading animation */}
               {messagesLoading && (
@@ -448,16 +463,18 @@ export const ChatPage = () => {
               {/* Committed messages */}
               {messages.map((msg) => {
                 if (msg.role === 'user') {
+                  const isLastUser = msg.id === lastUserMsgId;
                   return (
-                    <ChatMessageComponent
-                      key={msg.id}
-                      message={msg}
-                      showFrontierComparison={false}
-                      selectedFrontierAPI="claude"
-                      onAskAnotherAI={handleAskAnotherAI}
-                      onCloseFrontier={handleCloseFrontier}
-                      onFeedback={handleFeedback}
-                    />
+                    <div key={msg.id} ref={isLastUser ? lastUserMsgRef : undefined}>
+                      <ChatMessageComponent
+                        message={msg}
+                        showFrontierComparison={false}
+                        selectedFrontierAPI="claude"
+                        onAskAnotherAI={handleAskAnotherAI}
+                        onCloseFrontier={handleCloseFrontier}
+                        onFeedback={handleFeedback}
+                      />
+                    </div>
                   );
                 }
                 const hasFrontier = !!msg.frontierResult;

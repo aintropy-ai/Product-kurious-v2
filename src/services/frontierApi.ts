@@ -4,13 +4,17 @@ const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || '';
 const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 const callOpenRouter = async (model: string, query: string): Promise<SearchResponse> => {
+  console.log('[frontierApi] callOpenRouter', { model, hasKey: !!OPENROUTER_API_KEY });
+
   if (!OPENROUTER_API_KEY) {
+    console.error('[frontierApi] No API key found — check VITE_OPENROUTER_API_KEY');
     return {
       answer: 'OpenRouter API key not configured. Add VITE_OPENROUTER_API_KEY to your .env file.'
     };
   }
 
   try {
+    console.log('[frontierApi] sending request to OpenRouter');
     const response = await fetch(OPENROUTER_BASE_URL, {
       method: 'POST',
       headers: {
@@ -26,17 +30,21 @@ const callOpenRouter = async (model: string, query: string): Promise<SearchRespo
       })
     });
 
+    console.log('[frontierApi] response status:', response.status);
+
     if (!response.ok) {
       const error = await response.json();
+      console.error('[frontierApi] error response:', error);
       throw new Error(error.error?.message || `API request failed: ${response.status}`);
     }
 
     const data = await response.json();
+    console.log('[frontierApi] success, answer length:', data.choices?.[0]?.message?.content?.length);
     return {
       answer: data.choices[0]?.message?.content || 'No response from model'
     };
   } catch (error: any) {
-    console.error(`Error with ${model}:`, error);
+    console.error(`[frontierApi] Error with ${model}:`, error);
     throw new Error(error.message || 'Failed to get response from model');
   }
 };

@@ -37,7 +37,7 @@ export const ChatMessageComponent: React.FC<ChatMessageProps> = ({
   if (message.role === 'user') {
     return (
       <div className="flex justify-end mb-6 animate-fade-in">
-        <div className="max-w-2xl bg-k-card border border-k-border rounded-2xl px-5 py-3 text-k-text text-sm leading-relaxed">
+        <div className="max-w-2xl bg-k-cyan/10 border border-k-cyan/20 rounded-2xl px-5 py-3 text-k-text text-sm leading-relaxed">
           {message.content}
         </div>
       </div>
