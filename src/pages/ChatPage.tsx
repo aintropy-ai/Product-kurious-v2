@@ -5,6 +5,7 @@ import { ChatSidebar } from '../components/ChatSidebar';
 import { WelcomeScreen } from '../components/WelcomeScreen';
 import { ChatInputArea } from '../components/ChatInputArea';
 import { ChatMessageComponent } from '../components/ChatMessage';
+import AnswerBlock from '../components/AnswerBlock';
 import ThinkingState from '../components/ThinkingState';
 import {
   conversationApi,
@@ -18,7 +19,11 @@ import {
   SearchMode,
   NewStreamEvent,
   SSEEventAnswer,
+  SSEEventAnswerStart,
+  SSEEventAnswerToken,
+  SSEEventAnswerEnd,
   SSEEventDone,
+  SourceAttribution,
 } from '../types';
 
 import njQuestions from '../../assets/njopendata_questions_preloaded.txt?raw';
@@ -55,11 +60,14 @@ export const ChatPage = () => {
   // Chat messages for the active conversation
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [hasStarted, setHasStarted] = useState(false);
+  const [messagesLoading, setMessagesLoading] = useState(false);
 
   // In-flight state (mirrors NJSearchPage pattern)
   const [pendingQuery, setPendingQuery] = useState<string | null>(null);
   const [pendingEvents, setPendingEvents] = useState<NewStreamEvent[]>([]);
   const [pendingAnswer, setPendingAnswer] = useState<string | null>(null);
+  const [pendingAnswerTokens, setPendingAnswerTokens] = useState<string>('');
+  const [pendingAnswerSources, setPendingAnswerSources] = useState<SourceAttribution[] | null>(null);
   const [pendingLatency, setPendingLatency] = useState<number | null>(null);
   const [pendingError, setPendingError] = useState<string | null>(null);
   const [animDone, setAnimDone] = useState(false);
@@ -98,9 +106,11 @@ export const ChatPage = () => {
       setMessages([]);
       setActiveConversationId(null);
       setHasStarted(false);
+      setMessagesLoading(false);
       return;
     }
     setActiveConversationId(urlConversationId);
+    setMessagesLoading(true);
     conversationApi.getMessages(urlConversationId).then(({ messages: serverMsgs }) => {
       const hydrated: ChatMessage[] = serverMsgs
         .filter(m => m.role === 'user' || m.role === 'assistant')
@@ -114,17 +124,23 @@ export const ChatPage = () => {
         }));
       setMessages(hydrated);
       if (hydrated.length > 0) setHasStarted(true);
-    }).catch(() => {});
+    }).catch(() => {}).finally(() => setMessagesLoading(false));
   }, [urlConversationId]);
 
   const NO_ANSWER_PHRASE = 'does not contain the answer';
 
-  // Answer resolution: once stream done, extract answer from events
+  // Answer resolution: handle token-streamed answers and fallback to old API
   useEffect(() => {
     if (!streamDone || pendingAnswer || pendingError) return;
     if (!pendingQuery) return;
 
-    // New API: 'answer' stage event
+    // New streaming API: answer_token events (check if we have accumulated tokens with sources)
+    if (pendingAnswerSources && pendingAnswerTokens) {
+      setPendingAnswer(pendingAnswerTokens);
+      return;
+    }
+
+    // New API: 'answer' stage event (non-streaming)
     const answerEvt = pendingEvents.find(e => e.stage === 'answer') as SSEEventAnswer | undefined;
     if (answerEvt) {
       setPendingAnswer(answerEvt.answer);
@@ -140,20 +156,28 @@ export const ChatPage = () => {
 
     setPendingError('No answer received');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [streamDone, pendingEvents.length]);
+  }, [streamDone, pendingEvents.length, pendingAnswerTokens, pendingAnswerSources]);
 
-  // Commit: when ThinkingState animation done AND answer ready
+  // Commit: either when animation done AND answer ready, or when stream fully done with tokens
   useEffect(() => {
-    if (!animDone || !pendingQuery) return;
+    if (!pendingQuery) return;
     if (!pendingAnswer && !pendingError) return;
 
-    const answerEvt = pendingEvents.find(e => e.stage === 'answer') as SSEEventAnswer | undefined;
+    // For token streaming: commit once we have sources and stream is done
+    // For legacy answer event: commit once animation is done
+    const hasTokenSources = pendingAnswerSources && pendingAnswerTokens;
+    const shouldCommit = (hasTokenSources && streamDone) || (animDone && !hasTokenSources);
+    if (!shouldCommit) return;
+
+    // Sources can come from: token streaming (answer_end), or legacy answer event
+    const sources = pendingAnswerSources ||
+                    (pendingEvents.find(e => e.stage === 'answer') as SSEEventAnswer | undefined)?.attributed_sources;
 
     const assistantMsg: ChatMessage = {
       id: `asst-${Date.now()}`,
       role: 'assistant',
       content: pendingAnswer ?? pendingError ?? '',
-      sources: answerEvt?.attributed_sources,
+      sources,
       elapsed_ms: pendingLatency != null ? pendingLatency * 1000 : undefined,
       streamEvents: pendingEvents,
       streaming: false,
@@ -169,12 +193,14 @@ export const ChatPage = () => {
     setPendingQuery(null);
     setPendingEvents([]);
     setPendingAnswer(null);
+    setPendingAnswerTokens('');
+    setPendingAnswerSources(null);
     setPendingLatency(null);
     setPendingError(null);
     setAnimDone(false);
     pendingLogIdRef.current = -1;
     pendingConvIdRef.current = null;
-  }, [animDone, pendingQuery, pendingAnswer, pendingError]);
+  }, [animDone, streamDone, pendingQuery, pendingAnswer, pendingError, pendingAnswerSources, pendingAnswerTokens]);
 
   const handleThinkingComplete = useCallback(() => {
     setAnimDone(true);
@@ -194,6 +220,8 @@ export const ChatPage = () => {
     setPendingQuery(query);
     setPendingEvents([]);
     setPendingAnswer(null);
+    setPendingAnswerTokens('');
+    setPendingAnswerSources(null);
     setPendingLatency(null);
     setPendingError(null);
     setAnimDone(false);
@@ -230,6 +258,15 @@ export const ChatPage = () => {
             setPendingEvents(prev => [...prev, event]);
           },
           onAnswer: (_evt: SSEEventAnswer) => {},
+          onAnswerStart: (_evt: SSEEventAnswerStart) => {
+            setPendingAnswerTokens('');
+          },
+          onAnswerToken: (evt: SSEEventAnswerToken) => {
+            setPendingAnswerTokens(prev => prev + evt.token);
+          },
+          onAnswerEnd: (evt: SSEEventAnswerEnd) => {
+            setPendingAnswerSources(evt.attributed_sources);
+          },
           onDone: (evt: SSEEventDone) => {
             setPendingLatency(evt.total_elapsed_ms / 1000);
           },
@@ -370,8 +407,28 @@ export const ChatPage = () => {
           <div className="flex-1 overflow-y-auto">
             <div className="max-w-5xl mx-auto px-4 py-8">
 
+              {/* Loading animation */}
+              {messagesLoading && (
+                <div className="space-y-4">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="space-y-3">
+                      {/* User message skeleton */}
+                      <div className="flex justify-end">
+                        <div className="max-w-xs bg-k-blue rounded-2xl p-4 h-12 w-32 animate-pulse" />
+                      </div>
+                      {/* Assistant message skeleton */}
+                      <div className="border border-k-border rounded-2xl bg-k-card p-6 space-y-3">
+                        <div className="h-4 bg-k-border rounded w-3/4 animate-pulse" />
+                        <div className="h-4 bg-k-border rounded w-5/6 animate-pulse" />
+                        <div className="h-4 bg-k-border rounded w-2/3 animate-pulse" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {/* Welcome / idle state */}
-              {!hasStarted && (
+              {!hasStarted && !messagesLoading && (
                 <WelcomeScreen
                   firstName={firstName}
                   onQuestionSelect={handleSearch}
@@ -410,16 +467,37 @@ export const ChatPage = () => {
               })}
 
 
-              {/* In-flight ThinkingState */}
+              {/* In-flight ThinkingState or Streaming Answer */}
               {isSearching && (
                 <div className="mb-12">
                   <h2 className="text-base font-semibold text-k-text mb-4">{pendingQuery}</h2>
-                  <ThinkingState
-                    mode={searchMode === 'deep_think' ? 'deeper' : 'quick'}
-                    isDone={streamDone}
-                    onComplete={handleThinkingComplete}
-                    streamEvents={pendingEvents}
-                  />
+                  {pendingAnswerTokens ? (
+                    // Show streaming answer with sources once tokens start arriving
+                    <div className="border border-k-border rounded-2xl bg-k-card p-6 animate-fade-in">
+                      <div className="mb-5">
+                        <AnswerBlock
+                          answer={pendingAnswerTokens}
+                          sources={pendingAnswerSources ?? undefined}
+                          latency={pendingLatency ?? undefined}
+                          hideAskButton={true}
+                        />
+                      </div>
+                      {!streamDone && (
+                        <div className="flex items-center gap-2 text-xs text-k-muted pt-4 border-t border-k-border">
+                          <div className="w-2 h-2 bg-k-cyan rounded-full animate-pulse" />
+                          Streaming response...
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    // Show progress animation before tokens arrive
+                    <ThinkingState
+                      mode={searchMode === 'deep_think' ? 'deeper' : 'quick'}
+                      isDone={streamDone}
+                      onComplete={handleThinkingComplete}
+                      streamEvents={pendingEvents}
+                    />
+                  )}
                 </div>
               )}
 
