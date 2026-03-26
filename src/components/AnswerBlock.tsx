@@ -18,7 +18,10 @@ function unwrapFencedTables(text: string): string {
 }
 
 function stripSourcesBlock(text: string): string {
-  return text.replace(/<sources>[\s\S]*?<\/sources>/g, '').trimEnd();
+  return text
+    .replace(/<sources>[\s\S]*?<\/sources>/g, '')
+    .replace(/\[S\d+\]/g, '')
+    .trimEnd();
 }
 
 function MarkdownAnswer({ text }: { text: string }) {
@@ -61,6 +64,7 @@ export default function AnswerBlock({
 }: AnswerBlockProps) {
   const [sourcesOpen, setSourcesOpen] = useState(false);
   const [modelPickerOpen, setModelPickerOpen] = useState(false);
+  const [hoveredSourceIndex, setHoveredSourceIndex] = useState<number | null>(null);
 
   const seenKeys = new Set<string>();
   const uniqueSources = sources.map(src => ({
@@ -69,6 +73,7 @@ export default function AnswerBlock({
     excerpt: src.excerpt,
     category: src.category,
     sourceType: src.source_type,
+    matchedSentences: src.matched_sentences ?? null,
   })).filter(({ linkUrl, linkText }) => {
     const key = linkUrl ?? linkText;
     if (seenKeys.has(key)) return false;
@@ -100,8 +105,13 @@ export default function AnswerBlock({
             style={{ maxHeight: sourcesOpen ? '32rem' : '0', opacity: sourcesOpen ? 1 : 0 }}
           >
             <ol className="mt-3 space-y-2">
-              {uniqueSources.map(({ linkUrl, linkText, excerpt, category, sourceType }, i) => (
-                <li key={i} className="flex items-start gap-2 text-xs">
+              {uniqueSources.map(({ linkUrl, linkText, excerpt, category, sourceType, matchedSentences }, i) => (
+                <li
+                  key={i}
+                  className={`flex items-start gap-2 text-xs rounded-lg transition-colors ${matchedSentences && matchedSentences.length > 0 ? 'cursor-default' : ''} ${hoveredSourceIndex === i ? 'bg-k-cyan/5' : ''}`}
+                  onMouseEnter={() => matchedSentences && matchedSentences.length > 0 ? setHoveredSourceIndex(i) : undefined}
+                  onMouseLeave={() => setHoveredSourceIndex(null)}
+                >
                   <span className="flex-shrink-0 text-k-muted mt-0.5">{i + 1}.</span>
                   <div className="flex flex-col gap-0.5 min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -124,13 +134,20 @@ export default function AnswerBlock({
                     {excerpt && (
                       <p className="text-k-muted/70 leading-relaxed line-clamp-2">
                         {excerpt
-  .replace(/^#+\s*/, '')           // strip leading markdown headings
-  .replace(/<[^>]+>/g, ' ')        // strip HTML tags
-  .replace(/\|[-:\s|]+\|/g, ' ')  // strip markdown table separator rows (|---|---|)
+  .replace(/^#+\s*/, '')
+  .replace(/<[^>]+>/g, ' ')
+  .replace(/\|[-:\s|]+\|/g, ' ')
   .replace(/\s+/g, ' ')
   .trim()
 }
                       </p>
+                    )}
+                    {hoveredSourceIndex === i && matchedSentences && matchedSentences.length > 0 && (
+                      <div className="mt-1.5 border-l-2 border-k-cyan/40 pl-2 space-y-1">
+                        {matchedSentences.map((s, j) => (
+                          <p key={j} className="text-k-cyan/70 text-[11px] leading-relaxed italic">{s}</p>
+                        ))}
+                      </div>
                     )}
                   </div>
                 </li>
