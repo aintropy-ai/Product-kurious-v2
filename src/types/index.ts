@@ -104,6 +104,7 @@ export interface IntelligentQueryRequest {
   response_format?: ResponseFormat;
   conversation_id?: string;
   force_route?: 'structured' | 'unstructured';
+  model?: string;
 }
 
 export interface IntelligentSearchResponse {

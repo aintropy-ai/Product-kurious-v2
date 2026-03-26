@@ -10,6 +10,7 @@ import {
 
 const API_KEY = import.meta.env.VITE_BACKEND_API_KEY || '';
 const COMPANY_ID = import.meta.env.VITE_BACKEND_COMPANY_ID || 'default-company';
+const INTELLIGENT_SEARCH_MODEL = 'google/gemini-3-flash-preview';
 // Always use a relative base so requests route through the Cloudflare proxy (prod)
 // or the Vite dev proxy (dev) — never directly to the backend, which would be blocked by CORS.
 const BACKEND_URL = '/api/v1';
@@ -278,7 +279,7 @@ export async function chatStreamSearch(
   const response = await fetch(`${BACKEND_URL}/intelligent/_search/stream`, {
     method: 'POST',
     headers,
-    body: JSON.stringify(request),
+    body: JSON.stringify({ model: INTELLIGENT_SEARCH_MODEL, ...request }),
     signal,
   });
 
