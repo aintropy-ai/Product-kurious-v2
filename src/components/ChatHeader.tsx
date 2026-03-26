@@ -6,9 +6,10 @@ interface ChatHeaderProps {
   firstName?: string | null;
   theme: 'dark' | 'light';
   onToggleTheme: () => void;
+  onNewChat?: () => void;
 }
 
-export const ChatHeader: React.FC<ChatHeaderProps> = ({ firstName, theme, onToggleTheme }) => {
+export const ChatHeader: React.FC<ChatHeaderProps> = ({ firstName, theme, onToggleTheme, onNewChat }) => {
   const [profileOpen, setProfileOpen] = useState(false);
   const [waitlistOpen, setWaitlistOpen] = useState(false);
   const [waitlistEmail, setWaitlistEmail] = useState('');
@@ -33,10 +34,14 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ firstName, theme, onTogg
   return (
     <>
       <header className="sticky top-0 z-30 bg-k-nav border-b border-k-border flex items-center px-6 h-14 gap-4">
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <button
+          onClick={onNewChat}
+          className="flex items-center gap-2 flex-shrink-0 hover:opacity-80 transition-opacity"
+          title="New chat"
+        >
           <img src="/logo.png" alt="AIntropy" className="h-7 w-auto" />
           <span className="text-xs font-semibold text-k-cyan border border-k-cyan/50 rounded-full px-2 py-0.5 leading-none">beta</span>
-        </div>
+        </button>
 
         <span className="flex-1 text-center text-sm text-k-muted hidden sm:block">
           New Jersey Open Data — 57M documents across 23 agencies

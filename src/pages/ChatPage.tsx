@@ -395,6 +395,7 @@ export const ChatPage = () => {
         firstName={firstName}
         theme={theme}
         onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+        onNewChat={handleNewChat}
       />
 
       <div className="flex flex-1 overflow-hidden">

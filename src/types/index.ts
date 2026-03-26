@@ -50,13 +50,15 @@ export type ResponseFormat = 'text' | 'table' | 'bullets' | 'auto';
 
 export interface SourceAttribution {
   source_type: 'structured' | 'unstructured';
-  category: 'primary' | 'supporting' | 'additional';
+  category: 'primary' | 'supporting';
   title?: string;
   url?: string;
   source_parent?: string;
   relevance_score?: number;
   excerpt?: string;
   table_name?: string;
+  attribution_score?: number | null;
+  matched_sentences?: string[] | null;
 }
 
 export interface ConversationSummary {
