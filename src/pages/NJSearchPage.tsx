@@ -291,16 +291,16 @@ export const NJSearchPage = () => {
       <header className="sticky top-0 z-30 bg-k-nav border-b border-k-border flex items-center px-6 h-14 gap-4">
         <div className="flex items-center gap-2 flex-shrink-0">
           <img src="/logo.png" alt="AIntropy" className="h-7 w-auto" />
-          <span className="text-xs font-semibold text-k-cyan border border-k-cyan/50 rounded-full px-2 py-0.5 leading-none">beta</span>
+          <span className="text-xs font-normal text-gray-500 px-1 leading-none">alpha</span>
         </div>
 
         <div className="flex items-center gap-3 ml-auto flex-shrink-0">
-          <button
-            onClick={() => { setWaitlistOpen(true); setWaitlistState('idle'); setWaitlistEmail(''); }}
+          <a
+            href="mailto:help@aintropy.ai"
             className="text-xs font-medium px-4 py-1.5 rounded-full bg-k-cyan text-k-bg hover:bg-cyan-300 transition-colors flex-shrink-0"
           >
-            Join Waitlist
-          </button>
+            Contact Us
+          </a>
 
           <div className="relative">
             <button

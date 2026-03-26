@@ -40,20 +40,20 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ firstName, theme, onTogg
           title="New chat"
         >
           <img src="/logo.png" alt="AIntropy" className="h-7 w-auto" />
-          <span className="text-xs font-semibold text-k-cyan border border-k-cyan/50 rounded-full px-2 py-0.5 leading-none">beta</span>
+          <span className="text-xs font-normal text-gray-500 px-1 leading-none">alpha</span>
         </button>
 
         <span className="flex-1 text-center text-sm text-k-muted hidden sm:block">
-          New Jersey Open Data — 57M documents across 23 agencies
+          New Jersey Open Data. 85M+ documents across 23 agencies.
         </span>
 
         <div className="flex items-center gap-3 ml-auto flex-shrink-0">
-          <button
-            onClick={() => { setWaitlistOpen(true); setWaitlistState('idle'); setWaitlistEmail(''); }}
+          <a
+            href="mailto:help@aintropy.ai"
             className="text-xs font-medium px-4 py-1.5 rounded-full bg-k-cyan text-k-bg hover:bg-cyan-300 transition-colors flex-shrink-0"
           >
-            Join Waitlist
-          </button>
+            Contact Us
+          </a>
 
           <div className="relative">
             <button
