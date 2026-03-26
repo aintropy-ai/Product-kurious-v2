@@ -282,7 +282,7 @@ export async function chatStreamSearch(
   const response = await fetch(`${BACKEND_URL}/intelligent/_search/stream`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ model: SEARCH_MODELS[request.mode] ?? SEARCH_MODELS.quick, ...request }),
+    body: JSON.stringify({ model: SEARCH_MODELS[request.mode ?? 'quick'] ?? SEARCH_MODELS.quick, ...request }),
     signal,
   });
 
