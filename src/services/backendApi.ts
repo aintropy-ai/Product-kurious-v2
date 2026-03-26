@@ -12,7 +12,7 @@ const API_KEY = import.meta.env.VITE_BACKEND_API_KEY || '';
 const COMPANY_ID = import.meta.env.VITE_BACKEND_COMPANY_ID || 'default-company';
 const SEARCH_MODELS: Record<string, string> = {
   quick: 'meta-llama/llama-3.3-70b-instruct',
-  deep_think: 'meta-llama/llama-3.3-70b-instruct',
+  deep_think: 'google/gemini-3-flash-preview',
 };
 // Always use a relative base so requests route through the Cloudflare proxy (prod)
 // or the Vite dev proxy (dev) — never directly to the backend, which would be blocked by CORS.
