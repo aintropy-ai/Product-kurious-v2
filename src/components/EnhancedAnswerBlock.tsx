@@ -10,8 +10,14 @@ import FeedbackBar from './FeedbackBar';
 
 // ─── Inline citation pre-processor ──────────────────────────────────────────
 function addCitations(text: string): string {
-  return text.replace(/\[(\d+)\]/g,
-    '<sup class="inline-citation" data-ref="$1">$1</sup>');
+  // Collapse consecutive citations [1][2][3] → single badge showing "1.."
+  return text.replace(/(\[\d+\])+/g, (match) => {
+    const nums = [...match.matchAll(/\[(\d+)\]/g)].map(m => m[1]);
+    if (nums.length === 1) {
+      return `<sup class="inline-citation" data-refs="${nums[0]}">${nums[0]}</sup>`;
+    }
+    return `<sup class="inline-citation inline-citation-group" data-refs="${nums.join(',')}">${nums[0]}..</sup>`;
+  });
 }
 
 function unwrapFencedTables(text: string): string {
@@ -36,11 +42,13 @@ function VideoSourceCard({ src, idx }: { src: EnhancedSource; idx: number }) {
   const progress = (ts / duration) * 100;
   const thumbColor = THUMB_COLORS[idx % THUMB_COLORS.length];
 
+  const videoHref = src.url ? `${src.url}#t=${ts}` : undefined;
+
   return (
     <div className="rounded-xl border border-k-border bg-k-bg overflow-hidden">
-      <div className="relative h-24 flex items-center justify-center" style={{ background: thumbColor }}>
+      <a href={videoHref} target="_blank" rel="noopener noreferrer" className={`relative h-24 flex items-center justify-center block group/thumb ${videoHref ? 'cursor-pointer' : 'cursor-default'}`} style={{ background: thumbColor }}>
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center group-hover/thumb:bg-white/20 transition-colors duration-150">
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white ml-0.5">
               <path d="M8 5v14l11-7z" />
             </svg>
@@ -50,9 +58,9 @@ function VideoSourceCard({ src, idx }: { src: EnhancedSource; idx: number }) {
           <div className="h-full bg-k-cyan" style={{ width: `${progress}%` }} />
         </div>
         <div className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">
-          {formatTimestamp(ts)} / {formatTimestamp(duration)}
+          ▶ {formatTimestamp(ts)}
         </div>
-      </div>
+      </a>
       <div className="p-3">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
@@ -101,20 +109,32 @@ function ImageSourceCard({ src }: { src: EnhancedSource }) {
   );
 }
 
+// ─── Build the deep-link URL for a source ────────────────────────────────────
+function buildSourceUrl(src: EnhancedSource): string | null {
+  if (!src.url) return null;
+  if (src.type === 'video' && src.timestamp != null) {
+    return `${src.url}#t=${src.timestamp}`;
+  }
+  return src.url;
+}
+
 // ─── Document / structured source row ────────────────────────────────────────
-function DocSourceRow({ src, index, highlighted }: { src: EnhancedSource; index: number; highlighted?: boolean }) {
+function DocSourceRow({ src, index, highlighted, rowRef }: { src: EnhancedSource; index: number; highlighted?: boolean; rowRef?: (el: HTMLLIElement | null) => void }) {
   const [expanded, setExpanded] = useState(false);
   const icon = src.type === 'structured' ? '⛁' : '📄';
+  const href = buildSourceUrl(src);
+
   return (
-    <li className={`flex items-start gap-3 py-2.5 border-b border-k-border/30 last:border-b-0 rounded-lg px-2 transition-colors ${highlighted ? 'bg-k-cyan/5' : ''}`}>
+    <li ref={rowRef} className={`flex items-start gap-3 py-2.5 border-b border-k-border/30 last:border-b-0 rounded-lg px-2 transition-all duration-300 ${highlighted ? 'bg-k-cyan/10 border-l-2 border-l-k-cyan pl-3' : ''}`}>
       <span className="text-base flex-shrink-0 mt-0.5">{icon}</span>
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            {src.url ? (
-              <a href={src.url} target="_blank" rel="noopener noreferrer"
-                className="text-sm text-k-cyan hover:text-cyan-300 underline-offset-2 transition-colors font-medium truncate block">
+          <div className="min-w-0 flex-1">
+            {href ? (
+              <a href={href} target="_blank" rel="noopener noreferrer"
+                className="text-sm text-k-cyan hover:text-cyan-300 underline-offset-2 transition-colors duration-150 font-medium truncate block group/link">
                 {src.title}
+                <span className="ml-1 opacity-0 group-hover/link:opacity-100 transition-opacity duration-150 text-[10px]">↗</span>
               </a>
             ) : (
               <span className="text-sm text-k-text font-medium">{src.title}</span>
@@ -122,6 +142,12 @@ function DocSourceRow({ src, index, highlighted }: { src: EnhancedSource; index:
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-[10px] text-k-muted">{src.agency}</span>
               <span className="text-[10px] text-k-cyan/70">{src.freshness}</span>
+              {src.type === 'video' && src.timestamp != null && (
+                <span className="text-[10px] text-k-cyan/80 font-medium">▶ {formatTimestamp(src.timestamp)}</span>
+              )}
+              {src.type === 'structured' && (
+                <span className="text-[10px] text-purple-400/80 font-medium">⛁ Opens to highlighted row</span>
+              )}
             </div>
             <p className="text-[10px] text-k-muted/70 mt-0.5 italic">Used for: {src.contribution}</p>
           </div>
@@ -129,11 +155,12 @@ function DocSourceRow({ src, index, highlighted }: { src: EnhancedSource; index:
         </div>
         {src.excerpt && (
           <>
-            <button onClick={() => setExpanded(v => !v)} className="text-[10px] text-k-muted hover:text-k-text mt-1 transition-colors">
-              {expanded ? '▾ hide excerpt' : '▸ show excerpt'}
+            <button onClick={() => setExpanded(v => !v)} className="text-[10px] text-k-muted hover:text-k-cyan mt-1 transition-colors duration-150 flex items-center gap-1">
+              <span className={`transition-transform duration-150 inline-block ${expanded ? 'rotate-90' : ''}`}>▶</span>
+              {expanded ? 'Hide passage' : 'View passage'}
             </button>
             {expanded && (
-              <p className="text-[11px] text-k-muted mt-1.5 leading-relaxed border-l-2 border-k-border pl-2">
+              <p className="text-[11px] text-k-muted mt-1.5 leading-relaxed border-l-2 border-k-cyan/30 pl-2">
                 {src.excerpt}
               </p>
             )}
@@ -216,7 +243,8 @@ export default function EnhancedAnswerBlock({
   const [toast, setToast] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
   const toastTimer = useRef<number | null>(null);
-  const [citedSource, setCitedSource] = useState<number | null>(null);
+  const [citedSources, setCitedSources] = useState<number[]>([]);
+  const sourceRowRefs = useRef<Map<number, HTMLLIElement>>(new Map());
 
   const primarySources = demoQ.sources.filter(s => s.category === 'primary');
   const supportingSources = demoQ.sources.filter(s => s.category === 'supporting');
@@ -263,10 +291,15 @@ export default function EnhancedAnswerBlock({
     const handler = (e: MouseEvent) => {
       const el = e.target as HTMLElement;
       if (el.classList.contains('inline-citation')) {
-        const ref = parseInt(el.getAttribute('data-ref') ?? '0');
-        setCitedSource(ref);
+        const refs = (el.getAttribute('data-refs') ?? '')
+          .split(',').map(Number).filter(Boolean);
+        setCitedSources(refs);
         setSourcesOpen(true);
-        setTimeout(() => setCitedSource(null), 2000);
+        setTimeout(() => {
+          const firstRow = sourceRowRefs.current.get(refs[0] - 1);
+          firstRow?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 120);
+        setTimeout(() => setCitedSources([]), 2500);
       }
     };
     document.addEventListener('click', handler);
@@ -283,18 +316,19 @@ export default function EnhancedAnswerBlock({
     <>
       <Toast message={toast} visible={toastVisible} />
 
-      <div className="group/answer animate-fade-in">
+      <div className="group/answer animate-slide-up rounded-2xl px-6 py-5" style={{ background: '#1C1C1E', border: '1px solid rgba(255,255,255,0.09)' }}>
         {/* Citation styles */}
         <style>{`
           .inline-citation {
             display: inline-flex; align-items: center; justify-content: center;
-            width: 16px; height: 16px;
+            min-width: 16px; height: 16px; padding: 0 3px;
             background: rgba(0, 212, 255, 0.12); border: 1px solid rgba(0, 212, 255, 0.35);
             color: #00D4FF; border-radius: 4px; font-size: 9px; font-weight: 700;
             cursor: pointer; vertical-align: super; line-height: 1; margin: 0 1px;
             transition: background 0.15s; user-select: none;
           }
           .inline-citation:hover { background: rgba(0, 212, 255, 0.28); }
+          .inline-citation-group { background: rgba(0, 212, 255, 0.18); letter-spacing: -0.3px; }
         `}</style>
 
         {/* Answer text — no card, clean prose */}
@@ -322,7 +356,7 @@ export default function EnhancedAnswerBlock({
           {demoQ.sources.length > 0 && (
             <button
               onClick={() => setSourcesOpen(v => !v)}
-              className="flex items-center gap-1.5 text-xs text-k-muted hover:text-k-text transition-colors"
+              className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-k-muted/70 hover:text-k-text font-medium transition-colors"
             >
               <span className={`transition-transform duration-150 inline-block text-[10px] ${sourcesOpen ? 'rotate-90' : ''}`}>▶</span>
               {demoQ.sources.length} sources
@@ -332,16 +366,16 @@ export default function EnhancedAnswerBlock({
             </button>
           )}
 
-          <span className="text-k-muted/40 text-xs">·</span>
-          <span className="text-xs text-k-muted">
-            Searched 85M docs in <strong className="text-k-cyan font-medium">{elapsedSec}s</strong>
+          <span className="text-k-muted/40 text-[10px]">·</span>
+          <span className="text-[11px] uppercase tracking-wider text-k-muted/70 font-medium">
+            Searched 85M docs in <strong className="text-k-cyan font-semibold not-italic normal-case tracking-normal">{elapsedSec}s</strong>
           </span>
 
           {/* Cross-silo */}
           {demoQ.crossSiloAgencies.length >= 2 && (
             <>
-              <span className="text-k-muted/40 text-xs">·</span>
-              <span className="text-xs text-emerald-400/80 flex items-center gap-1">
+              <span className="text-k-muted/40 text-[10px]">·</span>
+              <span className="text-[11px] uppercase tracking-wider text-emerald-400/80 font-medium flex items-center gap-1">
                 <span>✓</span>
                 <span>{demoQ.crossSiloAgencies.length} agencies</span>
               </span>
@@ -414,7 +448,7 @@ export default function EnhancedAnswerBlock({
                 <ul>
                   {primarySources.filter(s => s.type !== 'video' && s.type !== 'image').map((src, i) => {
                     const globalIdx = demoQ.sources.indexOf(src);
-                    return <DocSourceRow key={i} src={src} index={globalIdx} highlighted={citedSource === globalIdx + 1} />;
+                    return <DocSourceRow key={i} src={src} index={globalIdx} highlighted={citedSources.includes(globalIdx + 1)} rowRef={el => { if (el) sourceRowRefs.current.set(globalIdx, el); }} />;
                   })}
                 </ul>
               </div>
@@ -427,7 +461,7 @@ export default function EnhancedAnswerBlock({
                 <ul>
                   {supportingSources.filter(s => s.type !== 'video' && s.type !== 'image').map((src, i) => {
                     const globalIdx = demoQ.sources.indexOf(src);
-                    return <DocSourceRow key={i} src={src} index={globalIdx} highlighted={citedSource === globalIdx + 1} />;
+                    return <DocSourceRow key={i} src={src} index={globalIdx} highlighted={citedSources.includes(globalIdx + 1)} rowRef={el => { if (el) sourceRowRefs.current.set(globalIdx, el); }} />;
                   })}
                 </ul>
               </div>
@@ -438,9 +472,10 @@ export default function EnhancedAnswerBlock({
               <div>
                 <p className="text-[10px] uppercase tracking-widest text-k-muted/60 font-semibold mb-1">Additional</p>
                 <ul>
-                  {additionalSources.filter(s => s.type !== 'video' && s.type !== 'image').map((src, i) => (
-                    <DocSourceRow key={i} src={src} index={demoQ.sources.indexOf(src)} />
-                  ))}
+                  {additionalSources.filter(s => s.type !== 'video' && s.type !== 'image').map((src, i) => {
+                    const globalIdx = demoQ.sources.indexOf(src);
+                    return <DocSourceRow key={i} src={src} index={globalIdx} rowRef={el => { if (el) sourceRowRefs.current.set(globalIdx, el); }} />;
+                  })}
                 </ul>
               </div>
             )}

@@ -207,20 +207,44 @@ function buildLiveSteps(events: NewStreamEvent[], isDone = false): LiveStep[] {
   return ordered;
 }
 
+// ─── Count-up animation ───────────────────────────────────────────────────────
+function CountUp({ target, unit }: { target: number; unit: string }) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    const duration = 400;
+    const steps = 20;
+    const increment = target / steps;
+    let current = 0;
+    const iv = setInterval(() => {
+      current += increment;
+      if (current >= target) { setValue(target); clearInterval(iv); }
+      else setValue(Math.floor(current));
+    }, duration / steps);
+    return () => clearInterval(iv);
+  }, [target]);
+  return (
+    <span className="text-[11px] text-k-cyan font-medium animate-fade-in ml-2">
+      → {value.toLocaleString()} {unit}
+    </span>
+  );
+}
+
 // Fallback animated steps when no live events yet
-const QUICK_STEPS = [
-  'Understood your question',
-  'Searching across 85M documents',
-  'Scanning government records & data',
-  'Connecting insights',
+interface FallbackStep { label: string; count?: number; unit?: string; }
+
+const QUICK_STEPS: FallbackStep[] = [
+  { label: 'Understood your question' },
+  { label: 'Searching across 85M documents',   count: 847,  unit: 'documents matched' },
+  { label: 'Scanning government records & data', count: 23,  unit: 'agencies scanned' },
+  { label: 'Connecting insights',               count: 12,  unit: 'sources selected' },
 ];
-const DEEPER_STEPS = [
-  'Understood your question',
-  'Searching across 85M documents',
-  'Scanning government records & data',
-  'Cross-referencing sources',
-  'Analysing connections',
-  'Synthesising a comprehensive answer',
+const DEEPER_STEPS: FallbackStep[] = [
+  { label: 'Understood your question' },
+  { label: 'Searching across 85M documents',     count: 1842, unit: 'documents matched' },
+  { label: 'Scanning government records & data', count: 31,   unit: 'agencies scanned' },
+  { label: 'Cross-referencing sources',          count: 94,   unit: 'cross-references' },
+  { label: 'Analysing connections',              count: 18,   unit: 'key patterns' },
+  { label: 'Synthesising a comprehensive answer', count: 26,  unit: 'sources selected' },
 ];
 
 export default function ThinkingState({ mode, isDone, onComplete, streamEvents = [] }: ThinkingStateProps) {
@@ -315,14 +339,17 @@ export default function ThinkingState({ mode, isDone, onComplete, streamEvents =
             const active  = i === visibleFallback - 1 && visibleFallback < fallbackSteps.length;
             const pending = i >= visibleFallback;
             return (
-              <div key={step} className={`flex items-center gap-3 transition-opacity duration-300 ${pending ? 'opacity-20' : 'opacity-100'}`}>
+              <div key={step.label} className={`flex items-center gap-3 transition-opacity duration-300 ${pending ? 'opacity-20' : 'opacity-100'}`}>
                 <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
                   {done    && <span className="text-k-cyan text-sm animate-tick">✓</span>}
                   {active  && <div className="w-3 h-3 border-2 border-k-cyan border-t-transparent rounded-full animate-spin" />}
                   {pending && <div className="w-2 h-2 rounded-full bg-k-border" />}
                 </div>
-                <span className={`text-sm transition-colors ${done ? 'text-k-text' : active ? 'text-k-cyan' : 'text-k-muted'}`}>
-                  {step}{active ? '...' : ''}
+                <span className="flex items-baseline gap-0">
+                  <span className={`text-sm transition-colors ${done ? 'text-k-text' : active ? 'text-k-cyan' : 'text-k-muted'}`}>
+                    {step.label}{active ? '...' : ''}
+                  </span>
+                  {done && step.count != null && <CountUp target={step.count} unit={step.unit!} />}
                 </span>
               </div>
             );

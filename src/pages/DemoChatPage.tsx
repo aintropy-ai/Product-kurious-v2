@@ -211,17 +211,6 @@ const [activeProject, setActiveProject] = useState<Project | null>(null);
 
       {/* ── Top header ─────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-30 bg-k-nav border-b border-k-border flex items-center px-4 h-12 gap-3 flex-shrink-0">
-        {/* Sidebar toggle */}
-        {!sidebarOpen && (
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-k-muted hover:text-k-text hover:bg-k-border/30 transition-colors flex-shrink-0"
-            title="Open sidebar"
-          >
-            ›
-          </button>
-        )}
-
         {/* Logo */}
         <button onClick={handleNewChat} className="flex items-center gap-2 flex-shrink-0 hover:opacity-80 transition-opacity">
           <img src="/logo.png" alt="AIntropy" className="h-6 w-auto" />
@@ -246,7 +235,7 @@ const [activeProject, setActiveProject] = useState<Project | null>(null);
               />
             ) : (
               <div className="group flex items-center gap-1.5 max-w-sm min-w-0">
-                <span className="text-sm text-k-muted truncate">{chatTitle}</span>
+                <span className="text-sm font-semibold text-k-text/80 truncate">{chatTitle}</span>
                 <button
                   onClick={() => { setTitleEditValue(chatTitle); setIsTitleEditing(true); }}
                   title="Rename chat"
@@ -286,19 +275,57 @@ const [activeProject, setActiveProject] = useState<Project | null>(null);
       <div className="flex flex-1 overflow-hidden">
 
         {/* Left sidebar */}
-        {sidebarOpen && (
-          <ProjectSidebar
-            activeConvId={activeConvId}
-            bookmarkCount={bookmarks.length}
-            onNewChat={handleNewChat}
-            onSelectConversation={handleSelectConversation}
-            onOpenBookmarks={() => setBookmarkPanelOpen(true)}
-            onClose={() => setSidebarOpen(false)}
-            onActiveProjectChange={(p, role) => { setActiveProject(p); setActiveProjectRole(role); setMembersPanelOpen(false); }}
-            theme={theme}
-            onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+        <div className="relative flex-shrink-0 flex">
+          {/* Cyan accent strip — glows when sidebar is collapsed */}
+          <div
+            className="flex-shrink-0 transition-all duration-250 ease-in-out"
+            style={{
+              width: sidebarOpen ? 0 : 3,
+              background: sidebarOpen ? 'transparent' : '#00D4FF',
+              boxShadow: sidebarOpen ? 'none' : '2px 0 10px rgba(0,212,255,0.3)',
+            }}
           />
-        )}
+
+          {/* Sidebar content */}
+          <div className={`transition-all duration-250 ease-in-out overflow-hidden ${sidebarOpen ? 'w-64' : 'w-0'}`}>
+            {sidebarOpen && (
+              <ProjectSidebar
+                activeConvId={activeConvId}
+                onNewChat={handleNewChat}
+                onSelectConversation={handleSelectConversation}
+                onActiveProjectChange={(p, role) => { setActiveProject(p); setActiveProjectRole(role); setMembersPanelOpen(false); }}
+                theme={theme}
+                onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+              />
+            )}
+          </div>
+
+          {/* Toggle tab — always at the sidebar's right boundary */}
+          <button
+            onClick={() => setSidebarOpen(o => !o)}
+            title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+            className="absolute top-3 z-20 w-5 h-8 rounded-r-lg flex items-center justify-center text-k-muted hover:text-k-cyan transition-all duration-150 group"
+            style={{
+              right: -20,
+              background: 'var(--k-card)',
+              border: '1px solid var(--k-border)',
+              borderLeft: 'none',
+              boxShadow: '2px 0 6px rgba(0,0,0,0.35)',
+            }}
+          >
+            <svg
+              viewBox="0 0 8 12"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`w-2.5 h-3 transition-transform duration-250 ${sidebarOpen ? '' : 'rotate-180'}`}
+            >
+              <polyline points="6,1 2,6 6,11" />
+            </svg>
+          </button>
+        </div>
 
         {/* Main content */}
         <main className="flex-1 flex flex-col overflow-hidden relative">
@@ -390,7 +417,7 @@ const [activeProject, setActiveProject] = useState<Project | null>(null);
                       ref={isLastUser ? lastUserRef : undefined}
                       className="flex justify-end mb-6 mt-2"
                     >
-                      <div className="max-w-lg bg-k-card border border-k-border rounded-2xl px-4 py-3 text-sm text-k-text">
+                      <div className="max-w-lg bg-k-card border border-k-border rounded-2xl px-4 py-3 text-sm text-k-text animate-slide-up">
                         {msg.content}
                       </div>
                     </div>
