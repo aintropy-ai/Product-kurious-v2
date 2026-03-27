@@ -537,24 +537,24 @@ export const ChatPage = () => {
 
               <div ref={bottomRef} />
             </div>
-          </div>
 
-          {/* Copyright footer */}
-          <div className="py-2 px-6 text-center" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-            <p className="text-xs text-k-muted leading-relaxed">
-              <em>Kurious answers questions about NJ Open Data only. It is not a general-purpose AI and cannot answer questions outside this dataset, for now.</em>
-            </p>
-            <p className="text-xs text-k-muted mt-1">
-              This is an early alpha research preview. Responses may be incomplete or inaccurate. Do not use for legal, medical, or financial decisions.
-            </p>
-            <a
-              href="https://aintropy.ai/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-k-muted hover:text-k-text transition-colors cursor-pointer inline-block mt-1"
-            >
-              Underlying technology may be protected by one or more patents pending under USPTO. © 2026 AIntropy
-            </a>
+            {/* Disclaimer footer */}
+            <div className="py-3 px-6 text-center" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <p className="text-xs text-k-muted leading-relaxed">
+                <em>Kurious answers questions about NJ Open Data only. It is not a general-purpose AI and cannot answer questions outside this dataset, for now.</em>
+              </p>
+              <p className="text-xs text-k-muted mt-1">
+                This is an early alpha research preview. Responses may be incomplete or inaccurate. Do not use for legal, medical, or financial decisions.
+              </p>
+              <a
+                href="https://aintropy.ai/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-k-muted hover:text-k-text transition-colors cursor-pointer inline-block mt-1"
+              >
+                Underlying technology may be protected by one or more patents pending under USPTO. © 2026 AIntropy
+              </a>
+            </div>
           </div>
         </main>
       </div>
