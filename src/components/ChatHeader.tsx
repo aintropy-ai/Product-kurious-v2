@@ -44,7 +44,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ firstName, theme, onTogg
         </button>
 
         <span className="absolute left-1/2 -translate-x-1/2 text-center text-sm text-k-muted hidden sm:block max-w-xl px-4">
-          New Jersey Open Data — 85M+ records, 23 agencies, 8+ formats. Your answer is one question away.
+          New Jersey Open Data - 85M+ records across 23 agencies, 8+ formats.
         </span>
 
         <div className="flex items-center gap-3 ml-auto flex-shrink-0">
