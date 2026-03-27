@@ -428,6 +428,7 @@ export const ChatPage = () => {
 
         <main className="flex-1 flex flex-col overflow-hidden">
           {/* Sticky input area */}
+          <div className="pt-6">
           <ChatInputArea
             onSubmit={handleSearch}
             disabled={isSearching}
@@ -435,6 +436,7 @@ export const ChatPage = () => {
             onModeChange={setSearchMode}
             preloadedQuestions={PRELOADED_QUESTIONS}
           />
+          </div>
 
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto flex flex-col">
