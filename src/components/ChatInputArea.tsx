@@ -9,6 +9,8 @@ interface ChatInputAreaProps {
   mode: SearchMode;
   onModeChange: (mode: SearchMode) => void;
   preloadedQuestions: string[];
+  onVoice?: () => void;
+  voiceActive?: boolean;
 }
 
 export const ChatInputArea: React.FC<ChatInputAreaProps> = ({
@@ -17,6 +19,8 @@ export const ChatInputArea: React.FC<ChatInputAreaProps> = ({
   mode,
   onModeChange,
   preloadedQuestions,
+  onVoice,
+  voiceActive,
 }) => {
   return (
     <div className="flex-shrink-0 border-b border-k-border px-4 py-4 bg-k-nav">
@@ -26,6 +30,8 @@ export const ChatInputArea: React.FC<ChatInputAreaProps> = ({
           disabled={disabled}
           preloadedQuestions={preloadedQuestions}
           compact
+          onVoice={onVoice}
+          voiceActive={voiceActive}
         />
         {/* Mode toggle */}
         <div className="flex items-center gap-2 mt-3 px-1">

@@ -267,6 +267,14 @@ export default function ThinkingState({ mode, isDone, onComplete, streamEvents =
     }
   }, [animComplete, isDone]);
 
+  // Demo mode: no stream events — fire onComplete as soon as fallback animation finishes
+  useEffect(() => {
+    if (fallbackComplete && streamEvents.length === 0) {
+      const t = setTimeout(onComplete, 400);
+      return () => clearTimeout(t);
+    }
+  }, [fallbackComplete]);
+
   return (
     <div className="animate-fade-in py-8 max-w-xl">
       <p className="text-sm font-medium text-k-muted mb-6 tracking-wide">

@@ -2,11 +2,11 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { ChatInputArea } from '../components/ChatInputArea';
 import ThinkingState from '../components/ThinkingState';
 import EnhancedAnswerBlock from '../components/EnhancedAnswerBlock';
+import { ProjectSidebar, MembersPanel, Project, Member } from '../components/ProjectSidebar';
 import {
   findDemoQuestion,
   SUGGESTION_CARDS,
   DemoQuestion,
-  AGENCY_FILTERS,
 } from '../data/demoData';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -30,17 +30,13 @@ const BOOKMARKS_KEY = 'kurious_v2_bookmarks';
 function loadBookmarks(): Bookmark[] {
   try { return JSON.parse(localStorage.getItem(BOOKMARKS_KEY) ?? '[]'); } catch { return []; }
 }
-
 function saveBookmarks(bm: Bookmark[]) {
   try { localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(bm)); } catch {}
 }
 
 // ─── Bookmark panel ───────────────────────────────────────────────────────────
 function BookmarkPanel({
-  bookmarks,
-  onClose,
-  onDelete,
-  onSelect,
+  bookmarks, onClose, onDelete, onSelect,
 }: {
   bookmarks: Bookmark[];
   onClose: () => void;
@@ -50,7 +46,7 @@ function BookmarkPanel({
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative w-full max-w-sm bg-k-nav border-l border-k-border flex flex-col animate-slide-up">
+      <div className="relative w-full max-w-sm bg-k-nav border-l border-k-border flex flex-col shadow-2xl">
         <div className="flex items-center justify-between px-5 py-4 border-b border-k-border">
           <div>
             <h2 className="text-sm font-semibold text-k-text">Saved Answers</h2>
@@ -63,7 +59,7 @@ function BookmarkPanel({
             <div>
               <p className="text-3xl mb-3">🔖</p>
               <p className="text-sm font-medium text-k-text mb-1">No saved answers yet</p>
-              <p className="text-xs text-k-muted">Click the Save button on any answer to bookmark it here.</p>
+              <p className="text-xs text-k-muted">Hover any answer and click the bookmark icon.</p>
             </div>
           </div>
         ) : (
@@ -80,7 +76,6 @@ function BookmarkPanel({
                   <button
                     onClick={() => onDelete(bm.id)}
                     className="text-k-muted hover:text-red-400 transition-colors text-xs flex-shrink-0 opacity-0 group-hover:opacity-100"
-                    title="Remove bookmark"
                   >
                     ✕
                   </button>
@@ -101,33 +96,6 @@ function BookmarkPanel({
   );
 }
 
-// ─── Agency filter chips ──────────────────────────────────────────────────────
-function AgencyFilters({
-  selected,
-  onSelect,
-}: {
-  selected: string;
-  onSelect: (agency: string) => void;
-}) {
-  return (
-    <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-      {AGENCY_FILTERS.map(agency => (
-        <button
-          key={agency}
-          onClick={() => onSelect(agency)}
-          className={`flex-shrink-0 text-xs px-3 py-1.5 rounded-full border transition-all duration-200 whitespace-nowrap ${
-            selected === agency
-              ? 'border-k-cyan text-k-cyan bg-k-cyan/10'
-              : 'border-k-border text-k-muted hover:border-k-border/80 hover:text-k-text'
-          }`}
-        >
-          {agency}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 // ─── Main page ────────────────────────────────────────────────────────────────
 export const DemoChatPage = () => {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
@@ -136,61 +104,60 @@ export const DemoChatPage = () => {
   const [isThinking, setIsThinking] = useState(false);
   const [pendingQ, setPendingQ] = useState<DemoQuestion | null>(null);
   const [searchMode, setSearchMode] = useState<'quick' | 'deep_think'>('quick');
-  const [agencyFilter, setAgencyFilter] = useState('All agencies');
   const [bookmarks, setBookmarks] = useState<Bookmark[]>(loadBookmarks);
   const [bookmarkPanelOpen, setBookmarkPanelOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activeConvId, setActiveConvId] = useState<string | null>(null);
+  const [chatTitle, setChatTitle] = useState<string>('');
   const [voiceActive, setVoiceActive] = useState(false);
+  const [suggestionPage, setSuggestionPage] = useState(0);
+const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [activeProjectRole, setActiveProjectRole] = useState<Member['role']>('Admin');
+  const [membersPanelOpen, setMembersPanelOpen] = useState(false);
+  const [isTitleEditing, setIsTitleEditing] = useState(false);
+  const [titleEditValue, setTitleEditValue] = useState('');
 
   const bottomRef = useRef<HTMLDivElement>(null);
-  const lastUserMsgRef = useRef<HTMLDivElement>(null);
+  const lastUserRef = useRef<HTMLDivElement>(null);
 
-  // Theme
   useEffect(() => {
     document.documentElement.classList.toggle('light', theme === 'light');
   }, [theme]);
 
-  // Scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [isThinking]);
 
+  const userMsgs = messages.filter(m => m.role === 'user');
+  const lastUserMsgId = userMsgs[userMsgs.length - 1]?.id;
+
   useEffect(() => {
-    if (lastUserMsgRef.current) {
-      lastUserMsgRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [messages.filter(m => m.role === 'user').length]);
+    lastUserRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [lastUserMsgId]);
 
   const handleSearch = (query: string) => {
-    if (!query.trim()) return;
+    if (!query.trim() || isThinking) return;
     setHasStarted(true);
 
     const demoQ = findDemoQuestion(query);
-    // Override mode from demo question
     if (demoQ.mode === 'deeper') setSearchMode('deep_think');
 
-    const userMsg: Message = {
-      id: `user-${Date.now()}`,
-      role: 'user',
-      content: query,
-    };
-    setMessages(prev => [...prev, userMsg]);
+    if (!chatTitle) setChatTitle(query.length > 50 ? query.slice(0, 50) + '…' : query);
 
+    setMessages(prev => [...prev, { id: `user-${Date.now()}`, role: 'user', content: query }]);
     setPendingQ(demoQ);
     setIsThinking(true);
   };
 
   const handleThinkingComplete = useCallback(() => {
     setIsThinking(false);
-
     if (!pendingQ) return;
-
-    const assistantMsg: Message = {
+    setMessages(prev => [...prev, {
       id: `asst-${Date.now()}`,
       role: 'assistant',
       content: pendingQ.answer,
       demoQ: pendingQ,
-    };
-    setMessages(prev => [...prev, assistantMsg]);
+    }]);
     setPendingQ(null);
   }, [pendingQ]);
 
@@ -198,27 +165,9 @@ export const DemoChatPage = () => {
     if (!msg.demoQ) return;
     setBookmarks(prev => {
       const existing = prev.find(b => b.answerId === msg.id);
-      let next: Bookmark[];
-      if (existing) {
-        next = prev.filter(b => b.answerId !== msg.id);
-      } else {
-        const bm: Bookmark = {
-          id: `bm-${Date.now()}`,
-          query: msg.demoQ!.query || msg.content,
-          answerId: msg.id,
-          savedAt: Date.now(),
-          demoQ: msg.demoQ!,
-        };
-        next = [bm, ...prev];
-      }
-      saveBookmarks(next);
-      return next;
-    });
-  };
-
-  const handleDeleteBookmark = (id: string) => {
-    setBookmarks(prev => {
-      const next = prev.filter(b => b.id !== id);
+      const next = existing
+        ? prev.filter(b => b.answerId !== msg.id)
+        : [{ id: `bm-${Date.now()}`, query: msg.demoQ!.query || msg.content, answerId: msg.id, savedAt: Date.now(), demoQ: msg.demoQ! }, ...prev];
       saveBookmarks(next);
       return next;
     });
@@ -229,221 +178,292 @@ export const DemoChatPage = () => {
     setHasStarted(false);
     setIsThinking(false);
     setPendingQ(null);
+    setActiveConvId(null);
+    setChatTitle('');
+    setSearchMode('quick');
   };
 
-  // Voice input
+  const handleSelectConversation = (id: string, title: string) => {
+    handleNewChat();
+    setActiveConvId(id);
+    setChatTitle(title);
+  };
+
   const handleVoiceInput = () => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) { alert('Voice input is not supported in this browser. Try Chrome.'); return; }
+    if (!SR) { alert('Voice input requires Chrome or Safari.'); return; }
     const recognition = new SR();
     recognition.lang = 'en-US';
     recognition.interimResults = false;
     setVoiceActive(true);
     recognition.onresult = (e: any) => {
       const text = e.results[0][0].transcript;
-      handleSearch(text);
       setVoiceActive(false);
+      handleSearch(text);
     };
     recognition.onerror = () => setVoiceActive(false);
     recognition.onend = () => setVoiceActive(false);
     recognition.start();
   };
 
-  const userMessages = messages.filter(m => m.role === 'user');
-  const lastUserMsgId = userMessages[userMessages.length - 1]?.id;
-
   return (
-    <div className="h-screen bg-k-bg flex flex-col">
-      {/* Header — with bookmark button */}
-      <header className="sticky top-0 z-30 bg-k-nav border-b border-k-border flex items-center px-6 h-14 gap-4">
-        <button
-          onClick={handleNewChat}
-          className="flex items-center gap-2 flex-shrink-0 hover:opacity-80 transition-opacity"
-          title="New chat"
-        >
-          <img src="/logo.png" alt="AIntropy" className="h-7 w-auto" />
-          <span className="text-xs font-normal text-gray-500 px-1 leading-none">v2</span>
+    <div className={`h-screen bg-k-bg flex flex-col ${theme}`}>
+
+      {/* ── Top header ─────────────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-30 bg-k-nav border-b border-k-border flex items-center px-4 h-12 gap-3 flex-shrink-0">
+        {/* Sidebar toggle */}
+        {!sidebarOpen && (
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-k-muted hover:text-k-text hover:bg-k-border/30 transition-colors flex-shrink-0"
+            title="Open sidebar"
+          >
+            ›
+          </button>
+        )}
+
+        {/* Logo */}
+        <button onClick={handleNewChat} className="flex items-center gap-2 flex-shrink-0 hover:opacity-80 transition-opacity">
+          <img src="/logo.png" alt="AIntropy" className="h-6 w-auto" />
+          <span className="text-sm font-semibold text-k-text">Kurious</span>
+          <span className="text-[10px] font-normal text-gray-500 leading-none px-1.5 py-0.5 rounded-full border border-gray-700">alpha</span>
         </button>
 
-        <span className="flex-1 text-center text-sm text-k-muted hidden sm:block whitespace-nowrap">
-          NJ Open Data — 57M+ records across 23 agencies, 8+ formats.
-        </span>
+        {/* Chat title */}
+        {chatTitle && (
+          <div className="flex-1 flex justify-center min-w-0 px-4">
+            {isTitleEditing ? (
+              <input
+                autoFocus
+                value={titleEditValue}
+                onChange={e => setTitleEditValue(e.target.value)}
+                onBlur={() => { if (titleEditValue.trim()) setChatTitle(titleEditValue.trim()); setIsTitleEditing(false); }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') { if (titleEditValue.trim()) setChatTitle(titleEditValue.trim()); setIsTitleEditing(false); }
+                  if (e.key === 'Escape') setIsTitleEditing(false);
+                }}
+                className="bg-k-card border border-k-cyan rounded-lg px-3 py-1 text-sm text-k-text focus:outline-none max-w-sm w-full text-center"
+              />
+            ) : (
+              <div className="group flex items-center gap-1.5 max-w-sm min-w-0">
+                <span className="text-sm text-k-muted truncate">{chatTitle}</span>
+                <button
+                  onClick={() => { setTitleEditValue(chatTitle); setIsTitleEditing(true); }}
+                  title="Rename chat"
+                  className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded text-k-muted hover:text-k-cyan"
+                >
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3 h-3">
+                    <path d="M11.013 2.513a1.75 1.75 0 0 1 2.475 2.474L6.226 12.25a2.751 2.751 0 0 1-.892.58l-2.185.91a.75.75 0 0 1-.977-.977l.91-2.184a2.75 2.75 0 0 1 .579-.892l7.352-7.174Z" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
-        <div className="flex items-center gap-3 ml-auto flex-shrink-0">
-          {/* Voice */}
-          <button
-            onClick={handleVoiceInput}
-            title="Voice input"
-            className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${
-              voiceActive
-                ? 'border-red-400 text-red-400 bg-red-400/10 animate-pulse'
-                : 'border-k-border text-k-muted hover:text-k-cyan hover:border-k-cyan'
-            }`}
-          >
-            <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5">
-              <path d="M8 1a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3Z"/>
-              <path d="M4.25 9.25a.75.75 0 0 0-1.5 0 5.25 5.25 0 0 0 4.5 5.201V15.5a.75.75 0 0 0 1.5 0v-1.049a5.25 5.25 0 0 0 4.5-5.201.75.75 0 0 0-1.5 0A3.75 3.75 0 0 1 8 13a3.75 3.75 0 0 1-3.75-3.75Z"/>
-            </svg>
-          </button>
+        {!chatTitle && <div className="flex-1" />}
 
-          {/* Bookmarks */}
+        {/* Right actions */}
+        <div className="flex items-center gap-1.5 ml-auto flex-shrink-0">
           <button
             onClick={() => setBookmarkPanelOpen(true)}
             title="Saved answers"
-            className="relative w-8 h-8 rounded-full border border-k-border text-k-muted hover:text-k-cyan hover:border-k-cyan flex items-center justify-center transition-all"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-k-muted hover:text-k-text hover:bg-k-border/30 transition-colors relative"
           >
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-3.5 h-3.5">
               <path d="M3.75 2h8.5c.966 0 1.75.784 1.75 1.75v10.5a.75.75 0 0 1-1.218.586L8 11.564l-4.782 3.272A.75.75 0 0 1 2 14.25V3.75C2 2.784 2.784 2 3.75 2Z" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             {bookmarks.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-k-cyan text-k-bg text-[9px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-k-cyan rounded-full text-[8px] font-bold text-k-bg flex items-center justify-center">
                 {bookmarks.length}
               </span>
             )}
           </button>
-
-          {/* Theme */}
-          <button
-            onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
-            className="w-8 h-8 rounded-full border border-k-border text-k-muted hover:text-k-text flex items-center justify-center transition-all"
-            title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
-          >
-            <span className="text-sm">{theme === 'dark' ? '☀️' : '🌙'}</span>
-          </button>
         </div>
       </header>
+
+      {/* ── Body: sidebar + main ─────────────────────────────────────────────── */}
+      <div className="flex flex-1 overflow-hidden">
+
+        {/* Left sidebar */}
+        {sidebarOpen && (
+          <ProjectSidebar
+            activeConvId={activeConvId}
+            bookmarkCount={bookmarks.length}
+            onNewChat={handleNewChat}
+            onSelectConversation={handleSelectConversation}
+            onOpenBookmarks={() => setBookmarkPanelOpen(true)}
+            onClose={() => setSidebarOpen(false)}
+            onActiveProjectChange={(p, role) => { setActiveProject(p); setActiveProjectRole(role); setMembersPanelOpen(false); }}
+            theme={theme}
+            onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+          />
+        )}
+
+        {/* Main content */}
+        <main className="flex-1 flex flex-col overflow-hidden relative">
+
+          {/* ── Project members button (top-right, below header) ─────────── */}
+          {activeProject && (
+            <div className="absolute top-3 right-4 z-20">
+              <button
+                onClick={() => setMembersPanelOpen(true)}
+                className="flex items-center gap-1.5 text-xs text-k-muted hover:text-k-text border border-k-border hover:border-k-border/80 rounded-lg px-3 py-1.5 bg-k-nav hover:bg-k-card transition-all"
+              >
+                <svg viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5 flex-shrink-0">
+                  <path d="M2 5.5a3.5 3.5 0 1 1 5.898 2.549 5.508 5.508 0 0 1 3.034 4.084.75.75 0 1 1-1.482.235 4 4 0 0 0-7.9 0 .75.75 0 0 1-1.482-.236A5.507 5.507 0 0 1 3.102 8.05 3.493 3.493 0 0 1 2 5.5ZM11 4a.75.75 0 1 0 0 1.5 1.5 1.5 0 0 1 .666 2.844.75.75 0 0 0-.416.672v.352a.75.75 0 0 0 .574.73c1.2.289 2.162 1.2 2.522 2.372a.75.75 0 1 0 1.434-.44 5.01 5.01 0 0 0-2.56-3.012A3 3 0 0 0 11 4ZM5.5 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+                </svg>
+                {activeProjectRole === 'Admin' ? 'Manage members' : 'View members'}
+              </button>
+            </div>
+          )}
+
+          {/* ── Scrollable messages area ──────────────────────────────────── */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="max-w-3xl mx-auto px-6 pt-6 pb-4 w-full">
+
+              {/* Welcome state */}
+              {!hasStarted && (
+                <div
+                  className="animate-fade-in pt-12 pb-8 transition-transform duration-300"
+                  style={{ transform: sidebarOpen ? 'translateX(-128px)' : 'none' }}
+                >
+
+                  <div className="flex flex-col items-center text-center">
+                    <h1 className="text-3xl font-semibold text-k-text mb-2">Welcome back, Kunal.</h1>
+                    <p className="text-k-muted text-base mb-8 max-w-md">
+                      Your AI knowledge engine. What do you want to explore today?
+                    </p>
+
+                    {/* Inline input */}
+                    <div className="w-full max-w-2xl mb-6">
+                      <ChatInputArea
+                        onSubmit={handleSearch}
+                        disabled={isThinking}
+                        mode={searchMode}
+                        onModeChange={setSearchMode}
+                        preloadedQuestions={SUGGESTION_CARDS}
+                        onVoice={handleVoiceInput}
+                        voiceActive={voiceActive}
+                      />
+                    </div>
+
+                    {/* Suggestion pills */}
+                    {(() => {
+                      const pageSize = 4;
+                      const start = (suggestionPage * pageSize) % SUGGESTION_CARDS.length;
+                      const visible = Array.from({ length: pageSize }, (_, i) =>
+                        SUGGESTION_CARDS[(start + i) % SUGGESTION_CARDS.length]
+                      );
+                      return (
+                        <>
+                          <div className="flex flex-wrap justify-center gap-2">
+                            {visible.map((s, i) => (
+                              <button key={`${suggestionPage}-${i}`} onClick={() => handleSearch(s)}
+                                className="text-xs text-k-muted hover:text-k-text border border-k-border hover:border-k-cyan/40 rounded-full px-4 py-2 transition-all duration-200 hover:bg-k-card/60 flex items-center gap-1.5 group animate-fade-in">
+                                <span className="text-k-cyan/60 group-hover:text-k-cyan transition-colors">→</span>
+                                {s.length > 48 ? s.slice(0, 48) + '…' : s}
+                              </button>
+                            ))}
+                          </div>
+                          <button
+                            onClick={() => setSuggestionPage(p => p + 1)}
+                            className="mt-4 flex items-center gap-1.5 text-xs text-k-muted/60 hover:text-k-cyan transition-colors mx-auto"
+                          >
+                            <span className="text-k-cyan/50">✦</span>
+                            More ideas
+                          </button>
+                        </>
+                      );
+                    })()}
+                  </div>
+                </div>
+              )}
+
+              {/* Messages */}
+              {messages.map(msg => {
+                const isLastUser = msg.id === lastUserMsgId;
+                if (msg.role === 'user') {
+                  return (
+                    <div
+                      key={msg.id}
+                      ref={isLastUser ? lastUserRef : undefined}
+                      className="flex justify-end mb-6 mt-2"
+                    >
+                      <div className="max-w-lg bg-k-card border border-k-border rounded-2xl px-4 py-3 text-sm text-k-text">
+                        {msg.content}
+                      </div>
+                    </div>
+                  );
+                }
+                if (!msg.demoQ) return null;
+                const isBookmarked = bookmarks.some(b => b.answerId === msg.id);
+                return (
+                  <div key={msg.id} className="mb-10">
+                    <EnhancedAnswerBlock
+                      demoQ={msg.demoQ}
+                      onRelatedQuestion={handleSearch}
+                      bookmarked={isBookmarked}
+                      onBookmark={() => handleBookmark(msg)}
+                    />
+                  </div>
+                );
+              })}
+
+              {/* Thinking animation */}
+              {isThinking && pendingQ && (
+                <div className="mb-8">
+                  <ThinkingState
+                    mode={pendingQ.mode === 'deeper' ? 'deeper' : 'quick'}
+                    isDone={false}
+                    onComplete={handleThinkingComplete}
+                    streamEvents={[]}
+                  />
+                </div>
+              )}
+
+              <div ref={bottomRef} />
+            </div>
+          </div>
+
+          {/* ── Sticky input at bottom (chat state only) ──────────────────── */}
+          {hasStarted && <div className="flex-shrink-0 border-t border-k-border/40 bg-k-bg">
+            <div className="max-w-3xl mx-auto px-6 py-3">
+              <ChatInputArea
+                onSubmit={handleSearch}
+                disabled={isThinking}
+                mode={searchMode}
+                onModeChange={setSearchMode}
+                preloadedQuestions={SUGGESTION_CARDS}
+                onVoice={handleVoiceInput}
+                voiceActive={voiceActive}
+              />
+            </div>
+            <p className="text-center text-[10px] text-k-muted/40 pb-2">
+              Kurious · NJ Open Data demo · 85M+ records
+            </p>
+          </div>}
+        </main>
+      </div>
+
+      {/* Members panel */}
+      {membersPanelOpen && activeProject && (
+        <MembersPanel
+          project={activeProject}
+          demoRole={activeProjectRole}
+          onClose={() => setMembersPanelOpen(false)}
+        />
+      )}
 
       {/* Bookmark panel */}
       {bookmarkPanelOpen && (
         <BookmarkPanel
           bookmarks={bookmarks}
           onClose={() => setBookmarkPanelOpen(false)}
-          onDelete={handleDeleteBookmark}
-          onSelect={query => { setBookmarkPanelOpen(false); handleSearch(query); }}
+          onDelete={id => setBookmarks(prev => { const n = prev.filter(b => b.id !== id); saveBookmarks(n); return n; })}
+          onSelect={q => { setBookmarkPanelOpen(false); handleSearch(q); }}
         />
       )}
-
-      {/* Main content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        {/* Sticky input — only after chat started */}
-        {hasStarted && (
-          <ChatInputArea
-            onSubmit={handleSearch}
-            disabled={isThinking}
-            mode={searchMode}
-            onModeChange={setSearchMode}
-            preloadedQuestions={SUGGESTION_CARDS}
-          />
-        )}
-
-        <div className="flex-1 overflow-y-auto flex flex-col">
-          <div className="flex-1 max-w-3xl mx-auto px-4 pt-4 pb-6 w-full">
-
-            {/* Welcome state */}
-            {!hasStarted && (
-              <div className="animate-fade-in text-center pt-6">
-                <h1 className="text-3xl font-bold text-k-text mb-2">Welcome to Kurious.</h1>
-                <p className="text-k-muted mb-5 text-base leading-relaxed max-w-xl mx-auto">
-                  Your AI-powered knowledge engine — what do you want to explore?
-                </p>
-
-                {/* Agency filter chips */}
-                <div className="max-w-2xl mx-auto mb-5">
-                  <AgencyFilters selected={agencyFilter} onSelect={setAgencyFilter} />
-                </div>
-
-                {/* Search bar */}
-                <div className="max-w-2xl mx-auto mb-6">
-                  <ChatInputArea
-                    onSubmit={handleSearch}
-                    disabled={isThinking}
-                    mode={searchMode}
-                    onModeChange={setSearchMode}
-                    preloadedQuestions={SUGGESTION_CARDS}
-                  />
-                </div>
-
-                {/* Suggestion cards */}
-                <div className="max-w-2xl mx-auto">
-                  <p className="text-xs text-k-muted uppercase tracking-widest mb-3 font-medium text-center">Try asking:</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {SUGGESTION_CARDS.map((s, i) => (
-                      <button
-                        key={i}
-                        onClick={() => handleSearch(s)}
-                        className="text-left border border-k-border rounded-xl p-4 text-sm text-k-muted hover:border-k-cyan hover:text-k-text transition-all duration-200 bg-k-card hover:bg-k-card/80 group"
-                      >
-                        <span className="text-k-cyan mr-2 group-hover:translate-x-0.5 inline-block transition-transform">→</span>
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Messages */}
-            {messages.map(msg => {
-              const isLastUser = msg.id === lastUserMsgId;
-              if (msg.role === 'user') {
-                return (
-                  <div
-                    key={msg.id}
-                    ref={isLastUser ? lastUserMsgRef : undefined}
-                    className="flex justify-end mb-4 mt-4"
-                  >
-                    <div className="max-w-lg bg-k-card border border-k-border rounded-2xl px-4 py-3 text-sm text-k-text">
-                      {msg.content}
-                    </div>
-                  </div>
-                );
-              }
-              // Assistant
-              if (!msg.demoQ) return null;
-              const isBookmarked = bookmarks.some(b => b.answerId === msg.id);
-              return (
-                <div key={msg.id} className="mb-8">
-                  <EnhancedAnswerBlock
-                    demoQ={msg.demoQ}
-                    onRelatedQuestion={handleSearch}
-                    bookmarked={isBookmarked}
-                    onBookmark={() => handleBookmark(msg)}
-                  />
-                </div>
-              );
-            })}
-
-            {/* Thinking animation */}
-            {isThinking && pendingQ && (
-              <div className="mb-8">
-                <ThinkingState
-                  mode={pendingQ.mode === 'deeper' ? 'deeper' : 'quick'}
-                  isDone={false}
-                  onComplete={handleThinkingComplete}
-                  streamEvents={[]}
-                />
-              </div>
-            )}
-
-            <div ref={bottomRef} />
-          </div>
-
-          {/* Footer */}
-          <div className="mt-auto py-3 px-6 text-center" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-            <p className="text-xs text-k-muted leading-relaxed">
-              <strong className="text-k-muted">Disclaimer:</strong> Kurious answers questions about NJ Open Data only. This is a prototype demo showcasing Kurious V2 capabilities.
-            </p>
-            <a
-              href="https://aintropy.ai/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-k-muted hover:text-k-text transition-colors cursor-pointer inline-block mt-1"
-            >
-              Underlying technology may be protected by one or more patents pending under USPTO. © 2026 AIntropy
-            </a>
-          </div>
-        </div>
-      </main>
     </div>
   );
 };

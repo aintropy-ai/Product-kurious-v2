@@ -133,7 +133,7 @@ The surge was driven by two factors: post-pandemic infrastructure catch-up and n
     ],
     thinkingSteps: [
       'Understood your question',
-      'Searching 57M government records',
+      'Searching 85M government records',
       'Found NJDOT capital budget database',
       'Cross-referencing with NJ Treasury appropriations',
       'Pulling IIJA federal allocation data',
@@ -201,7 +201,7 @@ The board also reviewed NTSB recommendations following the 2022 Secaucus near-mi
     ],
     thinkingSteps: [
       'Understood your question',
-      'Searching 57M documents across 23 agencies',
+      'Searching 85M documents across 23 agencies',
       'Scanning board meeting video archives',
       'Reading NJ Transit board meeting at 4:23',
       'Cross-referencing NTSB safety recommendations',
@@ -373,7 +373,7 @@ Gateway Development Commission Chairman John D. Porcari stated in November 2023 
     ],
     thinkingSteps: [
       'Understood your question',
-      'Searching 57M documents across 23 agencies',
+      'Searching 85M documents across 23 agencies',
       'Reading Gateway Program EIS documentation',
       'Analyzing NJ Transit project status reports',
       'Cross-referencing Amtrak/FRA federal filings',
@@ -426,7 +426,7 @@ Try one of the suggested questions to see the full range of capabilities, includ
   ],
   thinkingSteps: [
     'Understood your question',
-    'Searching 57M documents across 23 agencies',
+    'Searching 85M documents across 23 agencies',
     'Scanning videos, data & documents',
     'Connecting insights...',
   ],
@@ -447,6 +447,14 @@ export const SUGGESTION_CARDS = [
   'What did NJ Transit\'s board discuss about safety in 2023?',
   'Which NJ counties had the most environmental violations in 2022?',
   'What is the current status of the Gateway Tunnel project?',
+  'How has NJ school enrollment changed over the last 5 years?',
+  'What are the top causes of bridge deficiencies in NJ?',
+  'Which NJ agencies had the highest overtime expenditure in 2023?',
+  'What environmental remediation projects are active in Bergen County?',
+  'How much has NJ Transit\'s ridership recovered since 2020?',
+  'What is the NJ DEP\'s budget allocation for clean water initiatives?',
+  'Which NJ counties have the highest air quality violations?',
+  'How has NJ property tax revenue changed in the last decade?',
 ];
 
 export const AGENCY_FILTERS = [
