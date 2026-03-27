@@ -427,16 +427,16 @@ export const ChatPage = () => {
         )}
 
         <main className="flex-1 flex flex-col overflow-hidden">
-          {/* Sticky input area */}
-          <div className="pt-6">
-          <ChatInputArea
-            onSubmit={handleSearch}
-            disabled={isSearching}
-            mode={searchMode}
-            onModeChange={setSearchMode}
-            preloadedQuestions={PRELOADED_QUESTIONS}
-          />
-          </div>
+          {/* Sticky input area — only shown when chat has started */}
+          {hasStarted && (
+            <ChatInputArea
+              onSubmit={handleSearch}
+              disabled={isSearching}
+              mode={searchMode}
+              onModeChange={setSearchMode}
+              preloadedQuestions={PRELOADED_QUESTIONS}
+            />
+          )}
 
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto flex flex-col">
@@ -468,6 +468,15 @@ export const ChatPage = () => {
                   firstName={firstName}
                   onQuestionSelect={handleSearch}
                   suggestions={SUGGESTION_CARDS}
+                  inputArea={
+                    <ChatInputArea
+                      onSubmit={handleSearch}
+                      disabled={isSearching}
+                      mode={searchMode}
+                      onModeChange={setSearchMode}
+                      preloadedQuestions={PRELOADED_QUESTIONS}
+                    />
+                  }
                 />
               )}
 
