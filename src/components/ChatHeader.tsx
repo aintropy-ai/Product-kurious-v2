@@ -33,21 +33,23 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ firstName, theme, onTogg
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-k-nav border-b border-k-border flex items-center px-6 h-14 gap-4 relative">
-        <button
-          onClick={onNewChat}
-          className="flex items-center gap-2 flex-shrink-0 hover:opacity-80 transition-opacity"
-          title="New chat"
-        >
-          <img src="/logo.png" alt="AIntropy" className="h-7 w-auto" />
-          <span className="text-xs font-normal text-gray-500 px-1 leading-none">alpha</span>
-        </button>
+      <header className="sticky top-0 z-30 bg-k-nav border-b border-k-border flex items-center px-6 h-14">
+        <div className="flex-1 flex items-center">
+          <button
+            onClick={onNewChat}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            title="New chat"
+          >
+            <img src="/logo.png" alt="AIntropy" className="h-7 w-auto" />
+            <span className="text-xs font-normal text-gray-500 px-1 leading-none">alpha</span>
+          </button>
+        </div>
 
-        <span className="absolute left-1/2 -translate-x-1/2 text-center text-sm text-k-muted hidden sm:block max-w-xl px-4">
+        <span className="flex-1 text-center text-sm text-k-muted hidden sm:block whitespace-nowrap">
           New Jersey Open Data - 85M+ records across 23 agencies, 8+ formats.
         </span>
 
-        <div className="flex items-center gap-3 ml-auto flex-shrink-0">
+        <div className="flex-1 flex items-center justify-end gap-3">
           <a
             href="mailto:help@aintropy.ai"
             className="text-xs font-medium px-4 py-1.5 rounded-full bg-k-cyan text-k-bg hover:bg-cyan-300 transition-colors flex-shrink-0"
