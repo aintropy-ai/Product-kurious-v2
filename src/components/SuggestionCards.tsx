@@ -8,8 +8,8 @@ export default function SuggestionCards({ suggestions, onSelect, label = 'Try as
   if (!suggestions || suggestions.length === 0) return null;
 
   return (
-    <div className="animate-fade-in">
-      <p className="text-xs text-k-muted uppercase tracking-widest mb-3 font-medium">{label}</p>
+    <div className="animate-fade-in max-w-2xl mx-auto">
+      <p className="text-xs text-k-muted uppercase tracking-widest mb-3 font-medium text-center">{label}</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {suggestions.slice(0, 4).map((s, i) => (
           <button
