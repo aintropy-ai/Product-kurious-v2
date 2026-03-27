@@ -437,8 +437,8 @@ export const ChatPage = () => {
           />
 
           {/* Scrollable content */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="max-w-5xl mx-auto px-4 pt-4 pb-8">
+          <div className="flex-1 overflow-y-auto flex flex-col">
+            <div className="flex-1 max-w-5xl mx-auto px-4 pt-4 pb-8 w-full">
 
               {/* Loading animation */}
               {messagesLoading && (
@@ -539,7 +539,7 @@ export const ChatPage = () => {
             </div>
 
             {/* Disclaimer footer */}
-            <div className="py-3 px-6 text-center" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+            <div className="mt-auto py-3 px-6 text-center" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
               <p className="text-xs text-k-muted leading-relaxed">
                 <em>Kurious answers questions about NJ Open Data only. It is not a general-purpose AI and cannot answer questions outside this dataset, for now.</em>
               </p>
