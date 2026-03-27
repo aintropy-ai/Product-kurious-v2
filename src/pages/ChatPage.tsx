@@ -541,7 +541,7 @@ export const ChatPage = () => {
             {/* Disclaimer footer */}
             <div className="mt-auto py-3 px-6 text-center" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
               <p className="text-xs text-k-muted leading-relaxed">
-                <em>Kurious answers questions about NJ Open Data only. It is not a general-purpose AI and cannot answer questions outside this dataset, for now.</em>
+                <strong className="text-k-muted">Disclaimer:</strong> Kurious answers questions about NJ Open Data only. It is not a general-purpose AI and cannot answer questions outside this dataset, for now.
               </p>
               <p className="text-xs text-k-muted mt-1">
                 This is an early alpha research preview. Responses may be incomplete or inaccurate. Do not use for legal, medical, or financial decisions.
