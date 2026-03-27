@@ -19,7 +19,7 @@ const STRUCTURED_PHRASES = [
 
 const UNSTRUCTURED_PHRASES = [
   'Embedding query…',
-  'Scanning 57M documents…',
+  'Scanning 85M documents…',
   'Ranking by relevance…',
   'Reading top matches…',
   'Pulling excerpts…',
@@ -210,13 +210,13 @@ function buildLiveSteps(events: NewStreamEvent[], isDone = false): LiveStep[] {
 // Fallback animated steps when no live events yet
 const QUICK_STEPS = [
   'Understood your question',
-  'Searching across 57M documents',
+  'Searching across 85M documents',
   'Scanning government records & data',
   'Connecting insights',
 ];
 const DEEPER_STEPS = [
   'Understood your question',
-  'Searching across 57M documents',
+  'Searching across 85M documents',
   'Scanning government records & data',
   'Cross-referencing sources',
   'Analysing connections',

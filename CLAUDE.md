@@ -69,7 +69,7 @@ A React-based web application for managing knowledge perception pipelines and se
 
 **NJ Open Data** (23 agencies):
 - Department of Transportation (8.5M), Department of Health (7.2M), etc.
-- Total: 57M documents
+- Total: 85M documents
 
 **Legal Understanding** (1 source):
 - Local View (2.5K hours)
