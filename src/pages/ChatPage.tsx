@@ -440,7 +440,7 @@ export const ChatPage = () => {
 
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto flex flex-col">
-            <div className="flex-1 max-w-5xl mx-auto px-4 pt-4 pb-8 w-full">
+            <div className="flex-1 max-w-5xl mx-auto px-4 pt-2 pb-4 w-full">
 
               {/* Loading animation */}
               {messagesLoading && (

@@ -33,7 +33,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ firstName, theme, onTogg
 
   return (
     <>
-      <header className="sticky top-0 z-30 bg-k-nav border-b border-k-border flex items-center px-6 h-14 gap-4">
+      <header className="sticky top-0 z-30 bg-k-nav border-b border-k-border flex items-center px-6 h-14 gap-4 relative">
         <button
           onClick={onNewChat}
           className="flex items-center gap-2 flex-shrink-0 hover:opacity-80 transition-opacity"
@@ -43,7 +43,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({ firstName, theme, onTogg
           <span className="text-xs font-normal text-gray-500 px-1 leading-none">alpha</span>
         </button>
 
-        <span className="flex-1 text-center text-sm text-k-muted hidden sm:block">
+        <span className="absolute left-1/2 -translate-x-1/2 text-center text-sm text-k-muted hidden sm:block max-w-xl px-4">
           New Jersey Open Data. 85M+ records buried across 23 agencies, 8+ formats, images and video. Your answer is one question away.
         </span>
 
