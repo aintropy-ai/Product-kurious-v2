@@ -36,8 +36,9 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
-    if (!search.trim()) return conversations;
-    return conversations.filter(c =>
+    const recent = conversations.slice(0, 10);
+    if (!search.trim()) return recent;
+    return recent.filter(c =>
       (c.title || 'Untitled').toLowerCase().includes(search.toLowerCase())
     );
   }, [conversations, search]);
