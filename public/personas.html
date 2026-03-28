@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kurious — User Personas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0D0D0D;
+      --nav:     #111111;
+      --card:    #1A1A1A;
+      --card2:   #1C1C1E;
+      --border:  #2A2A2A;
+      --text:    #FFFFFF;
+      --muted:   #A0A0A0;
+      --cyan:    #00D4FF;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(17,17,17,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 56px;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo img { height: 24px; }
+    .nav-logo span { font-size: 15px; font-weight: 600; color: var(--text); }
+    .nav-badge { font-size: 10px; color: #666; border: 1px solid #333; border-radius: 99px; padding: 2px 7px; }
+    .nav-link { font-size: 13px; color: var(--muted); text-decoration: none; transition: color .15s; }
+    .nav-link:hover { color: var(--cyan); }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 80px 40px 60px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--cyan); background: rgba(0,212,255,.08);
+      border: 1px solid rgba(0,212,255,.2); border-radius: 99px;
+      padding: 4px 14px; margin-bottom: 24px;
+    }
+    .hero h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 800; line-height: 1.1; letter-spacing: -.02em; margin-bottom: 16px; }
+    .hero h1 span { color: var(--cyan); }
+    .hero p { font-size: 17px; color: var(--muted); line-height: 1.6; }
+
+    /* ── PERSONA GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px 80px;
+    }
+
+    /* ── PERSONA CARD ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+      cursor: default;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    }
+
+    .card-accent {
+      height: 4px;
+      width: 100%;
+    }
+
+    .card-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 20px 22px 16px;
+    }
+    .avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,.08);
+    }
+    .card-name { font-size: 17px; font-weight: 700; color: var(--text); }
+    .card-role { font-size: 12px; color: var(--muted); margin-top: 2px; font-weight: 500; }
+
+    .card-quote {
+      margin: 0 22px 18px;
+      font-size: 13px; font-style: italic; color: var(--muted);
+      line-height: 1.55;
+      padding: 12px 14px;
+      background: var(--card2);
+      border-radius: 10px;
+      border-left: 3px solid;
+      position: relative;
+    }
+    .card-quote::before {
+      content: '"';
+      font-size: 32px; font-style: normal; font-weight: 800;
+      position: absolute; top: -4px; left: 10px;
+      opacity: .2; line-height: 1;
+    }
+
+    /* before/after */
+    .before-after {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 8px; margin: 0 22px 18px;
+    }
+    .ba-box {
+      border-radius: 10px; padding: 10px 12px;
+    }
+    .ba-box.before { background: rgba(239,68,68,.06); border: 1px solid rgba(239,68,68,.15); }
+    .ba-box.after  { background: rgba(0,212,255,.06); border: 1px solid rgba(0,212,255,.15); }
+    .ba-label { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 5px; }
+    .ba-box.before .ba-label { color: #EF4444; }
+    .ba-box.after  .ba-label { color: var(--cyan); }
+    .ba-text { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+    /* journey */
+    .journey-label {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); padding: 0 22px 10px;
+    }
+    .journey {
+      padding: 0 22px 22px;
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .step {
+      display: flex; gap: 12px; align-items: flex-start;
+      position: relative;
+    }
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 14px; top: 28px;
+      width: 1px; height: calc(100% + 2px);
+      background: var(--border);
+    }
+    .step-dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+      border: 1.5px solid;
+      margin-top: 2px; z-index: 1;
+      background: var(--card);
+    }
+    .step-body { padding-bottom: 16px; flex: 1; }
+    .step-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .step-desc  { font-size: 12px; color: var(--muted); line-height: 1.45; }
+
+    /* superpower badge */
+    .superpower {
+      margin: 0 22px 22px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 500;
+    }
+    .superpower-icon { font-size: 16px; }
+
+    /* ── SECTION DIVIDER ── */
+    .section-divider {
+      text-align: center;
+      padding: 20px 40px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-divider h2 {
+      font-size: 28px; font-weight: 700; letter-spacing: -.02em;
+      color: var(--text); margin-bottom: 8px;
+    }
+    .section-divider p { font-size: 15px; color: var(--muted); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 32px 40px;
+      font-size: 12px; color: #444;
+    }
+    footer span { color: var(--cyan); }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="./index.html">
+    <img src="./logo.png" alt="Kurious" />
+    <span>Kurious</span>
+    <span class="nav-badge">alpha</span>
+  </a>
+  <a class="nav-link" href="./index.html">← Back to app</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">User Personas & Journeys</div>
+  <h1>Built for the people <span>asking hard questions</span></h1>
+  <p>Seven real roles. Seven different needs. One knowledge engine that meets all of them.</p>
+</div>
+
+<!-- GRID -->
+<div class="grid" id="personas"></div>
+
+<footer>
+  Kurious · <span>AIntropy</span> · Product v2 · 2026
+</footer>
+
+<script>
+const personas = [
+  {
+    name: "Maya",
+    role: "Policy Analyst · State Government",
+    emoji: "👩‍💼",
+    color: "#00D4FF",
+    gradient: "linear-gradient(135deg, #00D4FF, #0891B2)",
+    quote: "I spend half my day finding one data point I know exists somewhere in our 85M records.",
+    before: "3+ hours hunting PDFs across 6 agency portals for a single budget figure",
+    after: "Gets the answer in 8 seconds with the exact document page cited",
+    superpower: "⚡ Citation Defender",
+    superpowerDesc: "Every answer she gives her boss has a source she can point to",
+    superpowerBg: "rgba(0,212,255,.08)",
+    superpowerColor: "#00D4FF",
+    journey: [
+      { title: "Receives a brief", desc: "Director asks: 'What did NJ spend on transit infrastructure in 2022 vs 2023?'" },
+      { title: "Opens Kurious", desc: "Types the question in natural language — no SQL, no portal login" },
+      { title: "Watches the trace", desc: "Sees Kurious scan structured records + documents in real time — builds trust" },
+      { title: "Reads the answer", desc: "Gets a clear comparison with inline citations [1][2][3]" },
+      { title: "Clicks the source", desc: "Opens the exact table row highlighted — pastes the link into her brief" },
+      { title: "Sends to director", desc: "Done in 9 minutes instead of 3 hours. Repeat daily." },
+    ]
+  },
+  {
+    name: "Rajiv",
+    role: "VP of Operations · Enterprise",
+    emoji: "👨‍💼",
+    color: "#8B5CF6",
+    gradient: "linear-gradient(135deg, #8B5CF6, #6D28D9)",
+    quote: "I have a board meeting in 20 minutes and I need one number — not a dashboard.",
+    before: "Pings 3 analysts, waits 2 hours, gets a spreadsheet he doesn't have time to read",
+    after: "Gets the number, the context, and the source in under 30 seconds",
+    superpower: "🎯 Meeting-Ready",
+    superpowerDesc: "Walks into every room already knowing the answer",
+    superpowerBg: "rgba(139,92,246,.08)",
+    superpowerColor: "#8B5CF6",
+    journey: [
+      { title: "Board prep pressure", desc: "CFO wants transit ridership data before the 2pm call" },
+      { title: "Quick mode", desc: "Selects ⚡ Quick — knows he needs speed, not depth" },
+      { title: "Natural question", desc: "'What is NJ Transit ridership trend over the last 3 years?'" },
+      { title: "Answer in seconds", desc: "Gets a clean 3-sentence summary — no charts, no noise" },
+      { title: "Shares it", desc: "Screenshots the answer, pastes into his talking points" },
+      { title: "Looks sharp", desc: "Answers the CFO's follow-up without checking his phone" },
+    ]
+  },
+  {
+    name: "Sam",
+    role: "AI Engineer · SaaS Company",
+    emoji: "👨‍💻",
+    color: "#10B981",
+    gradient: "linear-gradient(135deg, #10B981, #059669)",
+    quote: "I need to know if this RAG pipeline actually works before I recommend it to my CTO.",
+    before: "Evaluates 4 vendors using vague demos that hide latency and hallucination rates",
+    after: "Sees exactly which retrieval algorithm ran, latency, and source hit count in real time",
+    superpower: "🔬 Under the Hood",
+    superpowerDesc: "Sees the retrieval trace others hide — makes an informed decision",
+    superpowerBg: "rgba(16,185,129,.08)",
+    superpowerColor: "#10B981",
+    journey: [
+      { title: "Shortlists Kurious", desc: "CTO asks Sam to evaluate 3 knowledge retrieval tools" },
+      { title: "Runs a stress test", desc: "Asks a deliberately hard question: multi-hop, cross-agency" },
+      { title: "Watches Think Deeper", desc: "Sees the live step trace — thinking → tool calls → results with counts" },
+      { title: "Checks the sources", desc: "Opens the source panel, verifies PRIMARY vs SUPPORTING grouping" },
+      { title: "Tests the API", desc: "Hits the API keys page, runs a curl — measures p95 latency" },
+      { title: "Recommends it", desc: "Sends a Slack to CTO: 'This is the one. Transparent, fast, accurate.'" },
+    ]
+  },
+  {
+    name: "Priya",
+    role: "Investigative Journalist · NJ News",
+    emoji: "📰",
+    color: "#F59E0B",
+    gradient: "linear-gradient(135deg, #F59E0B, #D97706)",
+    quote: "I need to cross-reference 5 agencies' data in one afternoon — and I can't get a fact wrong.",
+    before: "Files 3 FOIA requests, waits weeks, gets redacted PDFs she can't search",
+    after: "Cross-references 5 agencies in one session with exact document links for her editor",
+    superpower: "🔗 Source Linker",
+    superpowerDesc: "Every claim in her story has a government document behind it",
+    superpowerBg: "rgba(245,158,11,.08)",
+    superpowerColor: "#F59E0B",
+    journey: [
+      { title: "Story lead arrives", desc: "Tip: NJ infrastructure spending doesn't match federal reports" },
+      { title: "Cross-agency query", desc: "'Compare DOT spending reports with Port Authority financials 2021–2024'" },
+      { title: "Think Deeper mode", desc: "Selects 🔍 Think Deeper — needs comprehensive cross-referencing" },
+      { title: "Spots the anomaly", desc: "Kurious surfaces a $48M discrepancy between two agencies" },
+      { title: "Opens every source", desc: "Views passage in each doc — saves the deep-link URLs" },
+      { title: "Publishes with confidence", desc: "Every paragraph has a linked government source. Editor approves same day." },
+    ]
+  },
+  {
+    name: "Daniel",
+    role: "Compliance Officer · Financial Services",
+    emoji: "🏦",
+    color: "#3B82F6",
+    gradient: "linear-gradient(135deg, #3B82F6, #2563EB)",
+    quote: "Hallucinations aren't a UX problem for me — they're a regulatory risk.",
+    before: "Manually verifies every data point against source documents before an audit",
+    after: "Gets answers with exact document, page, and row — audit trail built in",
+    superpower: "📋 Audit Trail",
+    superpowerDesc: "Every answer is traceable to a specific record — zero interpretation needed",
+    superpowerBg: "rgba(59,130,246,.08)",
+    superpowerColor: "#3B82F6",
+    journey: [
+      { title: "Audit prep begins", desc: "Regulator requests evidence of compliance with NJ environmental standards" },
+      { title: "Precise query", desc: "'Show me all DEP enforcement actions against chemical facilities 2022–2024'" },
+      { title: "Reads the trace", desc: "Watches structured records scan — sees exactly which tables were queried" },
+      { title: "Verifies the source", desc: "Clicks ⛁ Opens to highlighted row — sees the exact DEP record" },
+      { title: "Downloads evidence", desc: "Saves each source link as part of the compliance package" },
+      { title: "Passes the audit", desc: "Presents 12 verified records to the regulator. Zero disputes." },
+    ]
+  },
+  {
+    name: "Aisha",
+    role: "City Council Member · Newark",
+    emoji: "🏛️",
+    color: "#EC4899",
+    gradient: "linear-gradient(135deg, #EC4899, #DB2777)",
+    quote: "My constituents ask me about potholes and budgets. I need answers I can say out loud.",
+    before: "Calls her chief of staff, waits a day, gets a 12-page PDF she has to summarise herself",
+    after: "Gets a plain-English answer she can read verbatim at a town hall",
+    superpower: "🎤 Town Hall Ready",
+    superpowerDesc: "Answers constituent questions on the spot — no jargon, no waiting",
+    superpowerBg: "rgba(236,72,153,.08)",
+    superpowerColor: "#EC4899",
+    journey: [
+      { title: "Constituent question", desc: "At a town hall: 'Why did our road repair budget drop this year?'" },
+      { title: "Opens Kurious on phone", desc: "Types the question in plain English while the room waits" },
+      { title: "Quick mode answer", desc: "Gets 3 clean sentences — no tables, no jargon" },
+      { title: "Reads it aloud", desc: "The answer is already in constituent-friendly language" },
+      { title: "Cites the source", desc: "'According to the city's 2024 capital plan...' — the source is right there" },
+      { title: "Earns trust", desc: "Constituents see a council member who has answers, not excuses" },
+    ]
+  },
+  {
+    name: "Leila",
+    role: "Head of Sales · AIntropy",
+    emoji: "💼",
+    color: "#EF4444",
+    gradient: "linear-gradient(135deg, #EF4444, #DC2626)",
+    quote: "I demo Kurious live in sales calls. If it stutters, I lose the deal.",
+    before: "Uses scripted screenshots — prospects always ask 'but can it handle our data?'",
+    after: "Runs live queries on real data during the call — prospects go silent with awe",
+    superpower: "🚀 Live Demo Weapon",
+    superpowerDesc: "Turns skeptical prospects into champions in a single 10-minute demo",
+    superpowerBg: "rgba(239,68,68,.08)",
+    superpowerColor: "#EF4444",
+    journey: [
+      { title: "Enterprise prospect call", desc: "Fortune 500 procurement team joins. 45 minutes. High stakes." },
+      { title: "Opens Kurious live", desc: "No slides. Pulls up the app directly — shows the welcome screen" },
+      { title: "Asks their question", desc: "Asks the question the prospect emailed in advance — in real time" },
+      { title: "They watch the trace", desc: "Live thinking steps build — prospect leans forward, stops checking phone" },
+      { title: "Shows the sources", desc: "Clicks into the source — shows the exact document passage used" },
+      { title: "Closes the deal", desc: "'Can we get a pilot?' Before the call ends." },
+    ]
+  }
+];
+
+const grid = document.getElementById('personas');
+
+personas.forEach(p => {
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const stepsHtml = p.journey.map((s, i) => `
+    <div class="step">
+      <div class="step-dot" style="color:${p.color}; border-color:${p.color}40;">${i + 1}</div>
+      <div class="step-body">
+        <div class="step-title">${s.title}</div>
+        <div class="step-desc">${s.desc}</div>
+      </div>
+    </div>
+  `).join('');
+
+  card.innerHTML = `
+    <div class="card-accent" style="background:${p.gradient}"></div>
+    <div class="card-header">
+      <div class="avatar" style="background:${p.color}18; border-color:${p.color}30;">${p.emoji}</div>
+      <div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-role">${p.role}</div>
+      </div>
+    </div>
+    <div class="card-quote" style="border-left-color:${p.color}60;">${p.quote}</div>
+    <div class="before-after">
+      <div class="ba-box before">
+        <div class="ba-label">Before</div>
+        <div class="ba-text">${p.before}</div>
+      </div>
+      <div class="ba-box after">
+        <div class="ba-label">With Kurious</div>
+        <div class="ba-text">${p.after}</div>
+      </div>
+    </div>
+    <div class="journey-label">User Journey</div>
+    <div class="journey">${stepsHtml}</div>
+    <div class="superpower" style="background:${p.superpowerBg}; border:1px solid ${p.superpowerColor}20;">
+      <span class="superpower-icon">${p.superpower.split(' ')[0]}</span>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:${p.superpowerColor};letter-spacing:.05em;">${p.superpower.split(' ').slice(1).join(' ')}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:1px;">${p.superpowerDesc}</div>
+      </div>
+    </div>
+  `;
+
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
