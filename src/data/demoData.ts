@@ -382,6 +382,281 @@ Gateway Development Commission Chairman John D. Porcari stated in November 2023 
       'Connecting insights...',
     ],
   },
+
+  // ─── Legal Video Demo Questions ──────────────────────────────────────────────
+  {
+    id: 'zoning-decision',
+    keywords: ['council', 'zoning', 'downtown', 'decision', 'vote', 'approve', 'zone', 'legal'],
+    query: 'What did the council decide about the downtown zoning proposal?',
+    mode: 'quick',
+    answer: `The City Council voted **5-2 to approve** the downtown zoning amendment (Resolution 2024-127) during the March 15 session [1]. Council President Maria Torres led the motion, citing the need for mixed-use development to address housing shortages [2].
+
+The amendment changes the downtown core from C-2 (Commercial) to MU-1 (Mixed Use), allowing residential units above ground-floor retail. Key provisions include:
+
+| Provision | Details |
+|---|---|
+| Height limit | Increased from 4 to 8 stories |
+| Residential density | Up to 60 units per acre |
+| Affordable housing | 15% mandatory inclusionary |
+| Parking requirement | Reduced to 0.75 spaces per unit |
+| Green space | 10% of lot area required |
+
+The two dissenting votes came from Council Members Park and Williams, who raised concerns about infrastructure capacity [3]. An environmental impact review was completed in January showing no significant adverse effects [4].`,
+    sources: [
+      {
+        type: 'video' as SourceType,
+        category: 'primary' as SourceCategory,
+        title: 'City Council Meeting — March 15, 2026 (Vote & Discussion)',
+        url: 'https://www.youtube.com/watch?v=example1',
+        agency: 'City Council',
+        freshness: 'Recorded Mar 15, 2026',
+        contribution: 'Contains the full council discussion and 5-2 vote on Resolution 2024-127',
+        timestamp: 872,
+        videoDuration: 5400,
+        excerpt: 'Council President Torres: "I move to approve Resolution 2024-127, the downtown zoning amendment. This is about creating housing our community needs while maintaining the character of our downtown corridor."'
+      },
+      {
+        type: 'document' as SourceType,
+        category: 'primary' as SourceCategory,
+        title: 'Resolution 2024-127: Downtown Zoning Amendment',
+        url: 'https://example.com/resolution-2024-127.pdf',
+        agency: 'City Planning Department',
+        freshness: 'Filed Mar 16, 2026',
+        contribution: 'Full text of the zoning amendment with all provisions, setback requirements, and compliance conditions',
+        excerpt: 'Section 3.2: The downtown core zone designation is hereby amended from C-2 (General Commercial) to MU-1 (Mixed Use) for all parcels within the boundaries described in Exhibit A...'
+      },
+      {
+        type: 'structured' as SourceType,
+        category: 'supporting' as SourceCategory,
+        title: 'Council Voting Record — Resolution 2024-127',
+        url: 'https://example.com/votes',
+        agency: 'City Clerk',
+        freshness: 'Updated Mar 15, 2026',
+        contribution: 'Official roll call vote showing each council member\'s position',
+        excerpt: 'Torres (Y), Rodriguez (Y), Chen (Y), Patel (Y), Johnson (Y), Park (N), Williams (N)'
+      },
+      {
+        type: 'image' as SourceType,
+        category: 'supporting' as SourceCategory,
+        title: 'Downtown Zoning Map — Amended Boundaries',
+        url: 'https://example.com/zoning-map',
+        agency: 'City Planning Department',
+        freshness: 'Published Mar 16, 2026',
+        contribution: 'Visual map showing the rezoned area boundaries and adjacent zones',
+        imageUrl: '',
+        region: { x: 30, y: 20, w: 40, h: 50 }
+      }
+    ],
+    confidence: 'high' as const,
+    crossSiloAgencies: ['City Council', 'City Planning Department', 'City Clerk'],
+    elapsedMs: 180,
+    relatedQuestions: [
+      'What were the specific objections raised by Council Members Park and Williams?',
+      'How does the new MU-1 zoning compare to other mixed-use zones in the city?',
+      'What is the timeline for the environmental impact review process?'
+    ],
+    thinkingSteps: [
+      'Understood query about council zoning decision',
+      'Searching across 100K+ hours of council video recordings',
+      'Found vote discussion at timestamp 14:32 in March 15 session',
+      'Cross-referencing with official resolution documents',
+      'Retrieving voting record from city clerk database',
+      'Locating relevant zoning maps',
+      'Synthesizing cross-modal answer with citations'
+    ]
+  },
+
+  {
+    id: 'budget-cuts',
+    keywords: ['budget', 'cuts', 'spending', 'reduce', 'fiscal', 'finance', 'money', 'funding'],
+    query: 'Show me all discussions about budget cuts in the last 6 months',
+    mode: 'deeper',
+    answer: `Budget cut discussions appeared in **4 council sessions** over the past 6 months, with the most significant debate occurring during the February budget hearing [1].
+
+**Key discussions by date:**
+
+**February 12, 2026 — Budget Hearing** [1]
+The Finance Committee proposed a 7% across-the-board cut to non-essential services. Director of Finance James Wright presented projections showing a $3.2M revenue shortfall. The public safety budget was exempted from cuts after strong pushback from the police and fire unions.
+
+**January 8, 2026 — Special Session** [2]
+Emergency discussion about declining sales tax revenue. Controller's office reported Q4 revenue was 11% below forecast. Council authorized a hiring freeze for all non-public-safety positions.
+
+**December 5, 2025 — Year-End Review** [3]
+Preliminary budget analysis revealed $4.8M in unfunded obligations for FY2026. Public works department flagged that a 5% cut would delay the Main Street bridge repair by 18 months.
+
+**October 15, 2025 — Quarterly Financial Review** [4]
+First indication of budget pressure. Revenue tracking 4% below projections. No cuts proposed yet but the finance committee was instructed to prepare contingency scenarios.
+
+Total proposed cuts across all departments: **$8.7M** against a $142M operating budget, representing a **6.1% reduction** [5].`,
+    sources: [
+      {
+        type: 'video' as SourceType,
+        category: 'primary' as SourceCategory,
+        title: 'City Council Budget Hearing — February 12, 2026',
+        url: 'https://www.youtube.com/watch?v=example2',
+        agency: 'City Council',
+        freshness: 'Recorded Feb 12, 2026',
+        contribution: 'Full budget hearing with Finance Director presentation and council debate on the 7% cut proposal',
+        timestamp: 1245,
+        videoDuration: 7200,
+        excerpt: 'Director Wright: "We are facing a $3.2 million revenue shortfall. Without corrective action, we will exhaust our reserve fund by Q3 of the fiscal year."'
+      },
+      {
+        type: 'video' as SourceType,
+        category: 'primary' as SourceCategory,
+        title: 'Special Session on Revenue Shortfall — January 8, 2026',
+        url: 'https://www.youtube.com/watch?v=example3',
+        agency: 'City Council',
+        freshness: 'Recorded Jan 8, 2026',
+        contribution: 'Emergency session discussing Q4 revenue decline and hiring freeze authorization',
+        timestamp: 456,
+        videoDuration: 3600,
+        excerpt: 'Council President Torres: "Given the severity of the revenue decline, I recommend an immediate hiring freeze across all non-public-safety departments effective today."'
+      },
+      {
+        type: 'video' as SourceType,
+        category: 'supporting' as SourceCategory,
+        title: 'Year-End Financial Review — December 5, 2025',
+        url: 'https://www.youtube.com/watch?v=example4',
+        agency: 'City Council',
+        freshness: 'Recorded Dec 5, 2025',
+        contribution: 'Preliminary budget analysis revealing $4.8M in unfunded obligations',
+        timestamp: 2340,
+        videoDuration: 5400,
+        excerpt: 'Public Works Director: "A 5% cut to our department would mean delaying the Main Street bridge repair by at least 18 months. That bridge is currently rated as structurally deficient."'
+      },
+      {
+        type: 'video' as SourceType,
+        category: 'additional' as SourceCategory,
+        title: 'Quarterly Financial Review — October 15, 2025',
+        url: 'https://www.youtube.com/watch?v=example5',
+        agency: 'City Council',
+        freshness: 'Recorded Oct 15, 2025',
+        contribution: 'First indication of budget pressure with revenue tracking below projections',
+        timestamp: 780,
+        videoDuration: 4800
+      },
+      {
+        type: 'structured' as SourceType,
+        category: 'supporting' as SourceCategory,
+        title: 'FY2026 Budget Revision Summary — Department Cuts',
+        url: 'https://example.com/budget',
+        agency: 'Finance Department',
+        freshness: 'Updated Feb 15, 2026',
+        contribution: 'Detailed breakdown of proposed cuts by department with dollar amounts and percentages',
+        excerpt: 'Total proposed reductions: $8.7M (6.1% of $142M operating budget). Public Safety: exempt. Public Works: -$2.1M. Parks & Recreation: -$1.8M. Administration: -$1.4M.'
+      }
+    ],
+    confidence: 'high' as const,
+    crossSiloAgencies: ['City Council', 'Finance Department', 'Public Works'],
+    elapsedMs: 340,
+    relatedQuestions: [
+      'Which departments were most affected by the proposed budget cuts?',
+      'What was the public reaction to the hiring freeze?',
+      'Has the Main Street bridge repair been rescheduled?'
+    ],
+    thinkingSteps: [
+      'Understood query about budget cut discussions over 6 months',
+      'Searching across all council session recordings from Oct 2025 to Apr 2026',
+      'Found 4 relevant sessions with budget-related discussions',
+      'Analyzing video transcripts for budget cut mentions',
+      'Cross-referencing with finance department records',
+      'Ordering by significance and date',
+      'Compiling timeline with key quotes and data points'
+    ]
+  },
+
+  {
+    id: 'environmental-river',
+    keywords: ['environment', 'river', 'pollution', 'water', 'impact', 'contamination', 'ecological', 'testimony'],
+    query: 'Has anyone raised concerns about the environmental impact on the river?',
+    mode: 'quick',
+    answer: `Yes, environmental concerns about the Millstone River have been raised in **3 separate proceedings** over the past year, with the most detailed testimony coming from Dr. Sarah Chen of the State Environmental Commission [1].
+
+**Key concerns raised:**
+
+**Water quality:** Dr. Chen's testimony presented data showing phosphorus levels 2.3x above EPA limits downstream of the industrial zone [1]. She attributed the increase to stormwater runoff from the expanded development area.
+
+**Ecological impact:** The Millstone River Conservancy submitted a 47-page assessment documenting a 34% decline in native fish populations over 3 years [2]. The assessment includes satellite imagery showing visible sediment plumes after heavy rainfall events [4].
+
+**Regulatory compliance:** The State Department of Environmental Protection (DEP) issued a Notice of Violation to two facilities in the industrial zone for exceeding discharge limits [3]. Combined excess discharge was estimated at 12,000 gallons per day above permitted levels.
+
+**Current status:** The council has ordered an independent environmental audit, due for completion by June 2026. Until the audit is complete, no new development permits will be issued within 500 feet of the riverbank.`,
+    sources: [
+      {
+        type: 'video' as SourceType,
+        category: 'primary' as SourceCategory,
+        title: 'Environmental Commission Hearing — Dr. Sarah Chen Testimony',
+        url: 'https://www.youtube.com/watch?v=example6',
+        agency: 'State Environmental Commission',
+        freshness: 'Recorded Feb 28, 2026',
+        contribution: 'Expert testimony with water quality data showing phosphorus levels 2.3x above EPA limits',
+        timestamp: 1567,
+        videoDuration: 4200,
+        excerpt: 'Dr. Chen: "Our water sampling data from twelve monitoring stations along the Millstone River shows a consistent pattern. Phosphorus concentrations downstream of the industrial zone are 2.3 times the EPA recommended limit. This is not an anomaly — we have 18 months of data confirming this trend."'
+      },
+      {
+        type: 'document' as SourceType,
+        category: 'primary' as SourceCategory,
+        title: 'Millstone River Ecological Impact Assessment',
+        url: 'https://example.com/river-assessment.pdf',
+        agency: 'Millstone River Conservancy',
+        freshness: 'Published Jan 15, 2026',
+        contribution: '47-page assessment documenting 34% decline in native fish populations with methodology and satellite data',
+        excerpt: 'Executive Summary: Over the study period (2023-2025), native fish populations in the lower Millstone River declined by 34%, with the sharpest decline observed in species sensitive to phosphorus loading...'
+      },
+      {
+        type: 'structured' as SourceType,
+        category: 'supporting' as SourceCategory,
+        title: 'DEP Notice of Violation — Industrial Zone Facilities',
+        url: 'https://example.com/dep-violations',
+        agency: 'NJ Department of Environmental Protection',
+        freshness: 'Issued Mar 1, 2026',
+        contribution: 'Official violation records for two facilities exceeding discharge permits',
+        excerpt: 'Facility A: 8,200 gal/day excess. Facility B: 3,800 gal/day excess. Combined: 12,000 gal/day above permitted levels.'
+      },
+      {
+        type: 'image' as SourceType,
+        category: 'supporting' as SourceCategory,
+        title: 'Satellite Imagery — Sediment Plume After Rainfall Event',
+        url: 'https://example.com/satellite',
+        agency: 'Millstone River Conservancy',
+        freshness: 'Captured Feb 10, 2026',
+        contribution: 'Satellite image showing visible sediment plume extending 1.2 miles downstream after heavy rainfall',
+        imageUrl: '',
+        region: { x: 20, y: 30, w: 60, h: 40 }
+      },
+      {
+        type: 'video' as SourceType,
+        category: 'supporting' as SourceCategory,
+        title: 'City Council Session — Environmental Audit Authorization',
+        url: 'https://www.youtube.com/watch?v=example7',
+        agency: 'City Council',
+        freshness: 'Recorded Mar 10, 2026',
+        contribution: 'Council vote authorizing independent environmental audit and development moratorium near riverbank',
+        timestamp: 3456,
+        videoDuration: 6000,
+        excerpt: 'Mayor Rodriguez: "Until the independent audit is complete, I am ordering a moratorium on all new development permits within 500 feet of the Millstone River bank."'
+      }
+    ],
+    confidence: 'high' as const,
+    crossSiloAgencies: ['State Environmental Commission', 'Millstone River Conservancy', 'NJ DEP', 'City Council'],
+    elapsedMs: 220,
+    relatedQuestions: [
+      'What specific facilities are cited in the DEP Notice of Violation?',
+      'When is the independent environmental audit expected to be completed?',
+      'What remediation steps have been proposed for the phosphorus contamination?'
+    ],
+    thinkingSteps: [
+      'Understood query about environmental impact on river',
+      'Searching across environmental hearings, council sessions, and regulatory records',
+      'Found expert testimony from Dr. Sarah Chen with water quality data',
+      'Located ecological assessment from Millstone River Conservancy',
+      'Cross-referencing with DEP violation records',
+      'Found satellite imagery showing sediment plumes',
+      'Compiling answer with multi-source evidence'
+    ]
+  },
 ];
 
 export const DEFAULT_QUESTION: DemoQuestion = {
@@ -447,6 +722,9 @@ export const SUGGESTION_CARDS = [
   'What did NJ Transit\'s board discuss about safety in 2023?',
   'Which NJ counties had the most environmental violations in 2022?',
   'What is the current status of the Gateway Tunnel project?',
+  'What did the council decide about the downtown zoning proposal?',
+  'Show me all discussions about budget cuts in the last 6 months',
+  'Has anyone raised concerns about the environmental impact on the river?',
   'How has NJ school enrollment changed over the last 5 years?',
   'What are the top causes of bridge deficiencies in NJ?',
   'Which NJ agencies had the highest overtime expenditure in 2023?',

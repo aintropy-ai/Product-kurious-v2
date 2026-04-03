@@ -37,16 +37,19 @@ function Toast({ message, visible }: { message: string; visible: boolean }) {
 const THUMB_COLORS = ['#1a2a3a', '#1a2a2a', '#2a1a3a', '#2a2a1a'];
 
 function VideoSourceCard({ src, idx }: { src: EnhancedSource; idx: number }) {
+  const [showPlayer, setShowPlayer] = useState(false);
   const ts = src.timestamp ?? 0;
   const duration = src.videoDuration ?? 3600;
   const progress = (ts / duration) * 100;
   const thumbColor = THUMB_COLORS[idx % THUMB_COLORS.length];
 
-  const videoHref = src.url ? `${src.url}#t=${ts}` : undefined;
-
   return (
     <div className="rounded-xl border border-k-border bg-k-bg overflow-hidden">
-      <a href={videoHref} target="_blank" rel="noopener noreferrer" className={`relative h-24 flex items-center justify-center block group/thumb ${videoHref ? 'cursor-pointer' : 'cursor-default'}`} style={{ background: thumbColor }}>
+      <div
+        onClick={(e) => { e.preventDefault(); setShowPlayer(!showPlayer); }}
+        className={`relative h-24 flex items-center justify-center group/thumb cursor-pointer`}
+        style={{ background: thumbColor }}
+      >
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center group-hover/thumb:bg-white/20 transition-colors duration-150">
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white ml-0.5">
@@ -60,7 +63,7 @@ function VideoSourceCard({ src, idx }: { src: EnhancedSource; idx: number }) {
         <div className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">
           ▶ {formatTimestamp(ts)}
         </div>
-      </a>
+      </div>
       <div className="p-3">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
@@ -80,6 +83,45 @@ function VideoSourceCard({ src, idx }: { src: EnhancedSource; idx: number }) {
           )}
         </div>
       </div>
+      {showPlayer && (
+        <div className="mt-2 rounded-lg overflow-hidden border border-k-border">
+          {/* Video player mockup */}
+          <div className="relative bg-black" style={{ aspectRatio: '16/9' }}>
+            {/* Paused state overlay */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
+                <div className="w-0 h-0 border-l-[20px] border-l-white border-y-[12px] border-y-transparent ml-1" />
+              </div>
+            </div>
+            {/* Title bar */}
+            <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-3">
+              <div className="flex items-center justify-between">
+                <span className="text-white text-xs font-medium">{src.title}</span>
+                <a href={src.url ? `${src.url}#t=${ts}` : '#'} target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-white text-xs">
+                  ↗ Open full
+                </a>
+              </div>
+            </div>
+            {/* Progress bar */}
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-white text-[10px] font-mono">{formatTimestamp(ts)}</span>
+                <div className="flex-1 h-1 bg-white/20 rounded-full">
+                  <div className="h-full bg-cyan-400 rounded-full" style={{ width: `${(ts / duration) * 100}%` }} />
+                </div>
+                <span className="text-white/60 text-[10px] font-mono">{formatTimestamp(duration)}</span>
+              </div>
+            </div>
+          </div>
+          {/* Transcript */}
+          {src.excerpt && (
+            <div className="bg-[#111] p-3 border-t border-k-border">
+              <p className="text-[10px] text-k-muted/60 font-semibold uppercase tracking-wider mb-1">Transcript at {formatTimestamp(ts)}</p>
+              <p className="text-xs text-k-body leading-relaxed italic">"{src.excerpt}"</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
