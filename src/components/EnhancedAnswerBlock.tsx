@@ -5,18 +5,24 @@ import rehypeRaw from 'rehype-raw';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
-import { EnhancedSource, ChartData, DemoQuestion, formatTimestamp } from '../data/demoData';
+import { EnhancedSource, ChartData, DemoQuestion } from '../data/demoData';
 import FeedbackBar from './FeedbackBar';
 
 // ─── Inline citation pre-processor ──────────────────────────────────────────
-function addCitations(text: string): string {
+function addCitations(text: string, sources?: EnhancedSource[]): string {
   // Collapse consecutive citations [1][2][3] → single badge showing "1.."
   return text.replace(/(\[\d+\])+/g, (match) => {
     const nums = [...match.matchAll(/\[(\d+)\]/g)].map(m => m[1]);
+    // Check if any referenced source is a video clip
+    const hasVideoRef = sources ? nums.some(n => {
+      const idx = parseInt(n) - 1;
+      return idx >= 0 && idx < sources.length && sources[idx].type === 'video';
+    }) : false;
+    const prefix = hasVideoRef ? '\uD83C\uDFAC' : '';
     if (nums.length === 1) {
-      return `<sup class="inline-citation" data-refs="${nums[0]}">${nums[0]}</sup>`;
+      return `${prefix}<sup class="inline-citation" data-refs="${nums[0]}">${nums[0]}</sup>`;
     }
-    return `<sup class="inline-citation inline-citation-group" data-refs="${nums.join(',')}">${nums[0]}..</sup>`;
+    return `${prefix}<sup class="inline-citation inline-citation-group" data-refs="${nums.join(',')}">${nums[0]}..</sup>`;
   });
 }
 
@@ -42,11 +48,13 @@ function formatClipDuration(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
+function formatClipSec(seconds: number): string {
+  return `${seconds} sec`;
+}
+
 function VideoClipCard({ src, idx, compact }: { src: EnhancedSource; idx: number; compact?: boolean }) {
   const [expanded, setExpanded] = useState(false);
   const clipLen = src.clipDuration ?? 15;
-  const startTs = src.startTime ?? src.timestamp ?? 0;
-  const endTs = src.endTime ?? startTs + clipLen;
   const thumbColor = THUMB_COLORS[idx % THUMB_COLORS.length];
 
   if (compact) {
@@ -63,29 +71,29 @@ function VideoClipCard({ src, idx, compact }: { src: EnhancedSource; idx: number
                 <path d="M8 5v14l11-7z" />
               </svg>
             </div>
-            <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[8px] px-1 py-0.5 rounded font-mono">
-              {formatClipDuration(clipLen)}
+            <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">
+              {formatClipSec(clipLen)}
             </div>
           </div>
           {/* Compact meta */}
           <div className="min-w-0 flex-1">
-            <p className="text-k-text font-semibold text-xs truncate">
+            <p className="text-sm font-semibold text-k-text truncate">
               {src.speaker?.name ?? 'Speaker'}
             </p>
-            <p className="text-k-muted text-[10px] truncate">
-              {formatClipDuration(clipLen)} clip
-            </p>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="text-xs text-k-muted truncate">{src.title}</span>
+              <span className="text-xs text-k-cyan font-medium flex-shrink-0">{formatClipSec(clipLen)}</span>
+            </div>
+            {src.excerpt && (
+              <p className="text-xs text-k-muted/80 italic mt-1 line-clamp-1">"{src.excerpt}"</p>
+            )}
           </div>
         </div>
-        {/* Compact expand */}
-        {expanded && (
+        {/* Expanded: full transcript */}
+        {expanded && src.excerpt && (
           <div className="border-t border-k-border/40 p-2.5 animate-fade-in">
-            <p className="text-k-muted text-[10px] mb-1">{src.speaker?.role}</p>
-            <p className="text-xs text-k-text truncate">{src.title}</p>
-            <p className="text-k-cyan text-[10px] mt-0.5">{formatTimestamp(startTs)} – {formatTimestamp(endTs)}</p>
-            {src.excerpt && (
-              <p className="text-k-muted/80 text-[10px] italic mt-1 line-clamp-2">"{src.excerpt}"</p>
-            )}
+            <p className="text-[10px] text-k-muted/60 font-semibold uppercase tracking-wider mb-1">{src.speaker?.role}</p>
+            <p className="text-xs text-k-muted/80 italic">"{src.excerpt}"</p>
           </div>
         )}
       </div>
@@ -99,40 +107,40 @@ function VideoClipCard({ src, idx, compact }: { src: EnhancedSource; idx: number
         onClick={() => setExpanded(v => !v)}
         className="flex items-start gap-3 p-3 cursor-pointer hover:bg-k-border/10 transition-colors group/clip"
       >
-        {/* Thumbnail */}
-        <div className="relative flex-shrink-0 w-40 h-[90px] rounded-lg overflow-hidden flex items-center justify-center" style={{ background: thumbColor }}>
+        {/* Thumbnail — 160x90 dark bg, centered play, duration badge bottom-right */}
+        <div className="relative flex-shrink-0 w-[160px] h-[90px] rounded-lg overflow-hidden flex items-center justify-center" style={{ background: thumbColor }}>
           <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center group-hover/clip:bg-white/20 transition-colors duration-150">
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white ml-0.5">
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>
-          <div className="absolute bottom-1.5 right-1.5 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono">
-            {formatClipDuration(clipLen)}
+          <div className="absolute bottom-1.5 right-1.5 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">
+            {formatClipSec(clipLen)}
           </div>
         </div>
         {/* Metadata */}
         <div className="min-w-0 flex-1 py-0.5">
-          {/* Line 1: Speaker */}
+          {/* Line 1: Speaker name + role */}
           <div className="flex items-baseline gap-1.5">
-            <span className="text-k-text font-semibold text-sm">{src.speaker?.name ?? 'Speaker'}</span>
-            <span className="text-k-muted text-xs">{src.speaker?.role ?? ''}</span>
+            <span className="text-sm font-semibold text-k-text">{src.speaker?.name ?? 'Speaker'}</span>
+            <span className="text-xs text-k-muted">{src.speaker?.role ?? ''}</span>
           </div>
-          {/* Line 2: Title + timestamp range */}
+          {/* Line 2: Source title + clip duration */}
           <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="text-k-muted text-xs truncate">{src.title}</span>
-            <span className="text-k-cyan text-xs flex-shrink-0">{formatTimestamp(startTs)} – {formatTimestamp(endTs)}</span>
+            <span className="text-xs text-k-muted truncate">{src.title}</span>
+            <span className="text-xs text-k-cyan font-medium flex-shrink-0">{formatClipSec(clipLen)}</span>
           </div>
           {/* Line 3-4: Transcript excerpt */}
           {src.excerpt && (
-            <p className="text-k-muted/80 text-xs italic mt-1.5 line-clamp-2">"{src.excerpt}"</p>
+            <p className="text-xs text-k-muted/80 italic mt-1.5 line-clamp-2">"{src.excerpt}"</p>
           )}
         </div>
       </div>
 
-      {/* Expanded inline player */}
+      {/* Expanded inline clip player */}
       {expanded && (
         <div className="border-t border-k-border/40 animate-fade-in">
-          {/* Larger video area */}
+          {/* 16:9 dark area with large play button */}
           <div className="relative bg-black" style={{ aspectRatio: '16/9' }}>
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
@@ -141,11 +149,9 @@ function VideoClipCard({ src, idx, compact }: { src: EnhancedSource; idx: number
             </div>
             {/* Title bar */}
             <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-3">
-              <div className="flex items-center justify-between">
-                <span className="text-white text-xs font-medium">{src.speaker?.name} — {src.speaker?.role}</span>
-              </div>
+              <span className="text-white text-xs font-medium">{src.speaker?.name} — {src.speaker?.role}</span>
             </div>
-            {/* Clip progress bar (for clip only, not full video) */}
+            {/* Simple clip progress bar: 0:00 to clipDuration */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-white text-[10px] font-mono">0:00</span>
@@ -156,27 +162,11 @@ function VideoClipCard({ src, idx, compact }: { src: EnhancedSource; idx: number
               </div>
             </div>
           </div>
-          {/* Full transcript */}
+          {/* Transcript below player */}
           {src.excerpt && (
             <div className="bg-[#111] p-3 border-t border-k-border">
-              <p className="text-[10px] text-k-muted/60 font-semibold uppercase tracking-wider mb-1">
-                Transcript · {formatTimestamp(startTs)} – {formatTimestamp(endTs)}
-              </p>
+              <p className="text-[10px] text-k-muted/60 font-semibold uppercase tracking-wider mb-1">Transcript</p>
               <p className="text-xs text-k-body leading-relaxed italic">"{src.excerpt}"</p>
-            </div>
-          )}
-          {/* See full video link */}
-          {src.url && (
-            <div className="px-3 py-2 border-t border-k-border/30 flex items-center justify-between">
-              <a
-                href={`${src.url}#t=${startTs}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[11px] text-k-cyan hover:text-cyan-300 font-medium transition-colors"
-              >
-                See full video at {formatTimestamp(startTs)} →
-              </a>
-              <span className="text-[10px] text-k-muted">{src.agency} · {src.freshness}</span>
             </div>
           )}
         </div>
@@ -213,9 +203,7 @@ function ImageSourceCard({ src }: { src: EnhancedSource }) {
 // ─── Build the deep-link URL for a source ────────────────────────────────────
 function buildSourceUrl(src: EnhancedSource): string | null {
   if (!src.url) return null;
-  if (src.type === 'video' && src.timestamp != null) {
-    return `${src.url}#t=${src.timestamp}`;
-  }
+  // Video sources are now displayed as self-contained clips, no deep linking
   return src.url;
 }
 
@@ -243,9 +231,6 @@ function DocSourceRow({ src, index, highlighted, rowRef }: { src: EnhancedSource
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-[10px] text-k-muted">{src.agency}</span>
               <span className="text-[10px] text-k-cyan/70">{src.freshness}</span>
-              {src.type === 'video' && src.timestamp != null && (
-                <span className="text-[10px] text-k-cyan/80 font-medium">▶ {formatTimestamp(src.timestamp)}</span>
-              )}
               {src.type === 'structured' && (
                 <span className="text-[10px] text-purple-400/80 font-medium">⛁ Opens to highlighted row</span>
               )}
@@ -409,15 +394,17 @@ export default function EnhancedAnswerBlock({
 
   const [showAllClips, setShowAllClips] = useState(false);
 
-  const processedAnswer = addCitations(unwrapFencedTables(demoQ.answer));
+  const processedAnswer = addCitations(unwrapFencedTables(demoQ.answer), demoQ.sources);
   const elapsedSec = (demoQ.elapsedMs / 1000).toFixed(2);
+  const clipLayout = demoQ.clipLayout ?? 'highlight';
   const videoSources = demoQ.sources.filter(s => s.type === 'video');
   const sortedClips = [...videoSources].sort((a, b) => (a.relevanceRank ?? 99) - (b.relevanceRank ?? 99));
-  const topClips = sortedClips.slice(0, 3);
-  const extraClips = sortedClips.slice(3);
+  const highlightTopClips = sortedClips.slice(0, 2);
+  const highlightExtraClips = sortedClips.slice(2);
+  const nonVideoSources = demoQ.sources.filter(s => s.type !== 'video');
   const hasVideo = videoSources.length > 0;
-  const hasImage = demoQ.sources.some(s => s.type === 'image');
-  const hasData = demoQ.sources.some(s => s.type === 'structured');
+  const hasImage = nonVideoSources.some(s => s.type === 'image');
+  const hasData = nonVideoSources.some(s => s.type === 'structured');
 
   return (
     <>
@@ -457,32 +444,48 @@ export default function EnhancedAnswerBlock({
         {/* Chart */}
         {demoQ.chartData && <InlineChart data={demoQ.chartData} />}
 
-        {/* Relevant Clips section — visible by default, between answer and sources */}
+        {/* Relevant Clips section — visible by default, between answer and metadata */}
         {hasVideo && (
           <div className="mt-5 mb-2">
-            <p className="text-[10px] uppercase tracking-widest text-k-muted/60 font-semibold mb-2.5">Relevant Clips</p>
-            {/* Top 3 clips in vertical stack */}
-            <div className="space-y-2">
-              {topClips.map((src, i) => (
-                <VideoClipCard key={i} src={src} idx={i} />
-              ))}
-            </div>
-            {/* Show more clips expansion */}
-            {extraClips.length > 0 && !showAllClips && (
-              <button
-                onClick={() => setShowAllClips(true)}
-                className="w-full mt-2 bg-k-border/20 hover:bg-k-border/40 text-k-muted text-xs rounded-lg py-2 transition-colors text-center"
-              >
-                Show {extraClips.length} more clip{extraClips.length > 1 ? 's' : ''}
-              </button>
-            )}
-            {/* Expanded: remaining clips in 2-column grid */}
-            {showAllClips && extraClips.length > 0 && (
-              <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 animate-fade-in">
-                {extraClips.map((src, i) => (
-                  <VideoClipCard key={i} src={src} idx={i + 3} compact />
-                ))}
-              </div>
+            {clipLayout === 'grid' ? (
+              <>
+                {/* Scenario B: Grid — all clips shown equally */}
+                <p className="text-[10px] uppercase tracking-widest text-k-muted/60 font-semibold mb-2.5">
+                  All clips related to this answer ({sortedClips.length}):
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {sortedClips.map((src, i) => (
+                    <VideoClipCard key={i} src={src} idx={i} compact />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Scenario A: Highlight — top 2 prominent, rest collapsed */}
+                <p className="text-[10px] uppercase tracking-widest text-k-muted/60 font-semibold mb-2.5">Relevant Clips</p>
+                <div className="space-y-2">
+                  {highlightTopClips.map((src, i) => (
+                    <VideoClipCard key={i} src={src} idx={i} />
+                  ))}
+                </div>
+                {/* "... N more clips" bar */}
+                {highlightExtraClips.length > 0 && !showAllClips && (
+                  <button
+                    onClick={() => setShowAllClips(true)}
+                    className="bg-k-border/20 hover:bg-k-border/40 text-k-muted text-xs rounded-lg py-2 text-center w-full mt-2 transition-colors"
+                  >
+                    ··· {highlightExtraClips.length} more clip{highlightExtraClips.length > 1 ? 's' : ''} ▼
+                  </button>
+                )}
+                {/* Expanded: remaining clips in 2-column grid */}
+                {showAllClips && highlightExtraClips.length > 0 && (
+                  <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 animate-fade-in">
+                    {highlightExtraClips.map((src, i) => (
+                      <VideoClipCard key={i} src={src} idx={i + 2} compact />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
@@ -490,14 +493,13 @@ export default function EnhancedAnswerBlock({
         {/* Metadata row — sources + timing + cross-silo + hover actions */}
         <div className="flex items-center gap-2 mt-4 flex-wrap">
           {/* Sources toggle */}
-          {demoQ.sources.length > 0 && (
+          {nonVideoSources.length > 0 && (
             <button
               onClick={() => setSourcesOpen(v => !v)}
               className="flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-k-muted/70 hover:text-k-text font-medium transition-colors"
             >
               <span className={`transition-transform duration-150 inline-block text-[10px] ${sourcesOpen ? 'rotate-90' : ''}`}>▶</span>
-              {demoQ.sources.length} sources
-              {hasVideo && <span className="text-[11px]">🎬</span>}
+              {nonVideoSources.length} sources
               {hasImage && <span className="text-[11px]">🖼️</span>}
               {hasData && <span className="text-[11px]">⛁</span>}
             </button>
@@ -554,18 +556,6 @@ export default function EnhancedAnswerBlock({
         {/* Sources panel */}
         {sourcesOpen && (
           <div className="mt-4 border-t border-k-border/40 pt-4 space-y-5 animate-fade-in">
-            {/* Video clip sources */}
-            {videoSources.length > 0 && (
-              <div>
-                <p className="text-[10px] uppercase tracking-widest text-k-muted/60 font-semibold mb-2">🎬 Video Clips</p>
-                <div className="space-y-2">
-                  {sortedClips.map((src, i) => (
-                    <VideoClipCard key={i} src={src} idx={i} />
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Image sources */}
             {demoQ.sources.filter(s => s.type === 'image').length > 0 && (
               <div>
