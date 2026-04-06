@@ -169,6 +169,19 @@ function VideoClipCard({ src, idx, compact }: { src: EnhancedSource; idx: number
               <p className="text-xs text-k-body leading-relaxed italic">"{src.excerpt}"</p>
             </div>
           )}
+          {/* Full video link — subtle, for context if needed */}
+          {src.url && (
+            <div className="px-3 py-2 border-t border-k-border/30">
+              <a
+                href={src.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-k-muted/50 hover:text-k-muted/80 transition-colors"
+              >
+                Watch full video: {src.title}{src.videoDuration ? ` (${Math.floor(src.videoDuration / 60)} min)` : ''} →
+              </a>
+            </div>
+          )}
         </div>
       )}
     </div>
