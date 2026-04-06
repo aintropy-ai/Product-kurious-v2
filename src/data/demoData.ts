@@ -16,6 +16,12 @@ export interface EnhancedSource {
   // Video-specific
   timestamp?: number; // seconds
   videoDuration?: number; // total seconds
+  // Clip-specific
+  speaker?: { name: string; role: string };
+  clipDuration?: number;      // clip length in seconds (5-30)
+  startTime?: number;         // start of clip in source video
+  endTime?: number;           // end of clip in source video
+  relevanceRank?: number;     // for sorting clips by relevance
   // Image-specific
   imageUrl?: string;
   region?: { x: number; y: number; w: number; h: number }; // 0-100 percent
@@ -168,6 +174,11 @@ The board also reviewed NTSB recommendations following the 2022 Secaucus near-mi
         contribution: 'PTC approval, track inspection policy, NTSB compliance confirmation',
         timestamp: 263, // 4:23
         videoDuration: 5400, // 90 minutes
+        speaker: { name: 'Chair Diane Gutierrez-Scaccetti', role: 'NJ Transit Board Chair' },
+        clipDuration: 18,
+        startTime: 263,
+        endTime: 281,
+        relevanceRank: 1,
       },
       {
         type: 'video',
@@ -179,6 +190,11 @@ The board also reviewed NTSB recommendations following the 2022 Secaucus near-mi
         contribution: 'Bus collision avoidance pilot program details and depot selection',
         timestamp: 1847, // 30:47
         videoDuration: 3600, // 60 minutes
+        speaker: { name: 'Kevin Corbett', role: 'NJ Transit CEO' },
+        clipDuration: 24,
+        startTime: 1847,
+        endTime: 1871,
+        relevanceRank: 2,
       },
       {
         type: 'document',
@@ -361,6 +377,11 @@ Gateway Development Commission Chairman John D. Porcari stated in November 2023 
         contribution: 'Chairman Porcari\'s statement on full funding commitment and timeline',
         timestamp: 734, // 12:14
         videoDuration: 7200, // 2 hours
+        speaker: { name: 'John D. Porcari', role: 'GDC Chairman' },
+        clipDuration: 22,
+        startTime: 734,
+        endTime: 756,
+        relevanceRank: 1,
       },
     ],
     confidence: 'high',
@@ -413,7 +434,12 @@ The two dissenting votes came from Council Members Park and Williams, who raised
         contribution: 'Contains the full council discussion and 5-2 vote on Resolution 2024-127',
         timestamp: 872,
         videoDuration: 5400,
-        excerpt: 'Council President Torres: "I move to approve Resolution 2024-127, the downtown zoning amendment. This is about creating housing our community needs while maintaining the character of our downtown corridor."'
+        excerpt: 'Council President Torres: "I move to approve Resolution 2024-127, the downtown zoning amendment. This is about creating housing our community needs while maintaining the character of our downtown corridor."',
+        speaker: { name: 'Maria Torres', role: 'Council President' },
+        clipDuration: 28,
+        startTime: 872,
+        endTime: 900,
+        relevanceRank: 1,
       },
       {
         type: 'document' as SourceType,
@@ -499,7 +525,12 @@ Total proposed cuts across all departments: **$8.7M** against a $142M operating 
         contribution: 'Full budget hearing with Finance Director presentation and council debate on the 7% cut proposal',
         timestamp: 1245,
         videoDuration: 7200,
-        excerpt: 'Director Wright: "We are facing a $3.2 million revenue shortfall. Without corrective action, we will exhaust our reserve fund by Q3 of the fiscal year."'
+        excerpt: 'Director Wright: "We are facing a $3.2 million revenue shortfall. Without corrective action, we will exhaust our reserve fund by Q3 of the fiscal year."',
+        speaker: { name: 'James Wright', role: 'Director of Finance' },
+        clipDuration: 15,
+        startTime: 1245,
+        endTime: 1260,
+        relevanceRank: 1,
       },
       {
         type: 'video' as SourceType,
@@ -511,7 +542,12 @@ Total proposed cuts across all departments: **$8.7M** against a $142M operating 
         contribution: 'Emergency session discussing Q4 revenue decline and hiring freeze authorization',
         timestamp: 456,
         videoDuration: 3600,
-        excerpt: 'Council President Torres: "Given the severity of the revenue decline, I recommend an immediate hiring freeze across all non-public-safety departments effective today."'
+        excerpt: 'Council President Torres: "Given the severity of the revenue decline, I recommend an immediate hiring freeze across all non-public-safety departments effective today."',
+        speaker: { name: 'Maria Torres', role: 'Council President' },
+        clipDuration: 12,
+        startTime: 456,
+        endTime: 468,
+        relevanceRank: 2,
       },
       {
         type: 'video' as SourceType,
@@ -523,7 +559,12 @@ Total proposed cuts across all departments: **$8.7M** against a $142M operating 
         contribution: 'Preliminary budget analysis revealing $4.8M in unfunded obligations',
         timestamp: 2340,
         videoDuration: 5400,
-        excerpt: 'Public Works Director: "A 5% cut to our department would mean delaying the Main Street bridge repair by at least 18 months. That bridge is currently rated as structurally deficient."'
+        excerpt: 'Public Works Director: "A 5% cut to our department would mean delaying the Main Street bridge repair by at least 18 months. That bridge is currently rated as structurally deficient."',
+        speaker: { name: 'Robert Kane', role: 'Public Works Director' },
+        clipDuration: 20,
+        startTime: 2340,
+        endTime: 2360,
+        relevanceRank: 3,
       },
       {
         type: 'video' as SourceType,
@@ -534,7 +575,12 @@ Total proposed cuts across all departments: **$8.7M** against a $142M operating 
         freshness: 'Recorded Oct 15, 2025',
         contribution: 'First indication of budget pressure with revenue tracking below projections',
         timestamp: 780,
-        videoDuration: 4800
+        videoDuration: 4800,
+        speaker: { name: 'Lisa Nguyen', role: 'City Controller' },
+        clipDuration: 18,
+        startTime: 780,
+        endTime: 798,
+        relevanceRank: 4,
       },
       {
         type: 'structured' as SourceType,
@@ -593,7 +639,12 @@ Total proposed cuts across all departments: **$8.7M** against a $142M operating 
         contribution: 'Expert testimony with water quality data showing phosphorus levels 2.3x above EPA limits',
         timestamp: 1567,
         videoDuration: 4200,
-        excerpt: 'Dr. Chen: "Our water sampling data from twelve monitoring stations along the Millstone River shows a consistent pattern. Phosphorus concentrations downstream of the industrial zone are 2.3 times the EPA recommended limit. This is not an anomaly — we have 18 months of data confirming this trend."'
+        excerpt: 'Dr. Chen: "Our water sampling data from twelve monitoring stations along the Millstone River shows a consistent pattern. Phosphorus concentrations downstream of the industrial zone are 2.3 times the EPA recommended limit. This is not an anomaly — we have 18 months of data confirming this trend."',
+        speaker: { name: 'Dr. Sarah Chen', role: 'Environmental Scientist' },
+        clipDuration: 26,
+        startTime: 1567,
+        endTime: 1593,
+        relevanceRank: 1,
       },
       {
         type: 'document' as SourceType,
@@ -636,7 +687,12 @@ Total proposed cuts across all departments: **$8.7M** against a $142M operating 
         contribution: 'Council vote authorizing independent environmental audit and development moratorium near riverbank',
         timestamp: 3456,
         videoDuration: 6000,
-        excerpt: 'Mayor Rodriguez: "Until the independent audit is complete, I am ordering a moratorium on all new development permits within 500 feet of the Millstone River bank."'
+        excerpt: 'Mayor Rodriguez: "Until the independent audit is complete, I am ordering a moratorium on all new development permits within 500 feet of the Millstone River bank."',
+        speaker: { name: 'Mayor Rodriguez', role: 'City Mayor' },
+        clipDuration: 14,
+        startTime: 3456,
+        endTime: 3470,
+        relevanceRank: 2,
       }
     ],
     confidence: 'high' as const,

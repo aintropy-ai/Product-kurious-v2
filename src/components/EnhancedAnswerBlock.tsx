@@ -33,61 +33,107 @@ function Toast({ message, visible }: { message: string; visible: boolean }) {
   );
 }
 
-// ─── Video source card ────────────────────────────────────────────────────────
+// ─── Video clip card ─────────────────────────────────────────────────────────
 const THUMB_COLORS = ['#1a2a3a', '#1a2a2a', '#2a1a3a', '#2a2a1a'];
 
-function VideoSourceCard({ src, idx }: { src: EnhancedSource; idx: number }) {
-  const [showPlayer, setShowPlayer] = useState(false);
-  const ts = src.timestamp ?? 0;
-  const duration = src.videoDuration ?? 3600;
-  const progress = (ts / duration) * 100;
+function formatClipDuration(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function VideoClipCard({ src, idx, compact }: { src: EnhancedSource; idx: number; compact?: boolean }) {
+  const [expanded, setExpanded] = useState(false);
+  const clipLen = src.clipDuration ?? 15;
+  const startTs = src.startTime ?? src.timestamp ?? 0;
+  const endTs = src.endTime ?? startTs + clipLen;
   const thumbColor = THUMB_COLORS[idx % THUMB_COLORS.length];
+
+  if (compact) {
+    return (
+      <div
+        onClick={() => setExpanded(v => !v)}
+        className="rounded-lg border border-k-border bg-k-bg overflow-hidden cursor-pointer hover:border-k-border/80 transition-colors group/clip"
+      >
+        <div className="flex items-center gap-2.5 p-2">
+          {/* Compact thumbnail */}
+          <div className="relative flex-shrink-0 w-20 h-12 rounded overflow-hidden flex items-center justify-center" style={{ background: thumbColor }}>
+            <div className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center group-hover/clip:bg-white/20 transition-colors">
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-2.5 h-2.5 text-white ml-0.5">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
+            <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[8px] px-1 py-0.5 rounded font-mono">
+              {formatClipDuration(clipLen)}
+            </div>
+          </div>
+          {/* Compact meta */}
+          <div className="min-w-0 flex-1">
+            <p className="text-k-text font-semibold text-xs truncate">
+              {src.speaker?.name ?? 'Speaker'}
+            </p>
+            <p className="text-k-muted text-[10px] truncate">
+              {formatClipDuration(clipLen)} clip
+            </p>
+          </div>
+        </div>
+        {/* Compact expand */}
+        {expanded && (
+          <div className="border-t border-k-border/40 p-2.5 animate-fade-in">
+            <p className="text-k-muted text-[10px] mb-1">{src.speaker?.role}</p>
+            <p className="text-xs text-k-text truncate">{src.title}</p>
+            <p className="text-k-cyan text-[10px] mt-0.5">{formatTimestamp(startTs)} – {formatTimestamp(endTs)}</p>
+            {src.excerpt && (
+              <p className="text-k-muted/80 text-[10px] italic mt-1 line-clamp-2">"{src.excerpt}"</p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-xl border border-k-border bg-k-bg overflow-hidden">
+      {/* Main row: thumbnail + metadata */}
       <div
-        onClick={(e) => { e.preventDefault(); setShowPlayer(!showPlayer); }}
-        className={`relative h-24 flex items-center justify-center group/thumb cursor-pointer`}
-        style={{ background: thumbColor }}
+        onClick={() => setExpanded(v => !v)}
+        className="flex items-start gap-3 p-3 cursor-pointer hover:bg-k-border/10 transition-colors group/clip"
       >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center group-hover/thumb:bg-white/20 transition-colors duration-150">
+        {/* Thumbnail */}
+        <div className="relative flex-shrink-0 w-40 h-[90px] rounded-lg overflow-hidden flex items-center justify-center" style={{ background: thumbColor }}>
+          <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center group-hover/clip:bg-white/20 transition-colors duration-150">
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white ml-0.5">
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
-          <div className="h-full bg-k-cyan" style={{ width: `${progress}%` }} />
-        </div>
-        <div className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">
-          ▶ {formatTimestamp(ts)}
-        </div>
-      </div>
-      <div className="p-3">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <p className="text-xs font-medium text-k-text truncate">{src.title}</p>
-            <p className="text-[10px] text-k-muted mt-0.5">{src.agency} · {src.freshness}</p>
-            <p className="text-[10px] text-k-muted/70 mt-0.5 italic">Used for: {src.contribution}</p>
+          <div className="absolute bottom-1.5 right-1.5 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono">
+            {formatClipDuration(clipLen)}
           </div>
-          {src.url && (
-            <a
-              href={`${src.url}#t=${ts}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-shrink-0 flex items-center gap-1 text-[11px] text-k-cyan hover:text-cyan-300 font-medium whitespace-nowrap transition-colors"
-            >
-              Jump to {formatTimestamp(ts)} →
-            </a>
+        </div>
+        {/* Metadata */}
+        <div className="min-w-0 flex-1 py-0.5">
+          {/* Line 1: Speaker */}
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-k-text font-semibold text-sm">{src.speaker?.name ?? 'Speaker'}</span>
+            <span className="text-k-muted text-xs">{src.speaker?.role ?? ''}</span>
+          </div>
+          {/* Line 2: Title + timestamp range */}
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <span className="text-k-muted text-xs truncate">{src.title}</span>
+            <span className="text-k-cyan text-xs flex-shrink-0">{formatTimestamp(startTs)} – {formatTimestamp(endTs)}</span>
+          </div>
+          {/* Line 3-4: Transcript excerpt */}
+          {src.excerpt && (
+            <p className="text-k-muted/80 text-xs italic mt-1.5 line-clamp-2">"{src.excerpt}"</p>
           )}
         </div>
       </div>
-      {showPlayer && (
-        <div className="mt-2 rounded-lg overflow-hidden border border-k-border">
-          {/* Video player mockup */}
+
+      {/* Expanded inline player */}
+      {expanded && (
+        <div className="border-t border-k-border/40 animate-fade-in">
+          {/* Larger video area */}
           <div className="relative bg-black" style={{ aspectRatio: '16/9' }}>
-            {/* Paused state overlay */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
                 <div className="w-0 h-0 border-l-[20px] border-l-white border-y-[12px] border-y-transparent ml-1" />
@@ -96,28 +142,41 @@ function VideoSourceCard({ src, idx }: { src: EnhancedSource; idx: number }) {
             {/* Title bar */}
             <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-3">
               <div className="flex items-center justify-between">
-                <span className="text-white text-xs font-medium">{src.title}</span>
-                <a href={src.url ? `${src.url}#t=${ts}` : '#'} target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-white text-xs">
-                  ↗ Open full
-                </a>
+                <span className="text-white text-xs font-medium">{src.speaker?.name} — {src.speaker?.role}</span>
               </div>
             </div>
-            {/* Progress bar */}
+            {/* Clip progress bar (for clip only, not full video) */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-white text-[10px] font-mono">{formatTimestamp(ts)}</span>
+                <span className="text-white text-[10px] font-mono">0:00</span>
                 <div className="flex-1 h-1 bg-white/20 rounded-full">
-                  <div className="h-full bg-cyan-400 rounded-full" style={{ width: `${(ts / duration) * 100}%` }} />
+                  <div className="h-full bg-cyan-400 rounded-full" style={{ width: '0%' }} />
                 </div>
-                <span className="text-white/60 text-[10px] font-mono">{formatTimestamp(duration)}</span>
+                <span className="text-white/60 text-[10px] font-mono">{formatClipDuration(clipLen)}</span>
               </div>
             </div>
           </div>
-          {/* Transcript */}
+          {/* Full transcript */}
           {src.excerpt && (
             <div className="bg-[#111] p-3 border-t border-k-border">
-              <p className="text-[10px] text-k-muted/60 font-semibold uppercase tracking-wider mb-1">Transcript at {formatTimestamp(ts)}</p>
+              <p className="text-[10px] text-k-muted/60 font-semibold uppercase tracking-wider mb-1">
+                Transcript · {formatTimestamp(startTs)} – {formatTimestamp(endTs)}
+              </p>
               <p className="text-xs text-k-body leading-relaxed italic">"{src.excerpt}"</p>
+            </div>
+          )}
+          {/* See full video link */}
+          {src.url && (
+            <div className="px-3 py-2 border-t border-k-border/30 flex items-center justify-between">
+              <a
+                href={`${src.url}#t=${startTs}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[11px] text-k-cyan hover:text-cyan-300 font-medium transition-colors"
+              >
+                See full video at {formatTimestamp(startTs)} →
+              </a>
+              <span className="text-[10px] text-k-muted">{src.agency} · {src.freshness}</span>
             </div>
           )}
         </div>
@@ -348,9 +407,15 @@ export default function EnhancedAnswerBlock({
     return () => document.removeEventListener('click', handler);
   }, []);
 
+  const [showAllClips, setShowAllClips] = useState(false);
+
   const processedAnswer = addCitations(unwrapFencedTables(demoQ.answer));
   const elapsedSec = (demoQ.elapsedMs / 1000).toFixed(2);
-  const hasVideo = demoQ.sources.some(s => s.type === 'video');
+  const videoSources = demoQ.sources.filter(s => s.type === 'video');
+  const sortedClips = [...videoSources].sort((a, b) => (a.relevanceRank ?? 99) - (b.relevanceRank ?? 99));
+  const topClips = sortedClips.slice(0, 3);
+  const extraClips = sortedClips.slice(3);
+  const hasVideo = videoSources.length > 0;
   const hasImage = demoQ.sources.some(s => s.type === 'image');
   const hasData = demoQ.sources.some(s => s.type === 'structured');
 
@@ -392,6 +457,36 @@ export default function EnhancedAnswerBlock({
         {/* Chart */}
         {demoQ.chartData && <InlineChart data={demoQ.chartData} />}
 
+        {/* Relevant Clips section — visible by default, between answer and sources */}
+        {hasVideo && (
+          <div className="mt-5 mb-2">
+            <p className="text-[10px] uppercase tracking-widest text-k-muted/60 font-semibold mb-2.5">Relevant Clips</p>
+            {/* Top 3 clips in vertical stack */}
+            <div className="space-y-2">
+              {topClips.map((src, i) => (
+                <VideoClipCard key={i} src={src} idx={i} />
+              ))}
+            </div>
+            {/* Show more clips expansion */}
+            {extraClips.length > 0 && !showAllClips && (
+              <button
+                onClick={() => setShowAllClips(true)}
+                className="w-full mt-2 bg-k-border/20 hover:bg-k-border/40 text-k-muted text-xs rounded-lg py-2 transition-colors text-center"
+              >
+                Show {extraClips.length} more clip{extraClips.length > 1 ? 's' : ''}
+              </button>
+            )}
+            {/* Expanded: remaining clips in 2-column grid */}
+            {showAllClips && extraClips.length > 0 && (
+              <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 animate-fade-in">
+                {extraClips.map((src, i) => (
+                  <VideoClipCard key={i} src={src} idx={i + 3} compact />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Metadata row — sources + timing + cross-silo + hover actions */}
         <div className="flex items-center gap-2 mt-4 flex-wrap">
           {/* Sources toggle */}
@@ -402,7 +497,7 @@ export default function EnhancedAnswerBlock({
             >
               <span className={`transition-transform duration-150 inline-block text-[10px] ${sourcesOpen ? 'rotate-90' : ''}`}>▶</span>
               {demoQ.sources.length} sources
-              {hasVideo && <span className="text-[11px]">🎥</span>}
+              {hasVideo && <span className="text-[11px]">🎬</span>}
               {hasImage && <span className="text-[11px]">🖼️</span>}
               {hasData && <span className="text-[11px]">⛁</span>}
             </button>
@@ -459,13 +554,13 @@ export default function EnhancedAnswerBlock({
         {/* Sources panel */}
         {sourcesOpen && (
           <div className="mt-4 border-t border-k-border/40 pt-4 space-y-5 animate-fade-in">
-            {/* Video sources */}
-            {demoQ.sources.filter(s => s.type === 'video').length > 0 && (
+            {/* Video clip sources */}
+            {videoSources.length > 0 && (
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-k-muted/60 font-semibold mb-2">Video</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {demoQ.sources.filter(s => s.type === 'video').map((src, i) => (
-                    <VideoSourceCard key={i} src={src} idx={i} />
+                <p className="text-[10px] uppercase tracking-widest text-k-muted/60 font-semibold mb-2">🎬 Video Clips</p>
+                <div className="space-y-2">
+                  {sortedClips.map((src, i) => (
+                    <VideoClipCard key={i} src={src} idx={i} />
                   ))}
                 </div>
               </div>
