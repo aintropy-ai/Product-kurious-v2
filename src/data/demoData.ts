@@ -153,6 +153,7 @@ The surge was driven by two factors: post-pandemic infrastructure catch-up and n
     keywords: ['transit', 'njtransit', 'nj transit', 'board', 'safety', 'meeting', 'fare', 'train', 'bus', 'rail'],
     query: 'What did NJ Transit\'s board discuss about safety in their 2023 meetings?',
     mode: 'quick',
+    clipLayout: 'highlight' as const,
     answer: `NJ Transit's Board of Directors addressed safety in three major sessions during 2023, with the most substantive discussion occurring at the **November 2023 board meeting** [1].
 
 **Key safety decisions made in 2023:**
@@ -332,6 +333,7 @@ Air quality violations represented the largest single category statewide (43%), 
     keywords: ['gateway', 'tunnel', 'amtrak', 'hudson', 'portal', 'rail', 'federal', 'funding', 'project', 'transit'],
     query: 'What is the current status and funding for the Gateway Tunnel project?',
     mode: 'deeper',
+    clipLayout: 'highlight' as const,
     answer: `The Gateway Program represents the largest infrastructure initiative in the northeastern United States, encompassing a new Hudson River rail tunnel, the Portal North Bridge replacement, and NJ-side station improvements [1].
 
 **Current Status (as of early 2024):**
