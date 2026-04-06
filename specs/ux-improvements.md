@@ -4,7 +4,7 @@
 **Live Prototype:** [Kurious v2](https://aintropy-ai.github.io/Product-kurious-v2/#/chat)
 **GitHub Issue:** [Video Clip UX #4](https://github.com/aintropy-ai/Product-kurious-v2/issues/4)
 **GitHub Project:** [Kurious](https://github.com/orgs/aintropy-ai/projects/4)
-**Sprint:** Sprint 1 (Apr 7-11)
+**Sprint:** Sprint 1 (Apr 6-10)
 
 ---
 
@@ -163,6 +163,20 @@ Each clip shows:
 
 ---
 
+### 11. Video-First Answer Layout
+
+**Before:** For video questions, text answer appears first, then clips below. The video power is buried.
+
+**After:** When a question has video clips as the answer, clips are shown FIRST (prominently at the top), then the text summary below, then sources.
+
+**Why:** This is the "aha moment" — Kurious finds the exact clip. If text comes first, it looks like every other chatbot. Clips first = instant differentiation. Shows the user: "we didn't just find text, we found the exact moment in a video."
+
+**Example:** "What did the council decide about the downtown zoning proposal?" → Shows the 2 relevant video clips immediately, then the text summary explaining the decision, then document sources.
+
+**Non-video questions are unaffected** — text-first layout remains for data/document questions.
+
+---
+
 ## What's NOT Changing
 - Sidebar (already has hide option)
 - Thinking animation (already polished)
@@ -172,4 +186,4 @@ Each clip shows:
 
 ---
 
-*Last updated: April 5, 2026*
+*Last updated: April 6, 2026*

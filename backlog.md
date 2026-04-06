@@ -1,6 +1,6 @@
 # Kurious — Product Backlog
 
-> Last updated: 2026-04-02 | Owner: Shivangi Mishra (PM)
+> Last updated: 2026-04-06 | Owner: Shivangi Mishra (PM)
 
 ---
 
@@ -88,7 +88,7 @@ All P0 and P1 features from the PRD. Shipped as static prototype with mock data.
 
 ---
 
-## v0.2 — UX Polish (Current Sprint: Apr 7-11)
+## v0.2 — UX Polish (Current Sprint: Apr 6-10)
 
 Refining the prototype UI based on team feedback. Preparing for backend connection.
 
@@ -97,7 +97,7 @@ Refining the prototype UI based on team feedback. Preparing for backend connecti
 | 1 | Landing page headline & subtitle | Compelling hero text that communicates value prop | Shivangi | Done |
 | 2 | Format icons on suggestion cards | Show source-type icons (video, data, doc) on each card | Shivangi | Done |
 | 3 | Staggered answer appearance | Sequential block reveal with tuned delays (800/1400/2000ms) | Shivangi | Done |
-| 4 | Multi-modal source badge | Badge indicating mixed source types in results | Shivangi | In Progress |
+| 4 | Multi-modal source badge | Badge indicating mixed source types in results | Shivangi | Done |
 | 5 | Video clip UX — highlight layout | Single featured clip with expanded context | Shivangi | Done |
 | 6 | Video clip UX — grid layout | Multi-clip browsing grid (6-8 clips per question) | Shivangi | Done |
 | 7 | Video intelligence — speech | Transcribed clips with speaker roles | Shivangi | Done |
@@ -105,11 +105,12 @@ Refining the prototype UI based on team feedback. Preparing for backend connecti
 | 9 | Video intelligence — visual-only | Visual description for silent/visual content | Shivangi | Done |
 | 10 | Grouped suggestion categories | Organize suggestions into themed groups | Shivangi | Done |
 | 11 | Positive fallback for unmatched queries | Helpful redirect instead of error state | Shivangi | Done |
-| 12 | Connect frontend to backend API (start) | Begin wiring mock data to live API endpoints | Engineering | Not Started |
+| 12 | Video-first answer layout | For video questions, show clips before text summary — demonstrates video search power | Shivangi | Done |
+| 13 | Connect frontend to backend API (start) | Begin wiring mock data to live API endpoints | Engineering | Not Started |
 
 ---
 
-## v1.0 — Production Ready (Sprint 2: Apr 14-18)
+## v1.0 — Production Ready (Sprint 2: Apr 13-17)
 
 Full backend integration, auth, and production-quality polish.
 
