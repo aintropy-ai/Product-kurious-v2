@@ -11,6 +11,7 @@
 | 🚀 **Live App** | [aintropy-ai.github.io/Product-kurious-v2](https://aintropy-ai.github.io/Product-kurious-v2/) |
 | 👥 **Persona Board** | [View all 7 user personas & journeys](https://aintropy-ai.github.io/Product-kurious-v2/personas.html) |
 | 📄 **PRD** | [docs/PRD.md](./docs/PRD.md) |
+| 📋 **Product Backlog** | [backlog.md](./backlog.md) |
 
 ---
 
