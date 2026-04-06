@@ -410,13 +410,16 @@ export default function EnhancedAnswerBlock({
   const [showChart, setShowChart] = useState(false);
   const [showMeta, setShowMeta] = useState(false);
 
-  // Staggered appearance timers
+  // Staggered appearance timers — longer delays to make the progressive reveal visible
   useEffect(() => {
-    const t1 = setTimeout(() => setShowClips(true), 300);
-    const t2 = setTimeout(() => setShowChart(true), 500);
-    const t3 = setTimeout(() => setShowMeta(true), 700);
+    setShowClips(false);
+    setShowChart(false);
+    setShowMeta(false);
+    const t1 = setTimeout(() => setShowClips(true), 800);
+    const t2 = setTimeout(() => setShowChart(true), 1400);
+    const t3 = setTimeout(() => setShowMeta(true), 2000);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, []);
+  }, [demoQ.id]);
 
   const processedAnswer = addCitations(unwrapFencedTables(demoQ.answer), demoQ.sources);
   const elapsedSec = (demoQ.elapsedMs / 1000).toFixed(2);
@@ -485,14 +488,14 @@ export default function EnhancedAnswerBlock({
 
         {/* Chart — staggered 500ms */}
         {demoQ.chartData && (
-          <div className={`transition-opacity duration-500 ${showChart ? 'opacity-100' : 'opacity-0'}`}>
+          <div className={`transition-opacity duration-700 ease-in-out ${showChart ? 'opacity-100' : 'opacity-0'}`}>
             <InlineChart data={demoQ.chartData} />
           </div>
         )}
 
         {/* Relevant Clips section — staggered 300ms */}
         {hasVideo && (
-          <div className={`mt-5 mb-2 transition-opacity duration-500 ${showClips ? 'opacity-100' : 'opacity-0'}`}>
+          <div className={`mt-5 mb-2 transition-opacity duration-700 ease-in-out ${showClips ? 'opacity-100' : 'opacity-0'}`}>
             {clipLayout === 'grid' ? (
               <>
                 {/* Scenario B: Grid — all clips shown equally */}
@@ -537,7 +540,7 @@ export default function EnhancedAnswerBlock({
         )}
 
         {/* Metadata row — sources + timing + cross-silo + hover actions — staggered 700ms */}
-        <div className={`flex items-center gap-2 mt-4 flex-wrap transition-opacity duration-500 ${showMeta ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`flex items-center gap-2 mt-4 flex-wrap transition-opacity duration-700 ease-in-out ${showMeta ? 'opacity-100' : 'opacity-0'}`}>
           {/* Sources toggle */}
           {nonVideoSources.length > 0 && (
             <button
