@@ -1018,11 +1018,11 @@ export function findDemoQuestion(query: string): DemoQuestion {
 
 export const SUGGESTION_CARDS = [
   'How much did NJ DOT spend on road maintenance in 2023?',
-  'What did NJ Transit\'s board discuss about safety in 2023?',
-  'Which NJ counties had the most environmental violations in 2022?',
-  'What is the current status of the Gateway Tunnel project?',
   'What did the council decide about the downtown zoning proposal?',
+  'Which NJ counties had the most environmental violations in 2022?',
   'Show me all discussions about budget cuts in the last 6 months',
+  'What did NJ Transit\'s board discuss about safety in 2023?',
+  'What is the current status of the Gateway Tunnel project?',
   'Has anyone raised concerns about the environmental impact on the river?',
   'How has NJ school enrollment changed over the last 5 years?',
   'What are the top causes of bridge deficiencies in NJ?',
