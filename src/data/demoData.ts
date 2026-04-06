@@ -279,7 +279,23 @@ Air quality violations represented the largest single category statewide (43%), 
         contribution: 'Facility counts by county to contextualize violation rates',
         excerpt: 'Essex County hosts 2,847 NJDEP-regulated facilities — the highest county concentration — with Hudson at 2,412 and Middlesex at 2,104.',
       },
+      {
+        type: 'video',
+        category: 'supporting',
+        title: 'DEP Aerial Survey — Raritan River',
+        url: 'https://www.nj.gov/dep/surveys/',
+        agency: 'NJ DEP',
+        freshness: 'Recorded Nov 2022',
+        contribution: 'Aerial footage showing discoloration patterns near industrial discharge point',
+        excerpt: 'Aerial footage showing discoloration patterns along the northern bank of the Raritan River near the industrial discharge point.',
+        speaker: { name: 'Aerial Survey', role: 'No audio — visual footage only' },
+        clipDuration: 8,
+        startTime: 0,
+        endTime: 8,
+        relevanceRank: 1,
+      },
     ],
+    clipLayout: 'highlight',
     chartData: {
       type: 'bar',
       title: 'Environmental Violations by County (Top 5, 2022)',
@@ -963,15 +979,13 @@ export const DEFAULT_QUESTION: DemoQuestion = {
   keywords: [],
   query: '',
   mode: 'quick',
-  answer: `Kurious searched across **57 million records** spanning 23 New Jersey government agencies to answer your question.
+  answer: `Right now, Kurious is searching across **NJ Open Data** — **85 million records**, **23 agencies**, **8+ formats** including documents, videos, spreadsheets, and images. Try asking anything about New Jersey!
 
-Based on available NJ Open Data, I found relevant information across multiple government databases. This prototype demonstrates Kurious's ability to connect insights across agencies, modalities, and data formats — from PDFs and spreadsheets to government meeting videos and geospatial data.
-
-Try one of the suggested questions to see the full range of capabilities, including:
-- **Video timestamps** — jump directly to the exact moment in a board meeting
-- **Auto-generated charts** — visualize numerical data instantly
-- **Cross-agency insights** — answers that connect dots across multiple departments
-- **Inline citations** — transparent sourcing for every claim`,
+Here are some things Kurious can do:
+- **Search government meeting videos** — find the exact moment a decision was made
+- **Visualize data** — auto-generate charts from budget and spending records
+- **Connect agencies** — answer questions that span DOT, DEP, Treasury, and more
+- **Cite everything** — every claim links back to its source`,
   sources: [
     {
       type: 'structured',
@@ -1017,10 +1031,10 @@ export function findDemoQuestion(query: string): DemoQuestion {
 }
 
 export const SUGGESTION_CARDS = [
-  'How much did NJ DOT spend on road maintenance in 2023?',
-  'What did the council decide about the downtown zoning proposal?',
-  'Which NJ counties had the most environmental violations in 2022?',
-  'Show me all discussions about budget cuts in the last 6 months',
+  '\uD83D\uDCCA How much did NJ DOT spend on road maintenance in 2023?',
+  '\uD83C\uDFAC What did the council decide about the downtown zoning proposal?',
+  '\uD83D\uDCC4 Which NJ counties had the most environmental violations in 2022?',
+  '\uD83C\uDFAC Show me all discussions about budget cuts in the last 6 months',
   'What did NJ Transit\'s board discuss about safety in 2023?',
   'What is the current status of the Gateway Tunnel project?',
   'Has anyone raised concerns about the environmental impact on the river?',
@@ -1032,6 +1046,35 @@ export const SUGGESTION_CARDS = [
   'What is the NJ DEP\'s budget allocation for clean water initiatives?',
   'Which NJ counties have the highest air quality violations?',
   'How has NJ property tax revenue changed in the last decade?',
+];
+
+export interface SuggestionGroup {
+  label: string;
+  cards: string[];
+}
+
+export const SUGGESTION_GROUPS: SuggestionGroup[] = [
+  {
+    label: '\uD83C\uDFAC Try a video search',
+    cards: [
+      '\uD83C\uDFAC What did the council decide about the downtown zoning proposal?',
+      '\uD83C\uDFAC Show me all discussions about budget cuts in the last 6 months',
+    ],
+  },
+  {
+    label: '\uD83D\uDCCA Try a data question',
+    cards: [
+      '\uD83D\uDCCA How much did NJ DOT spend on road maintenance in 2023?',
+      '\uD83D\uDCCA Which NJ agencies had the highest overtime expenditure in 2023?',
+    ],
+  },
+  {
+    label: '\uD83D\uDD17 Try a cross-agency question',
+    cards: [
+      '\uD83D\uDD17 What is the current status of the Gateway Tunnel project?',
+      '\uD83D\uDD17 Has anyone raised concerns about the environmental impact on the river?',
+    ],
+  },
 ];
 
 export const AGENCY_FILTERS = [

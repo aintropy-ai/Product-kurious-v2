@@ -406,6 +406,17 @@ export default function EnhancedAnswerBlock({
   }, []);
 
   const [showAllClips, setShowAllClips] = useState(false);
+  const [showClips, setShowClips] = useState(false);
+  const [showChart, setShowChart] = useState(false);
+  const [showMeta, setShowMeta] = useState(false);
+
+  // Staggered appearance timers
+  useEffect(() => {
+    const t1 = setTimeout(() => setShowClips(true), 300);
+    const t2 = setTimeout(() => setShowChart(true), 500);
+    const t3 = setTimeout(() => setShowMeta(true), 700);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, []);
 
   const processedAnswer = addCitations(unwrapFencedTables(demoQ.answer), demoQ.sources);
   const elapsedSec = (demoQ.elapsedMs / 1000).toFixed(2);
@@ -418,6 +429,19 @@ export default function EnhancedAnswerBlock({
   const hasVideo = videoSources.length > 0;
   const hasImage = nonVideoSources.some(s => s.type === 'image');
   const hasData = nonVideoSources.some(s => s.type === 'structured');
+  const docCount = demoQ.sources.filter(s => s.type === 'document').length;
+  const dataCount = demoQ.sources.filter(s => s.type === 'structured').length;
+  const imageCount = demoQ.sources.filter(s => s.type === 'image').length;
+  const videoCount = videoSources.length;
+
+  // Build multi-modal badge parts
+  const badgeParts: string[] = [];
+  badgeParts.push(`${demoQ.sources.length} sources`);
+  if (videoCount > 0) badgeParts.push(`${videoCount} video clip${videoCount > 1 ? 's' : ''}`);
+  if (docCount > 0) badgeParts.push(`${docCount} document${docCount > 1 ? 's' : ''}`);
+  if (dataCount > 0) badgeParts.push(`${dataCount} dataset${dataCount > 1 ? 's' : ''}`);
+  if (imageCount > 0) badgeParts.push(`${imageCount} image${imageCount > 1 ? 's' : ''}`);
+  const badgeText = 'ANSWER FROM ' + badgeParts.join(' \u00B7 ').toUpperCase();
 
   return (
     <>
@@ -438,6 +462,11 @@ export default function EnhancedAnswerBlock({
           .inline-citation-group { background: rgba(0, 212, 255, 0.18); letter-spacing: -0.3px; }
         `}</style>
 
+        {/* Multi-modal answer badge */}
+        <p className="text-[11px] text-k-muted/50 uppercase tracking-wider font-medium mb-3">
+          {badgeText}
+        </p>
+
         {/* Answer text — no card, clean prose */}
         <div className="prose prose-sm prose-invert max-w-none
           prose-p:text-k-text prose-p:leading-relaxed
@@ -454,12 +483,16 @@ export default function EnhancedAnswerBlock({
           </ReactMarkdown>
         </div>
 
-        {/* Chart */}
-        {demoQ.chartData && <InlineChart data={demoQ.chartData} />}
+        {/* Chart — staggered 500ms */}
+        {demoQ.chartData && (
+          <div className={`transition-opacity duration-500 ${showChart ? 'opacity-100' : 'opacity-0'}`}>
+            <InlineChart data={demoQ.chartData} />
+          </div>
+        )}
 
-        {/* Relevant Clips section — visible by default, between answer and metadata */}
+        {/* Relevant Clips section — staggered 300ms */}
         {hasVideo && (
-          <div className="mt-5 mb-2">
+          <div className={`mt-5 mb-2 transition-opacity duration-500 ${showClips ? 'opacity-100' : 'opacity-0'}`}>
             {clipLayout === 'grid' ? (
               <>
                 {/* Scenario B: Grid — all clips shown equally */}
@@ -503,8 +536,8 @@ export default function EnhancedAnswerBlock({
           </div>
         )}
 
-        {/* Metadata row — sources + timing + cross-silo + hover actions */}
-        <div className="flex items-center gap-2 mt-4 flex-wrap">
+        {/* Metadata row — sources + timing + cross-silo + hover actions — staggered 700ms */}
+        <div className={`flex items-center gap-2 mt-4 flex-wrap transition-opacity duration-500 ${showMeta ? 'opacity-100' : 'opacity-0'}`}>
           {/* Sources toggle */}
           {nonVideoSources.length > 0 && (
             <button

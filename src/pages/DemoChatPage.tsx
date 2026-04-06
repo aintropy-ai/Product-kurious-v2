@@ -6,6 +6,7 @@ import { ProjectSidebar, MembersPanel, Project, Member } from '../components/Pro
 import {
   findDemoQuestion,
   SUGGESTION_CARDS,
+  SUGGESTION_GROUPS,
   DemoQuestion,
 } from '../data/demoData';
 
@@ -111,6 +112,7 @@ export const DemoChatPage = () => {
   const [chatTitle, setChatTitle] = useState<string>('');
   const [voiceActive, setVoiceActive] = useState(false);
   const [suggestionPage, setSuggestionPage] = useState(0);
+  const [showGrouped, setShowGrouped] = useState(false);
 const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [activeProjectRole, setActiveProjectRole] = useState<Member['role']>('Admin');
   const [membersPanelOpen, setMembersPanelOpen] = useState(false);
@@ -181,6 +183,8 @@ const [activeProject, setActiveProject] = useState<Project | null>(null);
     setActiveConvId(null);
     setChatTitle('');
     setSearchMode('quick');
+    setShowGrouped(false);
+    setSuggestionPage(0);
   };
 
   const handleSelectConversation = (id: string, title: string) => {
@@ -362,8 +366,13 @@ const [activeProject, setActiveProject] = useState<Project | null>(null);
                       Your AI knowledge engine. What do you want to explore today?
                     </p>
 
+                    {/* Headline above search bar */}
+                    <p className="text-sm text-k-muted/60 font-light mb-3">
+                      Ask anything about New Jersey's 85 million public records
+                    </p>
+
                     {/* Inline input */}
-                    <div className="w-full max-w-2xl mb-6">
+                    <div className="w-full max-w-2xl mb-3">
                       <ChatInputArea
                         onSubmit={handleSearch}
                         disabled={isThinking}
@@ -375,34 +384,67 @@ const [activeProject, setActiveProject] = useState<Project | null>(null);
                       />
                     </div>
 
-                    {/* Suggestion pills */}
-                    {(() => {
-                      const pageSize = 4;
-                      const start = (suggestionPage * pageSize) % SUGGESTION_CARDS.length;
-                      const visible = Array.from({ length: pageSize }, (_, i) =>
-                        SUGGESTION_CARDS[(start + i) % SUGGESTION_CARDS.length]
-                      );
-                      return (
-                        <>
-                          <div className="flex flex-wrap justify-center gap-2">
-                            {visible.map((s, i) => (
-                              <button key={`${suggestionPage}-${i}`} onClick={() => handleSearch(s)}
-                                className="text-xs text-k-muted hover:text-k-text border border-k-border hover:border-k-cyan/40 rounded-full px-4 py-2 transition-all duration-200 hover:bg-k-card/60 flex items-center gap-1.5 group animate-fade-in">
-                                <span className="text-k-cyan/60 group-hover:text-k-cyan transition-colors">→</span>
-                                {s.length > 48 ? s.slice(0, 48) + '…' : s}
-                              </button>
-                            ))}
+                    {/* Subtitle below search bar */}
+                    <p className="text-sm text-k-muted/50 mb-6">
+                      Documents. Videos. Spreadsheets. Images. One search.
+                    </p>
+
+                    {/* Suggestion pills — initial 4 or grouped categories */}
+                    {!showGrouped ? (
+                      <>
+                        {(() => {
+                          const pageSize = 4;
+                          const start = (suggestionPage * pageSize) % SUGGESTION_CARDS.length;
+                          const visible = Array.from({ length: pageSize }, (_, i) =>
+                            SUGGESTION_CARDS[(start + i) % SUGGESTION_CARDS.length]
+                          );
+                          return (
+                            <div className="flex flex-wrap justify-center gap-2">
+                              {visible.map((s, i) => (
+                                <button key={`${suggestionPage}-${i}`} onClick={() => handleSearch(s)}
+                                  className="text-xs text-k-muted hover:text-k-text border border-k-border hover:border-k-cyan/40 rounded-full px-4 py-2 transition-all duration-200 hover:bg-k-card/60 flex items-center gap-1.5 group animate-fade-in">
+                                  <span className="text-k-cyan/60 group-hover:text-k-cyan transition-colors">{'\u2192'}</span>
+                                  {s.length > 55 ? s.slice(0, 55) + '\u2026' : s}
+                                </button>
+                              ))}
+                            </div>
+                          );
+                        })()}
+                        <button
+                          onClick={() => setShowGrouped(true)}
+                          className="mt-4 flex items-center gap-1.5 text-xs text-k-muted/60 hover:text-k-cyan transition-colors mx-auto"
+                        >
+                          <span className="text-k-cyan/50">{'\u2726'}</span>
+                          More ideas
+                        </button>
+                      </>
+                    ) : (
+                      <div className="w-full max-w-2xl space-y-5 animate-fade-in">
+                        {SUGGESTION_GROUPS.map((group, gi) => (
+                          <div key={gi}>
+                            <p className="text-[11px] text-k-muted/50 uppercase tracking-wider font-medium mb-2 text-left">
+                              {group.label}
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {group.cards.map((s, ci) => (
+                                <button key={`g${gi}-${ci}`} onClick={() => handleSearch(s)}
+                                  className="text-xs text-k-muted hover:text-k-text border border-k-border hover:border-k-cyan/40 rounded-full px-4 py-2 transition-all duration-200 hover:bg-k-card/60 flex items-center gap-1.5 group animate-fade-in">
+                                  <span className="text-k-cyan/60 group-hover:text-k-cyan transition-colors">{'\u2192'}</span>
+                                  {s.length > 55 ? s.slice(0, 55) + '\u2026' : s}
+                                </button>
+                              ))}
+                            </div>
                           </div>
-                          <button
-                            onClick={() => setSuggestionPage(p => p + 1)}
-                            className="mt-4 flex items-center gap-1.5 text-xs text-k-muted/60 hover:text-k-cyan transition-colors mx-auto"
-                          >
-                            <span className="text-k-cyan/50">✦</span>
-                            More ideas
-                          </button>
-                        </>
-                      );
-                    })()}
+                        ))}
+                        <button
+                          onClick={() => { setShowGrouped(false); setSuggestionPage(p => p + 1); }}
+                          className="mt-2 flex items-center gap-1.5 text-xs text-k-muted/60 hover:text-k-cyan transition-colors mx-auto"
+                        >
+                          <span className="text-k-cyan/50">{'\u2190'}</span>
+                          Back to suggestions
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
