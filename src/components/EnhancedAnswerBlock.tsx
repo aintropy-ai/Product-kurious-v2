@@ -407,18 +407,30 @@ export default function EnhancedAnswerBlock({
 
   const [showAllClips, setShowAllClips] = useState(false);
   const [showClips, setShowClips] = useState(false);
+  const [showText, setShowText] = useState(false);
   const [showChart, setShowChart] = useState(false);
   const [showMeta, setShowMeta] = useState(false);
 
-  // Staggered appearance timers — longer delays to make the progressive reveal visible
+  // Staggered progressive reveal — each section appears one by one
   useEffect(() => {
     setShowClips(false);
+    setShowText(false);
     setShowChart(false);
     setShowMeta(false);
-    const t1 = setTimeout(() => setShowClips(true), 800);
-    const t2 = setTimeout(() => setShowChart(true), 1400);
-    const t3 = setTimeout(() => setShowMeta(true), 2000);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    if (hasVideo) {
+      // Video questions: clips first → text → chart → sources
+      const t1 = setTimeout(() => setShowClips(true), 400);
+      const t2 = setTimeout(() => setShowText(true), 1200);
+      const t3 = setTimeout(() => setShowChart(true), 1800);
+      const t4 = setTimeout(() => setShowMeta(true), 2400);
+      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+    } else {
+      // Non-video questions: text first → chart → sources
+      const t1 = setTimeout(() => setShowText(true), 300);
+      const t2 = setTimeout(() => setShowChart(true), 900);
+      const t3 = setTimeout(() => setShowMeta(true), 1500);
+      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    }
   }, [demoQ.id]);
 
   const processedAnswer = addCitations(unwrapFencedTables(demoQ.answer), demoQ.sources);
@@ -513,16 +525,7 @@ export default function EnhancedAnswerBlock({
         )}
 
         {/* Answer text — appears after clips for video questions, or first for non-video */}
-        <div className="prose prose-sm prose-invert max-w-none
-          prose-p:text-k-text prose-p:leading-relaxed
-          prose-headings:text-k-text prose-headings:font-semibold
-          prose-strong:text-k-text
-          prose-a:text-k-cyan hover:prose-a:text-cyan-300
-          prose-code:text-k-cyan prose-code:bg-k-bg prose-code:px-1 prose-code:rounded
-          prose-pre:bg-k-bg
-          prose-li:text-k-text prose-ol:text-k-text prose-ul:text-k-text
-          prose-blockquote:border-l-k-border prose-blockquote:text-k-muted
-          prose-table:text-sm prose-th:text-k-muted prose-td:text-k-text">
+        <div className={`transition-opacity duration-700 ease-in-out ${showText ? 'opacity-100' : 'opacity-0'} prose prose-sm prose-invert max-w-none prose-p:text-k-text prose-p:leading-relaxed prose-headings:text-k-text prose-headings:font-semibold prose-strong:text-k-text prose-a:text-k-cyan hover:prose-a:text-cyan-300 prose-code:text-k-cyan prose-code:bg-k-bg prose-code:px-1 prose-code:rounded prose-pre:bg-k-bg prose-li:text-k-text prose-ol:text-k-text prose-ul:text-k-text prose-blockquote:border-l-k-border prose-blockquote:text-k-muted prose-table:text-sm prose-th:text-k-muted prose-td:text-k-text`}>
           <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
             {processedAnswer}
           </ReactMarkdown>
@@ -535,51 +538,7 @@ export default function EnhancedAnswerBlock({
           </div>
         )}
 
-        {/* Clips section removed from here — now rendered above the answer text for video questions */}
-        {false && hasVideo && (
-          <div className={`mt-5 mb-2 transition-opacity duration-700 ease-in-out ${showClips ? 'opacity-100' : 'opacity-0'}`}>
-            {clipLayout === 'grid' ? (
-              <>
-                {/* Scenario B: Grid — all clips shown equally */}
-                <p className="text-[10px] uppercase tracking-widest text-k-muted/60 font-semibold mb-2.5">
-                  All clips related to this answer ({sortedClips.length}):
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {sortedClips.map((src, i) => (
-                    <VideoClipCard key={i} src={src} idx={i} compact />
-                  ))}
-                </div>
-              </>
-            ) : (
-              <>
-                {/* Scenario A: Highlight — top 2 prominent, rest collapsed */}
-                <p className="text-[10px] uppercase tracking-widest text-k-muted/60 font-semibold mb-2.5">Relevant Clips</p>
-                <div className="space-y-2">
-                  {highlightTopClips.map((src, i) => (
-                    <VideoClipCard key={i} src={src} idx={i} />
-                  ))}
-                </div>
-                {/* "... N more clips" bar */}
-                {highlightExtraClips.length > 0 && !showAllClips && (
-                  <button
-                    onClick={() => setShowAllClips(true)}
-                    className="bg-k-border/20 hover:bg-k-border/40 text-k-muted text-xs rounded-lg py-2 text-center w-full mt-2 transition-colors"
-                  >
-                    ··· {highlightExtraClips.length} more clip{highlightExtraClips.length > 1 ? 's' : ''} ▼
-                  </button>
-                )}
-                {/* Expanded: remaining clips in 2-column grid */}
-                {showAllClips && highlightExtraClips.length > 0 && (
-                  <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 animate-fade-in">
-                    {highlightExtraClips.map((src, i) => (
-                      <VideoClipCard key={i} src={src} idx={i + 2} compact />
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        )}
+        {/* Clips are now rendered above the answer text for video questions */}
 
         {/* Metadata row — sources + timing + cross-silo + hover actions — staggered 700ms */}
         <div className={`flex items-center gap-2 mt-4 flex-wrap transition-opacity duration-700 ease-in-out ${showMeta ? 'opacity-100' : 'opacity-0'}`}>
