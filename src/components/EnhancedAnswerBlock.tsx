@@ -470,7 +470,49 @@ export default function EnhancedAnswerBlock({
           {badgeText}
         </p>
 
-        {/* Answer text — no card, clean prose */}
+        {/* Video-first layout: clips shown BEFORE text for video questions */}
+        {hasVideo && (
+          <div className={`mb-5 transition-opacity duration-700 ease-in-out ${showClips ? 'opacity-100' : 'opacity-0'}`}>
+            {clipLayout === 'grid' ? (
+              <>
+                <p className="text-[10px] uppercase tracking-widest text-k-muted/60 font-semibold mb-2.5">
+                  All clips related to this answer ({sortedClips.length}):
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {sortedClips.map((src, i) => (
+                    <VideoClipCard key={i} src={src} idx={i} compact />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-[10px] uppercase tracking-widest text-k-muted/60 font-semibold mb-2.5">Relevant Clips</p>
+                <div className="space-y-2">
+                  {highlightTopClips.map((src, i) => (
+                    <VideoClipCard key={i} src={src} idx={i} />
+                  ))}
+                </div>
+                {highlightExtraClips.length > 0 && !showAllClips && (
+                  <button
+                    onClick={() => setShowAllClips(true)}
+                    className="bg-k-border/20 hover:bg-k-border/40 text-k-muted text-xs rounded-lg py-2 text-center w-full mt-2 transition-colors"
+                  >
+                    ··· {highlightExtraClips.length} more clip{highlightExtraClips.length > 1 ? 's' : ''} ▼
+                  </button>
+                )}
+                {showAllClips && highlightExtraClips.length > 0 && (
+                  <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3 animate-fade-in">
+                    {highlightExtraClips.map((src, i) => (
+                      <VideoClipCard key={i} src={src} idx={i + 2} compact />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Answer text — appears after clips for video questions, or first for non-video */}
         <div className="prose prose-sm prose-invert max-w-none
           prose-p:text-k-text prose-p:leading-relaxed
           prose-headings:text-k-text prose-headings:font-semibold
@@ -493,8 +535,8 @@ export default function EnhancedAnswerBlock({
           </div>
         )}
 
-        {/* Relevant Clips section — staggered 300ms */}
-        {hasVideo && (
+        {/* Clips section removed from here — now rendered above the answer text for video questions */}
+        {false && hasVideo && (
           <div className={`mt-5 mb-2 transition-opacity duration-700 ease-in-out ${showClips ? 'opacity-100' : 'opacity-0'}`}>
             {clipLayout === 'grid' ? (
               <>
