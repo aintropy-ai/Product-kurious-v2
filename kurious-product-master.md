@@ -95,7 +95,7 @@ Every feature moves through these phases:
 | **Enterprise Knowledge Search** | Active | Production | One search across all formats. Cross-agency, cross-format answers. Inline citations. Multi-modal source badge. Two search modes (quick/deep). |
 | **Video Intelligence** | Active | Production | Find specific moments in hours of video. Speaker ID on every clip. 3 content types (speech, unclear, visual-only). Clip extraction with relevant segments. |
 | **Data Analysis** | Active | Production | Answer questions from structured data. Charts and tables generated. NL2SQL pipeline live (text → SQL → PostgreSQL). |
-| **Admin & Governance** | Planned | Inception | Feedback analytics, usage tracking, user management, access control. Keycloak auth exists. Admin feedback UX assigned (nj-open-data-demo #5). |
+| **Internal Admin Tools** | Planned | Inception | For internal team use only. Feedback analytics, usage tracking, eval results, access control. UX designed ([live mockup](https://aintropy-ai.github.io/Product-kurious-v2/admin-feedback.html)). Keycloak auth exists. |
 | **Workflow Automation** | Future | — | Pattern detection, agent creation, proactive suggestions. The platform play — Kurious observes user behavior and suggests/builds workflows. |
 
 **Success metrics:**
@@ -141,7 +141,7 @@ Every feature moves through these phases:
 | Cross-agency answers | Multi-source badge | Cross-agency query | Cross-modal reasoning | Multiple agencies indexed | Active across all layers |
 | Enterprise search | Search UI | Search API | Blended RAG | NJ Open Data | Active across all layers |
 | Data analysis | Charts & tables | NL2SQL | Query processing | Structured data indexed | Active across all layers |
-| Admin analytics | Admin console | Feedback API | — | Feedback data | Planned (Inception) |
+| Internal admin tools | Admin console | Feedback API | — | Feedback data | Planned (Inception) |
 | Workflow automation | Proactive suggestions | Pattern detection | Usage learning | User activity data | Future |
 
 ---
@@ -150,7 +150,7 @@ Every feature moves through these phases:
 
 | Quarter | Focus | Key deliverables |
 |---|---|---|
-| **Q2 2026 (now)** | Play stage | NJ Open Data demo polished, video experience refined, publications proving the tech, website live, admin analytics started |
+| **Q2 2026 (now)** | Play stage | NJ Open Data demo polished, video experience refined, publications proving the tech, website live, internal admin tools started |
 | **Q3 2026** | Try stage | Self-serve trial, upload own data, SaaS login, first external users |
 | **Q4 2026** | Buy/Deploy | Enterprise features, compliance, integrations, dedicated deployments |
 
