@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Feedback & Analytics — Kurious</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #0D0D0D; color: #fff; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+    :root {
+      --k-bg: #0D0D0D; --k-nav: #111111; --k-card: #1A1A1A; --k-border: #2A2A2A;
+      --k-text: #FFFFFF; --k-muted: #A0A0A0; --k-cyan: #00D4FF; --k-teal: #0891B2;
+      --k-error: #EF4444; --k-success: #34D399;
+    }
+
+    /* Header */
+    .header { background: var(--k-nav); border-bottom: 1px solid var(--k-border); padding: 0 24px; height: 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-logo { font-size: 14px; font-weight: 700; color: var(--k-text); }
+    .header-logo span { color: var(--k-cyan); }
+    .header-badge { font-size: 9px; font-weight: 600; color: var(--k-cyan); background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2); padding: 2px 8px; border-radius: 10px; }
+    .header-nav { display: flex; gap: 4px; }
+    .header-nav a { font-size: 12px; color: var(--k-muted); padding: 6px 12px; border-radius: 8px; text-decoration: none; transition: all 0.15s; }
+    .header-nav a:hover { color: var(--k-text); background: var(--k-border); }
+    .header-nav a.active { color: var(--k-cyan); background: rgba(0,212,255,0.08); }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+
+    /* Page title */
+    .page-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .page-subtitle { font-size: 12px; color: var(--k-muted); margin-bottom: 24px; }
+
+    /* Stat cards */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: var(--k-card); border: 1px solid var(--k-border); border-radius: 16px; padding: 20px; }
+    .stat-label { font-size: 11px; color: var(--k-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 8px; }
+    .stat-value { font-size: 28px; font-weight: 800; color: var(--k-text); }
+    .stat-value.cyan { color: var(--k-cyan); }
+    .stat-value.error { color: var(--k-error); }
+    .stat-value.success { color: var(--k-success); }
+    .stat-sub { font-size: 11px; color: var(--k-muted); margin-top: 4px; }
+    .stat-sub .up { color: var(--k-success); font-weight: 600; }
+    .stat-sub .down { color: var(--k-error); font-weight: 600; }
+    .stat-issue { font-size: 13px; font-weight: 600; color: var(--k-text); margin-top: 2px; }
+    .stat-issue-count { font-size: 11px; color: var(--k-muted); }
+
+    /* Filters */
+    .filters { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .filter-pills { display: flex; gap: 4px; }
+    .filter-pill { font-size: 12px; font-weight: 500; padding: 6px 16px; border-radius: 20px; border: 1px solid var(--k-border); background: transparent; color: var(--k-muted); cursor: pointer; transition: all 0.15s; }
+    .filter-pill:hover { border-color: var(--k-cyan); color: var(--k-text); }
+    .filter-pill.active { background: rgba(0,212,255,0.1); border-color: var(--k-cyan); color: var(--k-cyan); }
+    .filter-search { flex: 1; min-width: 200px; background: var(--k-card); border: 1px solid var(--k-border); border-radius: 10px; padding: 8px 14px; font-size: 12px; color: var(--k-text); font-family: inherit; outline: none; transition: border-color 0.15s; }
+    .filter-search:focus { border-color: var(--k-cyan); }
+    .filter-search::placeholder { color: #555; }
+    .filter-date { font-size: 12px; color: var(--k-muted); background: var(--k-card); border: 1px solid var(--k-border); border-radius: 10px; padding: 6px 14px; cursor: pointer; transition: all 0.15s; }
+    .filter-date:hover { border-color: var(--k-cyan); color: var(--k-text); }
+
+    /* Section headers */
+    .section-header { font-size: 11px; color: var(--k-muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; margin-bottom: 12px; margin-top: 32px; }
+
+    /* Feedback list */
+    .feedback-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 32px; }
+    .feedback-item { background: var(--k-card); border: 1px solid var(--k-border); border-radius: 14px; padding: 16px 20px; transition: all 0.15s; cursor: pointer; }
+    .feedback-item:hover { background: #1e1e1e; border-color: #333; }
+    .feedback-top { display: flex; align-items: flex-start; gap: 12px; }
+    .feedback-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+    .feedback-icon.positive { background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.25); }
+    .feedback-icon.negative { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25); }
+    .feedback-content { flex: 1; min-width: 0; }
+    .feedback-query { font-size: 14px; font-weight: 600; color: var(--k-text); margin-bottom: 6px; }
+    .feedback-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+    .feedback-tag { font-size: 10px; font-weight: 500; padding: 2px 10px; border-radius: 10px; background: rgba(0,212,255,0.08); color: var(--k-cyan); border: 1px solid rgba(0,212,255,0.15); }
+    .feedback-reason { font-size: 12px; color: var(--k-error); font-weight: 500; margin-bottom: 4px; }
+    .feedback-comment { font-size: 12px; color: var(--k-muted); font-style: italic; margin-bottom: 6px; }
+    .feedback-meta { font-size: 11px; color: #555; display: flex; gap: 8px; align-items: center; }
+    .feedback-meta .dot { color: #333; }
+    .feedback-view { font-size: 11px; color: var(--k-cyan); font-weight: 500; flex-shrink: 0; margin-top: 2px; opacity: 0; transition: opacity 0.15s; }
+    .feedback-item:hover .feedback-view { opacity: 1; }
+
+    /* Expanded detail */
+    .feedback-detail { border-top: 1px solid var(--k-border); margin-top: 14px; padding-top: 14px; animation: fadeIn 0.3s ease; }
+    .detail-section { margin-bottom: 12px; }
+    .detail-label { font-size: 9px; font-weight: 700; color: var(--k-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .detail-answer { font-size: 13px; color: #ccc; line-height: 1.7; }
+    .detail-answer strong { color: var(--k-text); }
+    .detail-sources { list-style: none; padding: 0; }
+    .detail-sources li { font-size: 12px; color: var(--k-muted); padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+    .detail-sources li .num { color: var(--k-cyan); font-weight: 600; font-size: 10px; min-width: 16px; }
+    .detail-sources li a { color: var(--k-cyan); text-decoration: none; }
+    .detail-sources li a:hover { text-decoration: underline; }
+    .detail-meta-row { display: flex; gap: 16px; font-size: 11px; color: var(--k-muted); }
+    .detail-collapse { font-size: 11px; color: var(--k-cyan); cursor: pointer; text-align: right; margin-top: 8px; }
+
+    /* Charts section */
+    .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+    .chart-card { background: var(--k-card); border: 1px solid var(--k-border); border-radius: 16px; padding: 20px; }
+    .chart-card.full-width { grid-column: 1 / -1; }
+    .chart-title { font-size: 11px; color: var(--k-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 16px; }
+
+    /* Fake chart — trend line */
+    .trend-chart { height: 120px; display: flex; align-items: flex-end; gap: 2px; padding: 0 4px; }
+    .trend-bar { flex: 1; border-radius: 3px 3px 0 0; transition: all 0.3s; position: relative; }
+    .trend-bar:hover { opacity: 0.8; }
+    .trend-bar.positive { background: var(--k-success); }
+    .trend-bar.negative { background: var(--k-error); }
+    .trend-labels { display: flex; justify-content: space-between; margin-top: 8px; font-size: 9px; color: #444; }
+    .trend-legend { display: flex; gap: 16px; margin-top: 12px; }
+    .trend-legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--k-muted); }
+    .trend-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* Horizontal bar chart */
+    .hbar-chart { display: flex; flex-direction: column; gap: 10px; }
+    .hbar-row { display: flex; align-items: center; gap: 12px; }
+    .hbar-label { font-size: 11px; color: var(--k-muted); width: 180px; flex-shrink: 0; text-align: right; }
+    .hbar-track { flex: 1; height: 20px; background: #111; border-radius: 6px; overflow: hidden; position: relative; }
+    .hbar-fill { height: 100%; border-radius: 6px; transition: width 0.5s ease; }
+    .hbar-fill.error { background: linear-gradient(90deg, var(--k-error), #dc2626); }
+    .hbar-fill.cyan { background: linear-gradient(90deg, var(--k-cyan), var(--k-teal)); }
+    .hbar-fill.success { background: linear-gradient(90deg, var(--k-success), #059669); }
+    .hbar-value { font-size: 11px; color: var(--k-muted); font-weight: 600; width: 30px; flex-shrink: 0; }
+
+    /* Query type chart */
+    .qtype-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .qtype-label { font-size: 11px; color: var(--k-muted); width: 100px; flex-shrink: 0; text-align: right; }
+    .qtype-bars { flex: 1; display: flex; gap: 2px; height: 20px; }
+    .qtype-bar { height: 100%; border-radius: 4px; }
+    .qtype-bar.pos { background: var(--k-success); }
+    .qtype-bar.neg { background: var(--k-error); }
+    .qtype-counts { font-size: 10px; color: var(--k-muted); width: 80px; flex-shrink: 0; }
+
+    /* Action needed section */
+    .action-section { background: #1a1215; border: 1px solid rgba(239,68,68,0.2); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+    .action-header { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .action-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--k-error); animation: pulse 2s infinite; }
+    .action-title { font-size: 13px; font-weight: 700; color: var(--k-error); }
+    .action-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+    .action-item { display: flex; align-items: flex-start; gap: 10px; font-size: 12px; color: #ccc; line-height: 1.6; }
+    .action-item .bullet { color: var(--k-error); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .action-item strong { color: var(--k-text); }
+
+    /* Recurring issues */
+    .recurring-section { background: rgba(245,158,11,0.04); border: 1px solid rgba(245,158,11,0.15); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+    .recurring-header { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .recurring-icon { font-size: 14px; }
+    .recurring-title { font-size: 13px; font-weight: 700; color: #f59e0b; }
+    .recurring-item { background: var(--k-card); border: 1px solid var(--k-border); border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; }
+    .recurring-query { font-size: 13px; font-weight: 600; color: var(--k-text); margin-bottom: 4px; }
+    .recurring-detail { font-size: 11px; color: var(--k-muted); display: flex; gap: 12px; align-items: center; }
+    .recurring-count { color: var(--k-error); font-weight: 600; }
+    .recurring-reason { font-style: italic; }
+    .recurring-try { font-size: 10px; color: var(--k-cyan); cursor: pointer; margin-left: auto; font-weight: 500; }
+    .recurring-try:hover { text-decoration: underline; }
+
+    /* Try query button */
+    .try-btn { font-size: 10px; color: var(--k-cyan); background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.15); padding: 3px 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; text-decoration: none; }
+    .try-btn:hover { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.3); }
+
+    /* Weekly summary */
+    .summary-section { background: var(--k-card); border: 1px solid var(--k-border); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+    .summary-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .summary-title { font-size: 13px; font-weight: 700; color: var(--k-text); }
+    .summary-copy { font-size: 11px; color: var(--k-cyan); background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2); padding: 5px 14px; border-radius: 8px; cursor: pointer; transition: all 0.15s; font-weight: 500; }
+    .summary-copy:hover { background: rgba(0,212,255,0.15); }
+    .summary-body { font-size: 12px; color: var(--k-muted); line-height: 1.8; background: #111; border: 1px solid #1e1e1e; border-radius: 10px; padding: 14px 18px; font-family: 'Inter', sans-serif; }
+    .summary-body strong { color: var(--k-text); }
+    .summary-body .green { color: var(--k-success); }
+    .summary-body .red { color: var(--k-error); }
+
+    /* Before/After tracking */
+    .impact-section { margin-top: 12px; }
+    .impact-item { display: flex; align-items: center; gap: 12px; background: #111; border: 1px solid #1e1e1e; border-radius: 10px; padding: 10px 16px; margin-bottom: 6px; }
+    .impact-query { font-size: 12px; color: var(--k-text); flex: 1; font-weight: 500; }
+    .impact-before { font-size: 11px; color: var(--k-error); font-weight: 600; }
+    .impact-arrow { font-size: 11px; color: var(--k-muted); }
+    .impact-after { font-size: 11px; color: var(--k-success); font-weight: 600; }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-logo"><span>Kurious</span> Admin</div>
+      <span class="header-badge">ADMIN VIEW</span>
+    </div>
+    <div class="header-nav">
+      <a href="#" class="active">Feedback</a>
+      <a href="#">Analytics</a>
+      <a href="#">Users</a>
+      <a href="#">← Back to Search</a>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Page title -->
+    <h1 class="page-title">Feedback & Analytics</h1>
+    <p class="page-subtitle">All user feedback from the NJ Open Data demo. Updated on page refresh.</p>
+
+    <!-- Section 1: Overview cards -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total Feedback</div>
+        <div class="stat-value">142</div>
+        <div class="stat-sub">All time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Satisfaction Rate</div>
+        <div class="stat-value cyan">78%</div>
+        <div class="stat-sub"><span class="up">↑ 4%</span> vs last week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Top Issue</div>
+        <div class="stat-issue">Answer incomplete</div>
+        <div class="stat-issue-count">23 reports</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">This Week</div>
+        <div class="stat-value">34</div>
+        <div class="stat-sub"><span class="up">+8</span> vs last week</div>
+      </div>
+    </div>
+
+    <!-- Action Needed -->
+    <div class="action-section">
+      <div class="action-header">
+        <div class="action-dot"></div>
+        <div class="action-title">Action Needed</div>
+      </div>
+      <ul class="action-list">
+        <li class="action-item">
+          <span class="bullet">1.</span>
+          <span><strong>"Answer incomplete"</strong> is your #1 issue (23 reports) — mostly on <strong>video queries</strong> where users expect more context from clips</span>
+        </li>
+        <li class="action-item">
+          <span class="bullet">2.</span>
+          <span><strong>3 queries</strong> got repeated negative feedback — same question, same complaint. See recurring issues below.</span>
+        </li>
+        <li class="action-item">
+          <span class="bullet">3.</span>
+          <span><strong>Video queries</strong> have 2x more negative feedback than data queries — video source relevance needs improvement</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Recurring Issues -->
+    <div class="recurring-section">
+      <div class="recurring-header">
+        <span class="recurring-icon">⚠️</span>
+        <div class="recurring-title">Recurring Issues — Same query, multiple complaints</div>
+      </div>
+      <div class="recurring-item">
+        <div class="recurring-query">"What are the latest zoning changes in Newark?"</div>
+        <div class="recurring-detail">
+          <span class="recurring-count">4 negative</span>
+          <span class="recurring-reason">All say: "outdated data — shows 2021, not current"</span>
+          <a class="try-btn" href="#">Try this query →</a>
+        </div>
+      </div>
+      <div class="recurring-item">
+        <div class="recurring-query">"Show me environmental violations near Passaic River in 2023"</div>
+        <div class="recurring-detail">
+          <span class="recurring-count">3 negative</span>
+          <span class="recurring-reason">All say: "sources not relevant to Passaic specifically"</span>
+          <a class="try-btn" href="#">Try this query →</a>
+        </div>
+      </div>
+      <div class="recurring-item">
+        <div class="recurring-query">"What happened at the last NJ Transit board meeting?"</div>
+        <div class="recurring-detail">
+          <span class="recurring-count">3 negative</span>
+          <span class="recurring-reason">All say: "answer is too long, hard to find the key decision"</span>
+          <a class="try-btn" href="#">Try this query →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Before/After Impact -->
+    <div class="section-header">Impact — Fixed Queries</div>
+    <div class="impact-section" style="margin-bottom:32px;">
+      <div class="impact-item">
+        <div class="impact-query">"How much did NJ DOT spend on road maintenance?"</div>
+        <div class="impact-before">60% positive</div>
+        <div class="impact-arrow">→</div>
+        <div class="impact-after">95% positive</div>
+        <span style="font-size:10px;color:var(--k-muted);">Fixed Apr 3</span>
+      </div>
+      <div class="impact-item">
+        <div class="impact-query">"Which counties had most environmental violations?"</div>
+        <div class="impact-before">45% positive</div>
+        <div class="impact-arrow">→</div>
+        <div class="impact-after">88% positive</div>
+        <span style="font-size:10px;color:var(--k-muted);">Fixed Apr 5</span>
+      </div>
+      <div class="impact-item">
+        <div class="impact-query">"NJ Transit safety discussions in 2023"</div>
+        <div class="impact-before">50% positive</div>
+        <div class="impact-arrow">→</div>
+        <div class="impact-after">82% positive</div>
+        <span style="font-size:10px;color:var(--k-muted);">Fixed Apr 6</span>
+      </div>
+    </div>
+
+    <!-- Section 2: Feedback list -->
+    <div class="section-header">All Feedback</div>
+
+    <div class="filters">
+      <div class="filter-pills">
+        <button class="filter-pill active">All (142)</button>
+        <button class="filter-pill">👍 Positive (111)</button>
+        <button class="filter-pill">👎 Negative (31)</button>
+      </div>
+      <button class="filter-date">This week ▾</button>
+      <input type="text" class="filter-search" placeholder="Search feedback..." />
+    </div>
+
+    <div class="feedback-list">
+
+      <!-- Positive feedback -->
+      <div class="feedback-item" onclick="this.querySelector('.feedback-detail').style.display = this.querySelector('.feedback-detail').style.display === 'block' ? 'none' : 'block'">
+        <div class="feedback-top">
+          <div class="feedback-icon positive">👍</div>
+          <div class="feedback-content">
+            <div class="feedback-query">How much did NJ DOT spend on road maintenance in 2023?</div>
+            <div class="feedback-tags">
+              <span class="feedback-tag">Accurate</span>
+              <span class="feedback-tag">Fast</span>
+              <span class="feedback-tag">Great sources</span>
+            </div>
+            <div class="feedback-meta">
+              <span>3 sources</span>
+              <span class="dot">·</span>
+              <span>0.19s</span>
+              <span class="dot">·</span>
+              <span>Quick mode</span>
+              <span class="dot">·</span>
+              <span>Apr 7, 2026 2:34 PM</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0;">
+            <div class="feedback-view">View ↗</div>
+            <a class="try-btn" href="#">Try query →</a>
+          </div>
+        </div>
+        <div class="feedback-detail" style="display:none">
+          <div class="detail-section">
+            <div class="detail-label">Answer</div>
+            <div class="detail-answer">
+              NJ DOT allocated <strong>$1.84 billion</strong> in road maintenance expenditure for FY2023, a <strong>12.3% increase</strong> over FY2022's $1.64 billion — the largest year-over-year jump in the past decade.
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Sources</div>
+            <ul class="detail-sources">
+              <li><span class="num">1</span> <a href="#">NJ DOT FY2023 Capital Program Budget</a> — NJDOT</li>
+              <li><span class="num">2</span> <a href="#">NJ Treasury Annual Appropriations Report</a> — NJ Treasury</li>
+              <li><span class="num">3</span> <a href="#">IIJA NJ Allocation Report</a> — Federal Highway Admin</li>
+            </ul>
+          </div>
+          <div class="detail-meta-row">
+            <span>Mode: Quick</span>
+            <span>Sources: 3</span>
+            <span>Time: 0.19s</span>
+            <span>Agencies: NJDOT, NJ Treasury, Federal Highway Admin</span>
+          </div>
+          <div class="detail-collapse">Collapse ▲</div>
+        </div>
+      </div>
+
+      <!-- Negative feedback -->
+      <div class="feedback-item" onclick="this.querySelector('.feedback-detail').style.display = this.querySelector('.feedback-detail').style.display === 'block' ? 'none' : 'block'">
+        <div class="feedback-top">
+          <div class="feedback-icon negative">👎</div>
+          <div class="feedback-content">
+            <div class="feedback-query">What are the latest zoning changes in Newark?</div>
+            <div class="feedback-reason">The answer didn't address my question</div>
+            <div class="feedback-comment">"It showed data from 2021, not current zoning changes"</div>
+            <div class="feedback-meta">
+              <span>5 sources</span>
+              <span class="dot">·</span>
+              <span>1.24s</span>
+              <span class="dot">·</span>
+              <span>Deep think</span>
+              <span class="dot">·</span>
+              <span>Apr 7, 2026 1:12 PM</span>
+            </div>
+          </div>
+          <div class="feedback-view">View ↗</div>
+        </div>
+        <div class="feedback-detail" style="display:none">
+          <div class="detail-section">
+            <div class="detail-label">Answer</div>
+            <div class="detail-answer">
+              Based on available records, Newark's most recent zoning amendments were approved in <strong>October 2021</strong>, covering residential density changes in Ward 3 and mixed-use designation for the Ironbound district...
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Sources</div>
+            <ul class="detail-sources">
+              <li><span class="num">1</span> <a href="#">Newark Zoning Board Minutes 2021</a> — City of Newark</li>
+              <li><span class="num">2</span> <a href="#">NJ DEP Land Use Report</a> — NJDEP</li>
+              <li><span class="num">3</span> <a href="#">Newark Master Plan Amendment</a> — City of Newark</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">Feedback</div>
+            <div class="detail-answer" style="color: var(--k-error);">Reason: The answer didn't address my question</div>
+            <div class="detail-answer" style="font-style: italic; color: var(--k-muted);">"It showed data from 2021, not current zoning changes"</div>
+          </div>
+          <div class="detail-collapse">Collapse ▲</div>
+        </div>
+      </div>
+
+      <!-- Positive feedback 2 -->
+      <div class="feedback-item">
+        <div class="feedback-top">
+          <div class="feedback-icon positive">👍</div>
+          <div class="feedback-content">
+            <div class="feedback-query">What did the council decide about the downtown zoning proposal?</div>
+            <div class="feedback-tags">
+              <span class="feedback-tag">Accurate</span>
+              <span class="feedback-tag">Great sources</span>
+            </div>
+            <div class="feedback-meta">
+              <span>3 sources · 2 video clips</span>
+              <span class="dot">·</span>
+              <span>0.24s</span>
+              <span class="dot">·</span>
+              <span>Quick mode</span>
+              <span class="dot">·</span>
+              <span>Apr 7, 2026 11:45 AM</span>
+            </div>
+          </div>
+          <div class="feedback-view">View ↗</div>
+        </div>
+      </div>
+
+      <!-- Negative feedback 2 -->
+      <div class="feedback-item">
+        <div class="feedback-top">
+          <div class="feedback-icon negative">👎</div>
+          <div class="feedback-content">
+            <div class="feedback-query">Show me environmental violations near Passaic River in 2023</div>
+            <div class="feedback-reason">The sources don't seem relevant</div>
+            <div class="feedback-meta">
+              <span>4 sources</span>
+              <span class="dot">·</span>
+              <span>0.87s</span>
+              <span class="dot">·</span>
+              <span>Quick mode</span>
+              <span class="dot">·</span>
+              <span>Apr 6, 2026 4:22 PM</span>
+            </div>
+          </div>
+          <div class="feedback-view">View ↗</div>
+        </div>
+      </div>
+
+      <!-- Positive feedback 3 -->
+      <div class="feedback-item">
+        <div class="feedback-top">
+          <div class="feedback-icon positive">👍</div>
+          <div class="feedback-content">
+            <div class="feedback-query">Which NJ counties had the most environmental violations in 2022?</div>
+            <div class="feedback-tags">
+              <span class="feedback-tag">Fast</span>
+              <span class="feedback-tag">Easy to read</span>
+            </div>
+            <div class="feedback-meta">
+              <span>4 sources · 1 dataset</span>
+              <span class="dot">·</span>
+              <span>0.15s</span>
+              <span class="dot">·</span>
+              <span>Quick mode</span>
+              <span class="dot">·</span>
+              <span>Apr 6, 2026 3:08 PM</span>
+            </div>
+          </div>
+          <div class="feedback-view">View ↗</div>
+        </div>
+      </div>
+
+      <!-- Positive feedback 4 -->
+      <div class="feedback-item">
+        <div class="feedback-top">
+          <div class="feedback-icon positive">👍</div>
+          <div class="feedback-content">
+            <div class="feedback-query">Show me all discussions about budget cuts in the last 6 months</div>
+            <div class="feedback-tags">
+              <span class="feedback-tag">Accurate</span>
+              <span class="feedback-tag">Great sources</span>
+            </div>
+            <div class="feedback-meta">
+              <span>8 sources · 6 video clips</span>
+              <span class="dot">·</span>
+              <span>0.31s</span>
+              <span class="dot">·</span>
+              <span>Quick mode</span>
+              <span class="dot">·</span>
+              <span>Apr 6, 2026 2:55 PM</span>
+            </div>
+          </div>
+          <div class="feedback-view">View ↗</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Section 3: Analytics -->
+    <div class="section-header">Analytics</div>
+
+    <div class="charts">
+
+      <!-- Feedback trend -->
+      <div class="chart-card full-width">
+        <div class="chart-title">Feedback Trend — Last 30 Days</div>
+        <div class="trend-chart">
+          <!-- Simulated daily bars -->
+          <div class="trend-bar positive" style="height:30%"></div>
+          <div class="trend-bar negative" style="height:10%"></div>
+          <div class="trend-bar positive" style="height:45%"></div>
+          <div class="trend-bar negative" style="height:15%"></div>
+          <div class="trend-bar positive" style="height:35%"></div>
+          <div class="trend-bar negative" style="height:8%"></div>
+          <div class="trend-bar positive" style="height:50%"></div>
+          <div class="trend-bar negative" style="height:20%"></div>
+          <div class="trend-bar positive" style="height:40%"></div>
+          <div class="trend-bar negative" style="height:12%"></div>
+          <div class="trend-bar positive" style="height:55%"></div>
+          <div class="trend-bar negative" style="height:18%"></div>
+          <div class="trend-bar positive" style="height:60%"></div>
+          <div class="trend-bar negative" style="height:10%"></div>
+          <div class="trend-bar positive" style="height:45%"></div>
+          <div class="trend-bar negative" style="height:22%"></div>
+          <div class="trend-bar positive" style="height:70%"></div>
+          <div class="trend-bar negative" style="height:15%"></div>
+          <div class="trend-bar positive" style="height:50%"></div>
+          <div class="trend-bar negative" style="height:12%"></div>
+          <div class="trend-bar positive" style="height:65%"></div>
+          <div class="trend-bar negative" style="height:18%"></div>
+          <div class="trend-bar positive" style="height:75%"></div>
+          <div class="trend-bar negative" style="height:14%"></div>
+          <div class="trend-bar positive" style="height:80%"></div>
+          <div class="trend-bar negative" style="height:20%"></div>
+          <div class="trend-bar positive" style="height:85%"></div>
+          <div class="trend-bar negative" style="height:16%"></div>
+          <div class="trend-bar positive" style="height:90%"></div>
+          <div class="trend-bar negative" style="height:22%"></div>
+        </div>
+        <div class="trend-labels">
+          <span>Mar 8</span>
+          <span>Mar 15</span>
+          <span>Mar 22</span>
+          <span>Mar 29</span>
+          <span>Apr 7</span>
+        </div>
+        <div class="trend-legend">
+          <div class="trend-legend-item"><div class="trend-legend-dot" style="background:var(--k-success)"></div> Positive</div>
+          <div class="trend-legend-item"><div class="trend-legend-dot" style="background:var(--k-error)"></div> Negative</div>
+        </div>
+      </div>
+
+      <!-- Top negative reasons -->
+      <div class="chart-card">
+        <div class="chart-title">Top Negative Reasons</div>
+        <div class="hbar-chart">
+          <div class="hbar-row">
+            <div class="hbar-label">Answer incomplete</div>
+            <div class="hbar-track"><div class="hbar-fill error" style="width:74%"></div></div>
+            <div class="hbar-value">23</div>
+          </div>
+          <div class="hbar-row">
+            <div class="hbar-label">Sources not relevant</div>
+            <div class="hbar-track"><div class="hbar-fill error" style="width:58%"></div></div>
+            <div class="hbar-value">18</div>
+          </div>
+          <div class="hbar-row">
+            <div class="hbar-label">Answer seems incorrect</div>
+            <div class="hbar-track"><div class="hbar-fill error" style="width:35%"></div></div>
+            <div class="hbar-value">11</div>
+          </div>
+          <div class="hbar-row">
+            <div class="hbar-label">Didn't address question</div>
+            <div class="hbar-track"><div class="hbar-fill error" style="width:26%"></div></div>
+            <div class="hbar-value">8</div>
+          </div>
+          <div class="hbar-row">
+            <div class="hbar-label">Hard to understand</div>
+            <div class="hbar-track"><div class="hbar-fill error" style="width:10%"></div></div>
+            <div class="hbar-value">3</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback by query type -->
+      <div class="chart-card">
+        <div class="chart-title">Feedback by Query Type</div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="qtype-row">
+            <div class="qtype-label">📊 Data</div>
+            <div class="qtype-bars">
+              <div class="qtype-bar pos" style="width:70%"></div>
+              <div class="qtype-bar neg" style="width:12%"></div>
+            </div>
+            <div class="qtype-counts">42 👍 · 7 👎</div>
+          </div>
+          <div class="qtype-row">
+            <div class="qtype-label">🎬 Video</div>
+            <div class="qtype-bars">
+              <div class="qtype-bar pos" style="width:55%"></div>
+              <div class="qtype-bar neg" style="width:20%"></div>
+            </div>
+            <div class="qtype-counts">33 👍 · 12 👎</div>
+          </div>
+          <div class="qtype-row">
+            <div class="qtype-label">📄 Document</div>
+            <div class="qtype-bars">
+              <div class="qtype-bar pos" style="width:60%"></div>
+              <div class="qtype-bar neg" style="width:15%"></div>
+            </div>
+            <div class="qtype-counts">36 👍 · 9 👎</div>
+          </div>
+          <div class="qtype-row">
+            <div class="qtype-label">🔗 Cross-agency</div>
+            <div class="qtype-bars">
+              <div class="qtype-bar pos" style="width:45%"></div>
+              <div class="qtype-bar neg" style="width:8%"></div>
+            </div>
+            <div class="qtype-counts">27 👍 · 5 👎</div>
+          </div>
+        </div>
+        <div class="trend-legend" style="margin-top:16px;">
+          <div class="trend-legend-item"><div class="trend-legend-dot" style="background:var(--k-success)"></div> Positive</div>
+          <div class="trend-legend-item"><div class="trend-legend-dot" style="background:var(--k-error)"></div> Negative</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Weekly Summary for Standup -->
+    <div class="summary-section">
+      <div class="summary-header">
+        <div class="summary-title">📋 Weekly Summary — Ready for Friday Demo</div>
+        <button class="summary-copy" onclick="navigator.clipboard.writeText(document.getElementById('summary-text').innerText); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy for standup',2000);">Copy for standup</button>
+      </div>
+      <div class="summary-body" id="summary-text">
+        <strong>Feedback Summary — Week of Apr 7, 2026</strong><br><br>
+        This week: <strong>34 feedback</strong> received, <strong class="green">78% positive</strong> (<span class="green">↑ 4%</span> vs last week)<br><br>
+        <strong class="red">Top issue:</strong> "Answer incomplete" — 23 reports, mostly on video queries<br>
+        <strong class="red">Recurring:</strong> 3 queries with repeated negative feedback (Newark zoning, Passaic River, NJ Transit)<br><br>
+        <strong class="green">Improved this week:</strong><br>
+        • DOT spending query: 60% → 95% positive<br>
+        • Environmental violations: 45% → 88% positive<br>
+        • NJ Transit safety: 50% → 82% positive<br><br>
+        <strong>Action for next week:</strong> Improve video query relevance — video queries have 2x more negative feedback than data queries
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align:center;padding:24px 0;border-top:1px solid var(--k-border);margin-top:16px;">
+      <p style="font-size:11px;color:#444;">Kurious Admin · Feedback & Analytics · <span style="color:var(--k-cyan);">NJ Open Data Demo</span></p>
+      <p style="font-size:10px;color:#333;margin-top:4px;">Admin access only. Data refreshes on page load.</p>
+    </div>
+
+  </div>
+
+</body>
+</html>
