@@ -130,6 +130,7 @@
       <div class="tab active" onclick="switchTab('feedback')">Feedback</div>
       <div class="tab" onclick="switchTab('analytics')">Analytics</div>
       <div class="tab" onclick="switchTab('actions')">Actions & Issues</div>
+      <div class="tab" onclick="switchTab('eval')">Eval</div>
     </div>
 
     <!-- Tab 1: Feedback -->
@@ -219,6 +220,109 @@
       <div class="impact-item"><div class="impact-query">Environmental violations</div><div class="impact-before">45%</div><div class="impact-arrow">→</div><div class="impact-after">88%</div></div>
       <div class="impact-item"><div class="impact-query">NJ Transit safety</div><div class="impact-before">50%</div><div class="impact-arrow">→</div><div class="impact-after">82%</div></div>
     </div>
+
+    <!-- Tab 4: Eval -->
+    <div id="tab-eval" class="tab-content">
+      <!-- Accuracy summary -->
+      <div style="display:flex;gap:12px;margin-bottom:20px;">
+        <div class="stat-card" style="flex:1;">
+          <div class="stat-label">Total Eval Queries</div>
+          <div class="stat-value">12</div>
+        </div>
+        <div class="stat-card" style="flex:1;">
+          <div class="stat-label">Kurious Accuracy</div>
+          <div class="stat-value cyan">78%</div>
+          <div class="stat-sub">9 of 12 correct</div>
+        </div>
+        <div class="stat-card" style="flex:1;">
+          <div class="stat-label">vs Frontier Model</div>
+          <div class="stat-value success">+12%</div>
+          <div class="stat-sub">Kurious outperforms</div>
+        </div>
+      </div>
+
+      <!-- Eval filters -->
+      <div class="filters">
+        <button class="filter-pill active">All (12)</button>
+        <button class="filter-pill">Correct (9)</button>
+        <button class="filter-pill">Incorrect (3)</button>
+      </div>
+
+      <!-- Eval table -->
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--k-border);">
+              <th style="text-align:left;padding:10px 12px;font-size:10px;color:var(--k-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Question</th>
+              <th style="text-align:left;padding:10px 12px;font-size:10px;color:var(--k-cyan);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Kurious Answer</th>
+              <th style="text-align:left;padding:10px 12px;font-size:10px;color:var(--k-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Frontier Answer</th>
+              <th style="text-align:center;padding:10px 12px;font-size:10px;color:var(--k-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Correct?</th>
+              <th style="text-align:left;padding:10px 12px;font-size:10px;color:var(--k-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Golden Answer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #1e1e1e;background:rgba(52,211,153,0.03);">
+              <td style="padding:12px;color:var(--k-text);font-weight:500;max-width:200px;">What is the total amount of funding allocated to NJ DOT?</td>
+              <td style="padding:12px;color:#ccc;max-width:200px;">$26.52B, $1.89B maintenance</td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">$25.8B total allocation</td>
+              <td style="padding:12px;text-align:center;"><span style="background:rgba(52,211,153,0.15);color:var(--k-success);padding:2px 10px;border-radius:8px;font-size:10px;font-weight:600;">Yes</span></td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">$26.52 billion</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1e1e1e;">
+              <td style="padding:12px;color:var(--k-text);font-weight:500;max-width:200px;">How many incidents of Mental Illness were reported?</td>
+              <td style="padding:12px;color:#ccc;max-width:200px;">—</td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">—</td>
+              <td style="padding:12px;text-align:center;"><span style="background:rgba(239,68,68,0.15);color:var(--k-error);padding:2px 10px;border-radius:8px;font-size:10px;font-weight:600;">No</span></td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">1,247 incidents</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1e1e1e;background:rgba(52,211,153,0.03);">
+              <td style="padding:12px;color:var(--k-text);font-weight:500;max-width:200px;">What was the number of Assault incidents in 2022?</td>
+              <td style="padding:12px;color:#ccc;max-width:200px;">3,891 assault incidents</td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">3,750 incidents reported</td>
+              <td style="padding:12px;text-align:center;"><span style="background:rgba(52,211,153,0.15);color:var(--k-success);padding:2px 10px;border-radius:8px;font-size:10px;font-weight:600;">Yes</span></td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">3,891</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1e1e1e;">
+              <td style="padding:12px;color:var(--k-text);font-weight:500;max-width:200px;">Which authority had the lowest operating expenses?</td>
+              <td style="padding:12px;color:#ccc;max-width:200px;">Cape May County MUA ($2.1M)</td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">—</td>
+              <td style="padding:12px;text-align:center;"><span style="background:rgba(52,211,153,0.15);color:var(--k-success);padding:2px 10px;border-radius:8px;font-size:10px;font-weight:600;">Yes</span></td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">Cape May County MUA</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1e1e1e;background:rgba(52,211,153,0.03);">
+              <td style="padding:12px;color:var(--k-text);font-weight:500;max-width:200px;">Which use category had the highest water consumption?</td>
+              <td style="padding:12px;color:#ccc;max-width:200px;">Residential (68.4%)</td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">Residential use</td>
+              <td style="padding:12px;text-align:center;"><span style="background:rgba(52,211,153,0.15);color:var(--k-success);padding:2px 10px;border-radius:8px;font-size:10px;font-weight:600;">Yes</span></td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">Residential</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1e1e1e;">
+              <td style="padding:12px;color:var(--k-text);font-weight:500;max-width:200px;">In the 2014 report, how many incidents were reported?</td>
+              <td style="padding:12px;color:#ccc;max-width:200px;">—</td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">—</td>
+              <td style="padding:12px;text-align:center;"><span style="background:rgba(239,68,68,0.15);color:var(--k-error);padding:2px 10px;border-radius:8px;font-size:10px;font-weight:600;">No</span></td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">12,847</td>
+            </tr>
+            <tr style="border-bottom:1px solid #1e1e1e;background:rgba(52,211,153,0.03);">
+              <td style="padding:12px;color:var(--k-text);font-weight:500;max-width:200px;">Who is the highest paid NJ state employee?</td>
+              <td style="padding:12px;color:#ccc;max-width:200px;">Dr. Robert Johnson ($412K)</td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">—</td>
+              <td style="padding:12px;text-align:center;"><span style="background:rgba(52,211,153,0.15);color:var(--k-success);padding:2px 10px;border-radius:8px;font-size:10px;font-weight:600;">Yes</span></td>
+              <td style="padding:12px;color:var(--k-muted);max-width:200px;">Dr. Robert Johnson</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Eval insight -->
+      <div style="margin-top:16px;background:var(--k-card);border:1px solid var(--k-border);border-radius:12px;padding:14px;">
+        <div style="font-size:10px;color:var(--k-muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:600;margin-bottom:8px;">Eval Insight</div>
+        <div style="font-size:12px;color:#ccc;line-height:1.6;">
+          Kurious fails on queries where <strong style="color:var(--k-text);">the data requires specific year filtering</strong> (2014 report, Mental Illness count). These are NL2SQL queries where the date range isn't being passed correctly to the structured data pipeline.
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <script>
