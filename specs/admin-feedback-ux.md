@@ -149,6 +149,30 @@ Actionable insights that tell the admin what to do, not just what happened.
 
 ---
 
+### Tab 4: Eval
+
+Answer correctness evaluation. Compares Kurious answers against Frontier models and Golden (expected) answers.
+
+**Summary cards at top:**
+- Total eval queries (count)
+- Kurious accuracy (% correct)
+- vs Frontier model (how much better/worse)
+
+**Eval table:**
+- Question asked
+- Kurious answer
+- Frontier model answer
+- Is Correct (Yes/No badge, color coded green/red)
+- Golden answer (expected correct answer)
+
+**Filters:** All / Correct / Incorrect
+
+**Eval Insight:** Auto-generated summary of why Kurious fails on certain queries (e.g., "fails on date-filtered queries where year isn't passed to NL2SQL")
+
+**Data source:** Pulls from the Kurious Engine Leaderboard database (currently at 48.214.196.133, NJ Open Data User Feedback view)
+
+---
+
 ## Detail View (when admin clicks [View] in Feedback tab)
 
 Expands inline (not a new page) showing:
