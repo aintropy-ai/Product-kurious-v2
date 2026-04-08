@@ -131,6 +131,53 @@
     .qtype-bar.neg { background: var(--k-error); }
     .qtype-counts { font-size: 10px; color: var(--k-muted); width: 80px; flex-shrink: 0; }
 
+    /* Action needed section */
+    .action-section { background: #1a1215; border: 1px solid rgba(239,68,68,0.2); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+    .action-header { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .action-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--k-error); animation: pulse 2s infinite; }
+    .action-title { font-size: 13px; font-weight: 700; color: var(--k-error); }
+    .action-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+    .action-item { display: flex; align-items: flex-start; gap: 10px; font-size: 12px; color: #ccc; line-height: 1.6; }
+    .action-item .bullet { color: var(--k-error); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .action-item strong { color: var(--k-text); }
+
+    /* Recurring issues */
+    .recurring-section { background: rgba(245,158,11,0.04); border: 1px solid rgba(245,158,11,0.15); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+    .recurring-header { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .recurring-icon { font-size: 14px; }
+    .recurring-title { font-size: 13px; font-weight: 700; color: #f59e0b; }
+    .recurring-item { background: var(--k-card); border: 1px solid var(--k-border); border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; }
+    .recurring-query { font-size: 13px; font-weight: 600; color: var(--k-text); margin-bottom: 4px; }
+    .recurring-detail { font-size: 11px; color: var(--k-muted); display: flex; gap: 12px; align-items: center; }
+    .recurring-count { color: var(--k-error); font-weight: 600; }
+    .recurring-reason { font-style: italic; }
+    .recurring-try { font-size: 10px; color: var(--k-cyan); cursor: pointer; margin-left: auto; font-weight: 500; }
+    .recurring-try:hover { text-decoration: underline; }
+
+    /* Try query button */
+    .try-btn { font-size: 10px; color: var(--k-cyan); background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.15); padding: 3px 10px; border-radius: 8px; cursor: pointer; transition: all 0.15s; text-decoration: none; }
+    .try-btn:hover { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.3); }
+
+    /* Weekly summary */
+    .summary-section { background: var(--k-card); border: 1px solid var(--k-border); border-radius: 16px; padding: 20px; margin-bottom: 24px; }
+    .summary-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .summary-title { font-size: 13px; font-weight: 700; color: var(--k-text); }
+    .summary-copy { font-size: 11px; color: var(--k-cyan); background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2); padding: 5px 14px; border-radius: 8px; cursor: pointer; transition: all 0.15s; font-weight: 500; }
+    .summary-copy:hover { background: rgba(0,212,255,0.15); }
+    .summary-body { font-size: 12px; color: var(--k-muted); line-height: 1.8; background: #111; border: 1px solid #1e1e1e; border-radius: 10px; padding: 14px 18px; font-family: 'Inter', sans-serif; }
+    .summary-body strong { color: var(--k-text); }
+    .summary-body .green { color: var(--k-success); }
+    .summary-body .red { color: var(--k-error); }
+
+    /* Before/After tracking */
+    .impact-section { margin-top: 12px; }
+    .impact-item { display: flex; align-items: center; gap: 12px; background: #111; border: 1px solid #1e1e1e; border-radius: 10px; padding: 10px 16px; margin-bottom: 6px; }
+    .impact-query { font-size: 12px; color: var(--k-text); flex: 1; font-weight: 500; }
+    .impact-before { font-size: 11px; color: var(--k-error); font-weight: 600; }
+    .impact-arrow { font-size: 11px; color: var(--k-muted); }
+    .impact-after { font-size: 11px; color: var(--k-success); font-weight: 600; }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
@@ -180,6 +227,86 @@
       </div>
     </div>
 
+    <!-- Action Needed -->
+    <div class="action-section">
+      <div class="action-header">
+        <div class="action-dot"></div>
+        <div class="action-title">Action Needed</div>
+      </div>
+      <ul class="action-list">
+        <li class="action-item">
+          <span class="bullet">1.</span>
+          <span><strong>"Answer incomplete"</strong> is your #1 issue (23 reports) — mostly on <strong>video queries</strong> where users expect more context from clips</span>
+        </li>
+        <li class="action-item">
+          <span class="bullet">2.</span>
+          <span><strong>3 queries</strong> got repeated negative feedback — same question, same complaint. See recurring issues below.</span>
+        </li>
+        <li class="action-item">
+          <span class="bullet">3.</span>
+          <span><strong>Video queries</strong> have 2x more negative feedback than data queries — video source relevance needs improvement</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Recurring Issues -->
+    <div class="recurring-section">
+      <div class="recurring-header">
+        <span class="recurring-icon">⚠️</span>
+        <div class="recurring-title">Recurring Issues — Same query, multiple complaints</div>
+      </div>
+      <div class="recurring-item">
+        <div class="recurring-query">"What are the latest zoning changes in Newark?"</div>
+        <div class="recurring-detail">
+          <span class="recurring-count">4 negative</span>
+          <span class="recurring-reason">All say: "outdated data — shows 2021, not current"</span>
+          <a class="try-btn" href="#">Try this query →</a>
+        </div>
+      </div>
+      <div class="recurring-item">
+        <div class="recurring-query">"Show me environmental violations near Passaic River in 2023"</div>
+        <div class="recurring-detail">
+          <span class="recurring-count">3 negative</span>
+          <span class="recurring-reason">All say: "sources not relevant to Passaic specifically"</span>
+          <a class="try-btn" href="#">Try this query →</a>
+        </div>
+      </div>
+      <div class="recurring-item">
+        <div class="recurring-query">"What happened at the last NJ Transit board meeting?"</div>
+        <div class="recurring-detail">
+          <span class="recurring-count">3 negative</span>
+          <span class="recurring-reason">All say: "answer is too long, hard to find the key decision"</span>
+          <a class="try-btn" href="#">Try this query →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Before/After Impact -->
+    <div class="section-header">Impact — Fixed Queries</div>
+    <div class="impact-section" style="margin-bottom:32px;">
+      <div class="impact-item">
+        <div class="impact-query">"How much did NJ DOT spend on road maintenance?"</div>
+        <div class="impact-before">60% positive</div>
+        <div class="impact-arrow">→</div>
+        <div class="impact-after">95% positive</div>
+        <span style="font-size:10px;color:var(--k-muted);">Fixed Apr 3</span>
+      </div>
+      <div class="impact-item">
+        <div class="impact-query">"Which counties had most environmental violations?"</div>
+        <div class="impact-before">45% positive</div>
+        <div class="impact-arrow">→</div>
+        <div class="impact-after">88% positive</div>
+        <span style="font-size:10px;color:var(--k-muted);">Fixed Apr 5</span>
+      </div>
+      <div class="impact-item">
+        <div class="impact-query">"NJ Transit safety discussions in 2023"</div>
+        <div class="impact-before">50% positive</div>
+        <div class="impact-arrow">→</div>
+        <div class="impact-after">82% positive</div>
+        <span style="font-size:10px;color:var(--k-muted);">Fixed Apr 6</span>
+      </div>
+    </div>
+
     <!-- Section 2: Feedback list -->
     <div class="section-header">All Feedback</div>
 
@@ -216,7 +343,10 @@
               <span>Apr 7, 2026 2:34 PM</span>
             </div>
           </div>
-          <div class="feedback-view">View ↗</div>
+          <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0;">
+            <div class="feedback-view">View ↗</div>
+            <a class="try-btn" href="#">Try query →</a>
+          </div>
         </div>
         <div class="feedback-detail" style="display:none">
           <div class="detail-section">
@@ -511,6 +641,25 @@
         </div>
       </div>
 
+    </div>
+
+    <!-- Weekly Summary for Standup -->
+    <div class="summary-section">
+      <div class="summary-header">
+        <div class="summary-title">📋 Weekly Summary — Ready for Friday Demo</div>
+        <button class="summary-copy" onclick="navigator.clipboard.writeText(document.getElementById('summary-text').innerText); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy for standup',2000);">Copy for standup</button>
+      </div>
+      <div class="summary-body" id="summary-text">
+        <strong>Feedback Summary — Week of Apr 7, 2026</strong><br><br>
+        This week: <strong>34 feedback</strong> received, <strong class="green">78% positive</strong> (<span class="green">↑ 4%</span> vs last week)<br><br>
+        <strong class="red">Top issue:</strong> "Answer incomplete" — 23 reports, mostly on video queries<br>
+        <strong class="red">Recurring:</strong> 3 queries with repeated negative feedback (Newark zoning, Passaic River, NJ Transit)<br><br>
+        <strong class="green">Improved this week:</strong><br>
+        • DOT spending query: 60% → 95% positive<br>
+        • Environmental violations: 45% → 88% positive<br>
+        • NJ Transit safety: 50% → 82% positive<br><br>
+        <strong>Action for next week:</strong> Improve video query relevance — video queries have 2x more negative feedback than data queries
+      </div>
     </div>
 
     <!-- Footer -->
