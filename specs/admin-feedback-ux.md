@@ -4,6 +4,8 @@
 **Assigned to:** Shivangi (design) + Aditya (implementation)
 **GitHub Issue:** [nj-open-data-demo #5](https://github.com/aintropy-ai/nj-open-data-demo/issues/5)
 **Design system:** Matches NJ Open Data demo — Kurious dark theme, Inter font, cyan/teal accents
+**Visual Mockup (live):** [admin-feedback.html](https://aintropy-ai.github.io/Product-kurious-v2/admin-feedback.html)
+**Layout:** Tabbed view — Feedback | Analytics | Actions & Issues
 
 ---
 
@@ -23,9 +25,9 @@ Admin users can inspect all user feedback, understand what's working and what's 
 
 ## Page Layout
 
-Three sections, all on one page. No separate tabs — scroll down to see everything.
+Tabbed layout with 4 stat cards always visible at the top. Three tabs below: Feedback, Analytics, Actions & Issues. No scrolling needed to find anything.
 
-### Section 1: Feedback Overview (top of page)
+### Always Visible: Feedback Overview (top of page, above tabs)
 
 A row of 4 stat cards showing the big picture at a glance.
 
@@ -44,9 +46,9 @@ A row of 4 stat cards showing the big picture at a glance.
 
 ---
 
-### Section 2: Feedback List (middle of page)
+### Tab 1: Feedback
 
-Scrollable list of all feedback items, most recent first.
+Scrollable list of all feedback items, most recent first. Each item has a "Try query" button to test the exact query.
 
 **Each feedback row shows:**
 
@@ -92,7 +94,7 @@ Scrollable list of all feedback items, most recent first.
 
 ---
 
-### Section 3: Analytics (bottom of page)
+### Tab 2: Analytics
 
 Simple, actionable charts. Not a dashboard — just what the admin needs.
 
@@ -121,7 +123,33 @@ Simple, actionable charts. Not a dashboard — just what the admin needs.
 
 ---
 
-## Detail View (when admin clicks [View])
+### Tab 3: Actions & Issues
+
+Actionable insights that tell the admin what to do, not just what happened.
+
+**Action Needed (red pulsing indicator):**
+- Auto-generated top 3 things to fix right now based on feedback patterns
+- Example: "'Answer incomplete' is #1 issue (23 reports), mostly on video queries"
+
+**Recurring Issues:**
+- Queries that get repeated negative feedback from multiple users, grouped together
+- Shows: query, number of negative reports, common complaint
+- "Try this query" button on each to test it immediately
+- Example: "Newark zoning changes" with 4 negative, all saying "outdated data"
+
+**Impact: Fixed Queries (before/after):**
+- Shows improvement when a query gets fixed
+- Example: "DOT spending: 60% positive → 95% positive (fixed Apr 3)"
+- Proves to the team that fixing feedback issues actually works
+
+**Weekly Summary:**
+- Pre-formatted summary ready for Friday demo day
+- One-click "Copy for standup" button
+- Contains: this week's count, satisfaction rate, top issue, improvements, action items
+
+---
+
+## Detail View (when admin clicks [View] in Feedback tab)
 
 Expands inline (not a new page) showing:
 
