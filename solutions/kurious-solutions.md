@@ -1,9 +1,5 @@
 # Kurious Solutions
 
-## What is a Solution?
-
-A solution is Kurious applied to a specific domain or use case. The platform is the same. The data, the intelligence, the UX. The solution is how we package it for a specific customer or industry.
-
 ## Solutions Roadmap
 
 | Priority | Solution | Domain | Status |
