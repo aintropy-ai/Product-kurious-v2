@@ -282,7 +282,7 @@
     }
     .sol-label { font-size: 11px; font-weight: 600; color: var(--cyan); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
     .sol-title { font-size: 36px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 48px; color: var(--text); }
-    .sol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 800px; width: 100%; }
+    .sol-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 960px; width: 100%; }
     .sol-card {
       background: var(--card); border: 1px solid var(--border); border-radius: 16px;
       padding: 36px; text-align: left; transition: all 0.25s; position: relative; overflow: hidden;
@@ -641,7 +641,7 @@
       <div class="demo-placeholder-text">Product demo GIF goes here</div>
       <div class="demo-placeholder-note">Upload: Short GIF showing Kurious finding a video clip with speaker ID and transcript</div>
     </div>
-    <p class="demo-sub">Kurious searches video, documents, images, and data simultaneously. It finds the exact clip, cites every source, and delivers answers in milliseconds.</p>
+    <p class="demo-sub">Ask once. We search video, documents, and data. You get one verified answer.</p>
   </div>
 
   <!-- HOW IT WORKS -->
@@ -720,7 +720,7 @@
       <div class="sol-card">
         <div class="sol-badge live">Live</div>
         <div class="sol-name">NJ Open Data</div>
-        <div class="sol-desc">85 million government records across 23 agencies. One search across documents, spreadsheets, images, and video.</div>
+        <div class="sol-desc">One search across 85 million records, 23 agencies, and 8+ formats. Documents, video, spreadsheets, images, and more.</div>
         <div class="sol-stat"><strong>85M</strong> records · <strong>23</strong> agencies · <strong>8+</strong> formats</div>
         <a href="https://njopendata.aintropy.ai" class="sol-cta">Try it yourself &#8594;</a>
       </div>
@@ -730,6 +730,13 @@
         <div class="sol-desc">4,000 hours of council meetings and legal proceedings. Find the exact moment a decision was made.</div>
         <div class="sol-stat"><strong>4,000+</strong> hours · <strong>12</strong> entity types</div>
         <a href="https://aintropy-ai.github.io/Product-kurious-v2/chat" class="sol-cta">Try it yourself &#8594;</a>
+      </div>
+      <div class="sol-card">
+        <div class="sol-badge" style="color:var(--cyan);background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);">Open</div>
+        <div class="sol-name">Your Data</div>
+        <div class="sol-desc">Any enterprise. Any industry. Any scale. Bring your data, we make it perceivable.</div>
+        <div class="sol-stat">Video · Documents · Images · Structured data</div>
+        <a href="#" class="sol-cta" onclick="event.preventDefault();document.getElementById('contact-modal').classList.add('open')">Get in touch &#8594;</a>
       </div>
     </div>
     <p class="domains-line" style="margin-top: 24px;"><span>Government</span> · <span>Legal</span> · <span>Healthcare</span> · <span>Finance</span> · Any industry with data trapped in video, documents, and silos.</p>
@@ -754,7 +761,7 @@
         <div class="lab-thumb">thumbnail</div>
         <div class="lab-tag">Research</div>
         <div class="lab-name">Universal Knowledge Perception</div>
-        <div class="lab-desc">Our published research on multimodal knowledge retrieval across text, video, images, and structured data at enterprise scale.</div>
+        <div class="lab-desc">The science behind perceiving knowledge across every format, at any scale.</div>
       </a>
       <div class="lab-card">
         <div class="lab-card-accent"></div>
@@ -782,7 +789,7 @@
     <div class="team-grid">
       <!-- PLACEHOLDER: Replace "photo" text with <img src="kunal.jpg"> etc when photos are ready -->
       <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Kunal Sawarkar</div><div class="tm-role">Co-Founder, CEO</div></a></div>
-      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Nirmit Desai</div><div class="tm-role">Co-Founder</div></a></div>
+      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Nirmit Desai</div><div class="tm-role">CTO & Co-Founder</div></a></div>
       <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Robin D'Souza</div><div class="tm-role">Advisor</div></a></div>
       <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Shivangi Mishra</div><div class="tm-role">Lead Product Manager</div></a></div>
       <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Aditya</div><div class="tm-role">Engineering</div></a></div>
@@ -797,7 +804,7 @@
   <!-- CONTACT -->
   <div class="contact reveal">
     <h2>Want to learn more?</h2>
-    <p>We're building the knowledge foundation for the next generation of AI.</p>
+    <p>Any industry. Any data. Let's build something together.</p>
     <button class="contact-btn" onclick="document.getElementById('contact-modal').classList.add('open')">Get in touch &#8594;</button>
   </div>
 
