@@ -137,17 +137,12 @@
     .sp-item { font-size: 12px; color: var(--body); display: flex; align-items: center; gap: 6px; }
     .sp-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--cyan); }
 
-    /* ===== GRID PATTERN OVERLAY ===== */
-    .grid-bg {
-      position: relative;
-    }
-    .grid-bg::after {
-      content: ''; position: absolute; inset: 0; pointer-events: none;
-      background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    /* ===== GRID PATTERN OVERLAY (full page) ===== */
+    .grid-bg-full {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
       background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
-      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
     }
 
     /* ===== SECTION DIVIDER GLOW ===== */
@@ -263,7 +258,8 @@
       background: var(--border);
     }
     .num-value {
-      font-size: 52px; font-weight: 900; letter-spacing: -3px; color: var(--cyan);
+      font-size: 44px; font-weight: 900; letter-spacing: -2px; color: var(--cyan);
+      white-space: nowrap;
     }
     .num-label { font-size: 13px; color: var(--body); margin-top: 8px; }
     .verify-line { text-align: center; margin-top: 48px; }
@@ -558,6 +554,7 @@
 <body>
 
   <canvas id="bg-canvas"></canvas>
+  <div class="grid-bg-full"></div>
 
   <!-- NAV -->
   <nav>
@@ -588,7 +585,7 @@
   </div>
 
   <!-- HERO -->
-  <div class="hero grid-bg" id="about">
+  <div class="hero" id="about">
     <h1>AIntropy</h1>
     <div class="hero-overline">Universal Knowledge Perception Platform</div>
     <p class="hero-sub">Making every form of knowledge perceivable. From video to enterprise data.</p>
@@ -597,14 +594,10 @@
   <!-- PROBLEM -->
   <div class="problem reveal">
     <h2>
-      AI can read.<br>
-      But it can't <span class="pop">see</span>.<br>
-      Can't <span class="pop">hear</span>. Can't <span class="pop">perceive</span>.
+      Text is only 10% of the story.<br>
+      <span class="pop">The rest is trapped in video, images, and unstructured data.</span>
     </h2>
-    <div class="problem-stat">
-      <span class="problem-stat-num">95%</span>
-      <span class="problem-stat-text">of enterprise knowledge is beyond text. We make all of it learnable.</span>
-    </div>
+    <p style="font-size: 22px; color: var(--text); margin-top: 24px; font-weight: 700;">Until now.</p>
   </div>
 
   <!-- WHAT MAKES US DIFFERENT -->
@@ -645,7 +638,7 @@
   </div>
 
   <!-- HOW IT WORKS -->
-  <div class="how-section grid-bg reveal">
+  <div class="how-section reveal">
     <div class="how-label">How it works</div>
     <div class="how-title">Three steps. Any data type.</div>
     <div class="how-flow">
@@ -711,7 +704,6 @@
       </div>
     </div>
 
-    <p style="font-size: 15px; color: var(--body); margin-bottom: 8px; text-align: center;">Proven on public data. Ready for your enterprise.</p>
     <div class="verify-line" style="margin-bottom: 48px;">
       <a href="https://huggingface.co/datasets/aintropy-ai/nj-open-data-rag" target="_blank" class="verify-link">Open benchmark. Open results. Verify it yourself &#8594;</a>
     </div>
