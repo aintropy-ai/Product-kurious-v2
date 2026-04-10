@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AIntropy - Universal Knowledge Perception Platform</title>
+  <title>AIntropy — The Knowledge Foundation for World Models</title>
   <link rel="icon" type="image/png" href="logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
@@ -55,7 +55,7 @@
     @keyframes heroPulse { 0%,100% { opacity: 0.6; transform: translateX(-50%) scale(1); } 50% { opacity: 1; transform: translateX(-50%) scale(1.05); } }
     .hero-overline {
       font-size: 11px; font-weight: 600; color: var(--cyan); text-transform: uppercase;
-      letter-spacing: 3px; margin-top: 20px; margin-bottom: 28px; opacity: 0.8;
+      letter-spacing: 3px; margin-bottom: 28px; opacity: 0.8;
     }
     .hero h1 {
       font-size: 74px; font-weight: 900; letter-spacing: -3.5px; line-height: 1.0;
@@ -137,12 +137,17 @@
     .sp-item { font-size: 12px; color: var(--body); display: flex; align-items: center; gap: 6px; }
     .sp-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--cyan); }
 
-    /* ===== GRID PATTERN OVERLAY (full page) ===== */
-    .grid-bg-full {
-      position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    /* ===== GRID PATTERN OVERLAY ===== */
+    .grid-bg {
+      position: relative;
+    }
+    .grid-bg::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
       background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
     }
 
     /* ===== SECTION DIVIDER GLOW ===== */
@@ -258,8 +263,7 @@
       background: var(--border);
     }
     .num-value {
-      font-size: 44px; font-weight: 900; letter-spacing: -2px; color: var(--cyan);
-      white-space: nowrap;
+      font-size: 52px; font-weight: 900; letter-spacing: -3px; color: var(--cyan);
     }
     .num-label { font-size: 13px; color: var(--body); margin-top: 8px; }
     .verify-line { text-align: center; margin-top: 48px; }
@@ -278,7 +282,7 @@
     }
     .sol-label { font-size: 11px; font-weight: 600; color: var(--cyan); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
     .sol-title { font-size: 36px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 48px; color: var(--text); }
-    .sol-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 960px; width: 100%; }
+    .sol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 800px; width: 100%; }
     .sol-card {
       background: var(--card); border: 1px solid var(--border); border-radius: 16px;
       padding: 36px; text-align: left; transition: all 0.25s; position: relative; overflow: hidden;
@@ -554,21 +558,17 @@
 <body>
 
   <canvas id="bg-canvas"></canvas>
-  <div class="grid-bg-full"></div>
 
   <!-- NAV -->
   <nav>
-    <div class="nav-logo">
-      <img src="logo.png" alt="AIntropy" class="nav-logo-img">
-      <span class="nav-logo-text"><span class="a">A</span>Intropy</span>
-      <span class="nav-alpha">alpha</span>
-    </div>
+    <a href="#home" class="nav-logo-text"><span class="a">A</span>Intropy</a>
     <div class="nav-links">
-      <a href="#about">About</a>
+      <a href="#home">Home</a>
       <a href="#solutions">Solutions</a>
       <a href="#lab">From the Lab</a>
       <a href="#team">Team</a>
-      <a href="https://njopendata.aintropy.ai" class="nav-cta">Try Kurious</a>
+      <a href="mailto:know@aintropy.ai?subject=I%20want%20to%20scale%20AI%20on%20my%20messy%20multimodal%20data">Contact</a>
+      <a href="https://njopendata.aintropy.ai" class="nav-cta" style="font-size:11px;font-weight:600;color:var(--cyan);border:1px solid rgba(0,212,255,0.3);padding:6px 16px;border-radius:6px;background:none;">Try Kurious →</a>
     </div>
     <button class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')">
       <span></span><span></span><span></span>
@@ -577,68 +577,166 @@
 
   <!-- Mobile menu -->
   <div id="mobile-menu" class="mobile-menu">
-    <a href="#about" onclick="document.getElementById('mobile-menu').classList.remove('open')">About</a>
+    <a href="#home" onclick="document.getElementById('mobile-menu').classList.remove('open')">Home</a>
     <a href="#solutions" onclick="document.getElementById('mobile-menu').classList.remove('open')">Solutions</a>
     <a href="#lab" onclick="document.getElementById('mobile-menu').classList.remove('open')">From the Lab</a>
     <a href="#team" onclick="document.getElementById('mobile-menu').classList.remove('open')">Team</a>
-    <a href="https://njopendata.aintropy.ai" class="nav-cta">Try Kurious</a>
+    <a href="mailto:know@aintropy.ai?subject=I%20want%20to%20scale%20AI%20on%20my%20messy%20multimodal%20data" onclick="document.getElementById('mobile-menu').classList.remove('open')">Contact</a>
+    <a href="https://njopendata.aintropy.ai" class="nav-cta">Try Kurious →</a>
   </div>
 
-  <!-- HERO -->
-  <div class="hero" id="about">
-    <h1>AIntropy</h1>
-    <div class="hero-overline">Universal Knowledge Perception Platform</div>
-    <p class="hero-sub">Making every form of knowledge perceivable. From video to enterprise data.</p>
-  </div>
+  <!-- HERO WITH ANIMATION -->
+  <style>
+    .new-hero { min-height: 100vh; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 64px 24px 24px; }
+    .new-hero .brand { text-align: center; position: relative; z-index: 20; }
+    .new-hero .brand h1 { font-size: 44px; font-weight: 900; letter-spacing: -2px; color: var(--text); }
+    .new-hero .brand h1 .a { color: var(--cyan); }
+    .new-hero .brand-tagline { font-size: 10px; font-weight: 500; color: var(--dim); text-transform: uppercase; letter-spacing: 3px; margin-top: 10px; }
+    .new-hero .problem-line { position: relative; z-index: 20; text-align: center; margin-top: 16px; font-size: 19px; font-weight: 600; color: var(--muted); letter-spacing: -0.3px; }
+    .new-hero .problem-line .bold { color: #fff; }
+    .new-hero .search-bar { position: relative; z-index: 20; width: 100%; max-width: 560px; background: rgba(14,14,14,0.95); border: 1px solid rgba(0,212,255,0.15); border-radius: 14px; padding: 14px 20px; margin-top: 24px; box-shadow: 0 0 40px rgba(0,212,255,0.05); display: flex; align-items: center; gap: 12px; transition: border-color 0.3s, box-shadow 0.3s; }
+    .new-hero .search-bar.active { border-color: rgba(0,212,255,0.3); box-shadow: 0 0 50px rgba(0,212,255,0.08); }
+    .new-hero .search-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; box-shadow: 0 0 10px rgba(0,212,255,0.5); }
+    .new-hero .search-input { font-size: 14px; color: #fff; font-family: 'Inter', sans-serif; flex: 1; min-height: 20px; }
+    .new-hero .search-cursor-el { display: inline-block; width: 2px; height: 17px; background: var(--cyan); vertical-align: middle; animation: heroBlink 1s step-end infinite; }
+    @keyframes heroBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+    .new-hero .domain-wrapper { position: absolute; top: -24px; left: 20px; overflow: hidden; height: 16px; }
+    .new-hero .domain-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; color: var(--cyan); transition: transform 0.4s, opacity 0.4s; }
+    .new-hero .domain-label.exit { transform: translateY(-18px); opacity: 0; }
+    .new-hero .domain-label.enter { transform: translateY(18px); opacity: 0; }
+    .hero-pulse { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid rgba(0,212,255,0.3); opacity: 0; pointer-events: none; }
+    .hero-pulse.fire { animation: heroPulseExpand 1.2s ease-out forwards; }
+    @keyframes heroPulseExpand { 0% { width: 10px; height: 10px; opacity: 0.8; } 100% { width: 2000px; height: 2000px; opacity: 0; } }
+    .chaos-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+    .chaos-piece { position: absolute; padding: 6px 12px; border-radius: 5px; font-size: 10px; font-weight: 500; opacity: 0; transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+    .chaos-piece.vid { background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.12); color: rgba(0,212,255,0.5); }
+    .chaos-piece.pdf { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.12); color: rgba(239,68,68,0.5); }
+    .chaos-piece.xls { background: rgba(52,211,153,0.07); border: 1px solid rgba(52,211,153,0.12); color: rgba(52,211,153,0.5); }
+    .chaos-piece.audio { background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.12); color: rgba(245,158,11,0.5); }
+    .chaos-piece.hand { background: rgba(236,72,153,0.07); border: 1px solid rgba(236,72,153,0.12); color: rgba(236,72,153,0.5); font-style: italic; }
+    .chaos-piece.photo { background: rgba(14,165,233,0.07); border: 1px solid rgba(14,165,233,0.12); color: rgba(14,165,233,0.5); }
+    .chaos-piece.scan { background: rgba(163,163,163,0.07); border: 1px solid rgba(163,163,163,0.12); color: rgba(163,163,163,0.5); }
+    .chaos-piece.img { background: rgba(168,85,247,0.07); border: 1px solid rgba(168,85,247,0.12); color: rgba(168,85,247,0.5); }
+    .chaos-piece.show { opacity: 0.85; animation: chaosAppear 0.3s cubic-bezier(0.23,1,0.32,1) forwards; }
+    @keyframes chaosAppear { 0% { opacity: 0; transform: scale(0.3); } 100% { opacity: 0.85; transform: scale(1) rotate(var(--rot)); } }
+    .chaos-piece.scatter { opacity: 0 !important; transform: translate(var(--sx), var(--sy)) rotate(var(--sr)) scale(0.2) !important; transition: all 0.35s cubic-bezier(0.55,0,1,0.45) !important; }
+    .hero-result-area { position: relative; z-index: 15; display: flex; gap: 14px; margin-top: 14px; opacity: 0; transform: translateY(25px) scale(0.97); transition: all 0.6s cubic-bezier(0.23,1,0.32,1); width: 100%; max-width: 700px; }
+    .hero-result-area.show { opacity: 1; transform: translateY(0) scale(1); }
+    .hero-vid-result { flex: 1.4; background: rgba(14,14,14,0.95); border: 1px solid rgba(0,212,255,0.2); border-radius: 12px; overflow: hidden; }
+    .hero-vid-preview { height: 130px; position: relative; background: #080810; overflow: hidden; }
+    .hero-vid-preview video { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8); }
+    .hero-vid-preview::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50px; background: linear-gradient(transparent, rgba(14,14,14,0.95)); z-index: 1; }
+    .hero-vid-speaker { position: absolute; top: 8px; left: 10px; font-size: 9px; font-weight: 600; color: #fff; background: rgba(0,0,0,0.85); padding: 4px 10px; border-radius: 5px; z-index: 2; }
+    .hero-vid-speaker .rdot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #ef4444; margin-right: 5px; animation: rdotBlink 1.5s ease-in-out infinite; }
+    @keyframes rdotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .hero-vid-clip { position: absolute; top: 8px; right: 10px; font-size: 8px; font-weight: 700; color: var(--cyan); background: rgba(0,0,0,0.85); padding: 4px 10px; border-radius: 5px; z-index: 2; text-transform: uppercase; letter-spacing: 1px; }
+    .hero-vid-progress { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; z-index: 3; background: rgba(255,255,255,0.08); }
+    .hero-vid-fill { height: 100%; background: var(--cyan); width: 0; box-shadow: 0 0 6px rgba(0,212,255,0.4); }
+    .hero-vid-wave { position: absolute; bottom: 10px; left: 10px; right: 10px; height: 16px; display: flex; align-items: end; gap: 1.5px; z-index: 2; }
+    .hero-wave-bar { flex: 1; background: rgba(0,212,255,0.3); border-radius: 1px; animation: heroWave 1.5s ease-in-out infinite; }
+    @keyframes heroWave { 0%,100% { height: 25%; } 50% { height: 100%; } }
+    .hero-vid-info { padding: 12px 14px; }
+    .hero-vid-answer { font-size: 12px; color: #ddd; line-height: 1.6; font-weight: 500; font-style: italic; }
+    .hero-vid-source { font-size: 9px; color: var(--dim); margin-top: 6px; }
+    .hero-vid-source span { color: var(--cyan); }
+    .hero-txt-result { flex: 1; background: rgba(14,14,14,0.95); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; overflow: hidden; }
+    .hero-txt-type { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
+    .hero-txt-type.doc { color: #34d399; }
+    .hero-txt-type.data { color: #f59e0b; }
+    .hero-txt-visual { margin-bottom: 12px; }
+    .hero-mini-chart { display: flex; align-items: end; gap: 4px; height: 50px; }
+    .hero-mini-bar { flex: 1; border-radius: 2px 2px 0 0; }
+    .hero-mini-label { font-size: 7px; color: var(--dim); text-align: center; margin-top: 3px; }
+    .hero-compare { display: flex; gap: 8px; }
+    .hero-compare-side { flex: 1; padding: 8px; border-radius: 6px; font-size: 10px; line-height: 1.5; }
+    .hero-compare-before { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.1); color: #ef4444; }
+    .hero-compare-after { background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.1); color: var(--cyan); }
+    .hero-compare-label { font-size: 7px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; opacity: 0.7; }
+    .hero-highlight-quote { font-size: 13px; color: #ddd; line-height: 1.6; padding: 10px 12px; border-left: 2px solid var(--cyan); background: rgba(0,212,255,0.03); border-radius: 0 6px 6px 0; }
+    .hero-mini-table { width: 100%; border-collapse: collapse; font-size: 9px; }
+    .hero-mini-table th { text-align: left; color: var(--dim); font-weight: 600; padding: 3px 0; border-bottom: 1px solid #1a1a1a; }
+    .hero-mini-table td { padding: 4px 0; color: #999; border-bottom: 1px solid #0f0f0f; }
+    .hero-mini-table td.hl { color: var(--cyan); font-weight: 600; }
+    .hero-progress-stat { margin-bottom: 6px; }
+    .hero-progress-label { font-size: 9px; color: #777; margin-bottom: 3px; display: flex; justify-content: space-between; }
+    .hero-progress-bg { height: 6px; background: #1a1a1a; border-radius: 3px; overflow: hidden; }
+    .hero-progress-fill { height: 100%; border-radius: 3px; }
+    .hero-txt-cite { font-size: 9px; color: #444; margin-top: auto; padding-top: 8px; border-top: 1px solid #1a1a1a; }
+    .hero-txt-stat { display: inline-block; font-size: 8px; font-weight: 600; color: var(--cyan); background: rgba(0,212,255,0.06); padding: 2px 7px; border-radius: 4px; margin-top: 6px; margin-right: 4px; }
+    .hero-counter { position: relative; z-index: 20; margin-top: 16px; font-size: 11px; color: #333; text-align: center; opacity: 0; transform: translateY(8px); transition: all 0.4s; }
+    .hero-counter.show { opacity: 1; transform: translateY(0); color: var(--dim); }
+    .hero-counter span { color: var(--cyan); font-weight: 600; }
+    .hero-cta-wrap { position: relative; z-index: 20; text-align: center; margin-top: 20px; }
+    .hero-main-cta { display: inline-block; font-size: 15px; font-weight: 600; color: #000; background: var(--cyan); padding: 14px 44px; border-radius: 10px; text-decoration: none; box-shadow: 0 0 30px rgba(0,212,255,0.15); animation: ctaGlow 3s ease-in-out infinite; transition: all 0.15s; }
+    @keyframes ctaGlow { 0%,100% { box-shadow: 0 0 25px rgba(0,212,255,0.12); } 50% { box-shadow: 0 0 45px rgba(0,212,255,0.25); } }
+    .hero-main-cta:hover { opacity: 0.9; transform: translateY(-2px); }
+    .hero-social-proof { position: relative; z-index: 20; margin-top: 24px; text-align: center; padding: 12px 24px; border-top: 1px solid rgba(255,255,255,0.04); }
+    .hero-social-proof p { font-size: 12px; color: #444; }
+    .hero-social-proof span { color: #777; }
+    @media (max-width: 768px) {
+      .new-hero .brand h1 { font-size: 32px; }
+      .new-hero .problem-line { font-size: 15px; }
+      .new-hero .search-input { font-size: 12px; }
+      .hero-result-area { flex-direction: column; gap: 10px; }
+      .chaos-piece { font-size: 7px !important; padding: 3px 7px; }
+    }
+  </style>
 
-  <!-- PROBLEM -->
-  <div class="problem reveal">
-    <h2>
-      Text is only 10% of the story.<br>
-      <span class="pop">The rest is trapped in video, images, and unstructured data.</span>
-    </h2>
-    <p style="font-size: 22px; color: var(--text); margin-top: 24px; font-weight: 700;">Until now.</p>
-  </div>
+  <div class="new-hero" id="home">
+    <div class="hero-pulse" id="hp1"></div>
+    <div class="hero-pulse" id="hp2"></div>
+    <div class="hero-pulse" id="hp3"></div>
+    <div class="chaos-layer" id="chaosLayer"></div>
 
-  <!-- WHAT MAKES US DIFFERENT -->
-  <div class="diff-section" id="diff-section">
-    <div class="diff-label">What makes us different</div>
-    <div class="diff-title">Not another AI search tool.</div>
-    <div class="diff-grid">
-      <div class="diff-row">
-        <div class="diff-others">Other AI reads text.</div>
-        <div class="diff-us">We <span class="pop">perceive</span> video, images, documents, and data.</div>
+    <div class="brand">
+      <h1><span class="a">A</span>Intropy</h1>
+      <div class="brand-tagline">Universal Knowledge Perception Platform</div>
+    </div>
+
+    <p class="problem-line"><span class="bold">Your data is messy.</span> Your answers don't have to be.</p>
+
+    <div class="search-bar" id="heroSearchBar">
+      <div class="search-dot"></div>
+      <div class="search-input" id="heroSearchText"></div>
+      <span class="search-cursor-el"></span>
+      <div class="domain-wrapper"><div class="domain-label" id="heroDomainLabel">Government</div></div>
+    </div>
+
+    <div class="hero-result-area" id="heroResultArea">
+      <div class="hero-vid-result">
+        <div class="hero-vid-preview">
+          <video id="heroVideoEl" autoplay muted loop playsinline></video>
+          <div class="hero-vid-speaker"><span class="rdot"></span><span id="hvSpeaker">Speaker</span></div>
+          <div class="hero-vid-clip" id="hvClipTag">Exact 5s clip</div>
+          <div class="hero-vid-wave" id="heroWaveform"></div>
+          <div class="hero-vid-progress"><div class="hero-vid-fill" id="hvProgress"></div></div>
+        </div>
+        <div class="hero-vid-info">
+          <div class="hero-vid-answer" id="hvAnswer">"Answer"</div>
+          <div class="hero-vid-source" id="hvSource">Source</div>
+        </div>
       </div>
-      <div class="diff-row">
-        <div class="diff-others">Other AI retrieves links.</div>
-        <div class="diff-us">We deliver the <span class="pop">exact moment</span>, cited and verified.</div>
-      </div>
-      <div class="diff-row">
-        <div class="diff-others">Other AI hallucinates.</div>
-        <div class="diff-us">Every answer <span class="pop">traces back</span> to a source.</div>
-      </div>
-      <div class="diff-row">
-        <div class="diff-others">Other AI needs months of custom training.</div>
-        <div class="diff-us"><span class="pop">Plug in</span> your data, get answers in seconds.</div>
+      <div class="hero-txt-result">
+        <div class="hero-txt-type" id="htType">Document</div>
+        <div class="hero-txt-visual" id="htVisual"></div>
+        <div class="hero-txt-cite" id="htCite">Citation</div>
+        <div id="htStats"></div>
       </div>
     </div>
-  </div>
 
-  <!-- DEMO PLACEHOLDER -->
-  <div class="demo-section reveal" id="demo">
-    <div class="demo-label">Kurious in action</div>
-    <div class="demo-title">Ask a question. Get the exact moment.</div>
-    <div class="demo-container">
-      <!-- PLACEHOLDER: Replace with product demo GIF or video showing Kurious finding a video clip -->
-      <div class="demo-placeholder-icon"></div>
-      <div class="demo-placeholder-text">Product demo GIF goes here</div>
-      <div class="demo-placeholder-note">Upload: Short GIF showing Kurious finding a video clip with speaker ID and transcript</div>
+    <div class="hero-counter" id="heroCounter">Searched <span id="hcNum">85M records</span> in <span id="hcTime">0.2s</span></div>
+
+    <div class="hero-cta-wrap">
+      <a href="https://njopendata.aintropy.ai" class="hero-main-cta">Try it yourself →</a>
     </div>
-    <p class="demo-sub">Ask once. We search video, documents, and data. You get one verified answer.</p>
+
+    <div class="hero-social-proof">
+      <p>Built by the minds behind <span>50+ patents</span> and <span>80+ research papers</span>. Now making knowledge perceivable.</p>
+    </div>
   </div>
 
   <!-- HOW IT WORKS -->
-  <div class="how-section reveal">
+  <div class="how-section grid-bg reveal">
     <div class="how-label">How it works</div>
     <div class="how-title">Three steps. Any data type.</div>
     <div class="how-flow">
@@ -657,7 +755,7 @@
         <div class="how-num">02</div>
         <div class="how-name">Understand</div>
         <div class="how-stat">12</div>
-        <div class="how-stat-label">Speakers, organizations, decisions, locations - all connected</div>
+        <div class="how-stat-label">Speakers, organizations, decisions, locations — all connected</div>
         <div class="how-example">
           <div class="how-example-label">Example</div>
           <div class="how-example-text">Speaker identified: Chair Diane Gutierrez-Scaccetti. Connected to 3 documents and 2 prior decisions.</div>
@@ -681,7 +779,7 @@
   <div class="solutions reveal" id="solutions">
     <div class="sol-label">Proven at scale</div>
 
-    <div class="numbers-inner" style="margin-bottom: 48px; grid-template-columns: repeat(5, 1fr);">
+    <div class="numbers-inner" style="margin-bottom: 48px;">
       <div class="num-item">
         <div class="num-value">85M+</div>
         <div class="num-label">Records and counting</div>
@@ -695,15 +793,12 @@
         <div class="num-label">As fast as 0.2 seconds</div>
       </div>
       <div class="num-item">
-        <div class="num-value">82.1%</div>
-        <div class="num-label">Accuracy. No training needed.</div>
-      </div>
-      <div class="num-item">
-        <div class="num-value">20-80x</div>
-        <div class="num-label">Cheaper than custom AI.</div>
+        <div class="num-value">#1</div>
+        <div class="num-label">On published benchmarks</div>
       </div>
     </div>
 
+    <p style="font-size: 15px; color: var(--body); margin-bottom: 8px; text-align: center;">Proven on public data. Ready for your enterprise.</p>
     <div class="verify-line" style="margin-bottom: 48px;">
       <a href="https://huggingface.co/datasets/aintropy-ai/nj-open-data-rag" target="_blank" class="verify-link">Open benchmark. Open results. Verify it yourself &#8594;</a>
     </div>
@@ -712,7 +807,7 @@
       <div class="sol-card">
         <div class="sol-badge live">Live</div>
         <div class="sol-name">NJ Open Data</div>
-        <div class="sol-desc">One search across 85 million records, 23 agencies, and 8+ formats. Documents, video, spreadsheets, images, and more.</div>
+        <div class="sol-desc">85 million government records across 23 agencies. One search across documents, spreadsheets, images, and video.</div>
         <div class="sol-stat"><strong>85M</strong> records · <strong>23</strong> agencies · <strong>8+</strong> formats</div>
         <a href="https://njopendata.aintropy.ai" class="sol-cta">Try it yourself &#8594;</a>
       </div>
@@ -723,15 +818,8 @@
         <div class="sol-stat"><strong>4,000+</strong> hours · <strong>12</strong> entity types</div>
         <a href="https://aintropy-ai.github.io/Product-kurious-v2/chat" class="sol-cta">Try it yourself &#8594;</a>
       </div>
-      <div class="sol-card">
-        <div class="sol-badge" style="color:var(--cyan);background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);">Open</div>
-        <div class="sol-name">Your Data</div>
-        <div class="sol-desc">Any enterprise. Any industry. Any scale. Bring your data, we make it perceivable.</div>
-        <div class="sol-stat">Video · Documents · Images · Structured data</div>
-        <a href="#" class="sol-cta" onclick="event.preventDefault();document.getElementById('contact-modal').classList.add('open')">Get in touch &#8594;</a>
-      </div>
     </div>
-    <p class="domains-line" style="margin-top: 24px;"><span>Government</span> · <span>Legal</span> · <span>Healthcare</span> · <span>Finance</span> · <span>Robotics</span> · Any industry where knowledge lives beyond text.</p>
+    <p class="domains-line" style="margin-top: 24px;"><span>Government</span> · <span>Legal</span> · <span>Healthcare</span> · <span>Finance</span> · Any industry with data trapped in video, documents, and silos.</p>
   </div>
 
   <div class="section-glow"></div>
@@ -753,7 +841,7 @@
         <div class="lab-thumb">thumbnail</div>
         <div class="lab-tag">Research</div>
         <div class="lab-name">Universal Knowledge Perception</div>
-        <div class="lab-desc">The science behind perceiving knowledge across every format, at any scale.</div>
+        <div class="lab-desc">Our published research on multimodal knowledge retrieval across text, video, images, and structured data at enterprise scale.</div>
       </a>
       <div class="lab-card">
         <div class="lab-card-accent"></div>
@@ -781,7 +869,7 @@
     <div class="team-grid">
       <!-- PLACEHOLDER: Replace "photo" text with <img src="kunal.jpg"> etc when photos are ready -->
       <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Kunal Sawarkar</div><div class="tm-role">Co-Founder, CEO</div></a></div>
-      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Nirmit Desai</div><div class="tm-role">CTO & Co-Founder</div></a></div>
+      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Nirmit Desai</div><div class="tm-role">Co-Founder</div></a></div>
       <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Robin D'Souza</div><div class="tm-role">Advisor</div></a></div>
       <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Shivangi Mishra</div><div class="tm-role">Lead Product Manager</div></a></div>
       <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Aditya</div><div class="tm-role">Engineering</div></a></div>
@@ -796,7 +884,7 @@
   <!-- CONTACT -->
   <div class="contact reveal">
     <h2>Want to learn more?</h2>
-    <p>Any industry. Any data. Let's build something together.</p>
+    <p>We're building the knowledge foundation for the next generation of AI.</p>
     <button class="contact-btn" onclick="document.getElementById('contact-modal').classList.add('open')">Get in touch &#8594;</button>
   </div>
 
@@ -829,7 +917,7 @@
         <div class="f-logo-text"><span>A</span>Intropy</div>
         <span class="nav-alpha">alpha</span>
       </div>
-      <div style="font-size: 11px; color: var(--muted); margin-bottom: 12px;">Universal Knowledge Perception Platform</div>
+      <div style="font-size: 11px; color: var(--muted); margin-bottom: 12px;">The Knowledge Foundation for World Models</div>
       <div class="f-disc">
         Research preview. Underlying technology may be protected by one or more patents pending with USPTO.
         Kurious answers questions about specific datasets only. It is not a general-purpose AI.
@@ -960,6 +1048,29 @@
       init();
       draw();
     })();
+  </script>
+
+  <!-- Hero Animation Script -->
+  <script>
+    const videoSources=['https://assets.mixkit.co/videos/1222/1222-720.mp4','https://assets.mixkit.co/videos/4883/4883-720.mp4','https://assets.mixkit.co/videos/3997/3997-720.mp4','https://assets.mixkit.co/videos/4812/4812-720.mp4','https://assets.mixkit.co/videos/4881/4881-720.mp4'];
+    const wf=document.getElementById('heroWaveform');
+    for(let i=0;i<35;i++){const b=document.createElement('div');b.className='hero-wave-bar';b.style.animationDelay=(i*0.04)+'s';b.style.height=(20+Math.random()*80)+'%';wf.appendChild(b);}
+    const hScenarios=[
+      {domain:'Government',query:'What did the transportation chair decide about Route 21?',chaos:['council_meeting.mp4','budget_fy24.pdf','route21_plan.xlsx','DOT_memo.txt','hearing_notes.pdf','site_inspection.jpg','zoning_map.tiff','vote_record.csv','handwritten_notes.jpg','board_res.pdf','press_conference.mp4','traffic_photos.zip','voicemail.wav','whiteboard.png','scanned_letter.pdf','meeting.mp4','sticky_notes.jpg','fax.tiff','surveillance.avi','microfiche.png','audio_testimony.m4a','napkin_sketch.jpg','pptx_FINAL.pptx','email_47msgs.mbox','slack.json','recording.mov','transcript.wav','blueprint.dwg','database.sql','satellite.geotiff'],video:{speaker:'Chair Gutierrez-Scaccetti',clipTag:'Exact 7s clip',answer:'"The Route 21 interchange expansion is approved. $48 million. Construction begins Q3."',source:'NJ Transportation Authority, June 2024',duration:7},visual:'chart',chartData:[{label:'Route 21',value:48,color:'#00D4FF'},{label:'Bridge',value:31,color:'#34d399'},{label:'Rail',value:22,color:'#a855f7'},{label:'Roads',value:15,color:'#f59e0b'}],text:{type:'doc',typeLabel:'Budget Allocation ($M)',cite:'NJ DOT Board Resolution Archives',stats:['Unanimous','$48M']},counter:{num:'85M government records',time:'0.2s'}},
+      {domain:'Healthcare',query:'What did the chief physician say about the new treatment protocol?',chaos:['patient.hl7','trial.pdf','lab_results.csv','mri.dcm','board_mtg.mp4','approval.pdf','handwritten_rx.jpg','research.xlsx','doctor_notes.png','xray.zip','pharmacy.csv','voicemail.wav','whiteboard.jpg','consent.pdf','surgery.mp4','post_it.jpg','fax.tiff','ecg.png','pathology.svs','audio.m4a','CT_scan.nii','ultrasound.avi','chart_notes.jpg','insurance.tiff','device_log.csv','paper_1998.pdf','dictated.mp3','EMR.png','referral.jpg','zoom.mp4'],video:{speaker:'Dr. Sarah Chen',clipTag:'Exact 5s clip',answer:'"73% response rate in Phase II. Moving to full deployment across oncology."',source:'Medical Board Review, Jan 2025',duration:5},visual:'quote',quoteText:'73% response rate across 240 patients. Median survival: 4.2 → 11.8 months.',text:{type:'data',typeLabel:'Clinical Evidence',cite:'Study #AIN-2024-087',stats:['240 patients','FDA fast-track']},counter:{num:'12,000 clinical records',time:'0.3s'}},
+      {domain:'Legal',query:'Show me exactly when the witness changed their testimony',chaos:['deposition.mp4','filing.pdf','evidence.xlsx','exhibit.jpg','handwritten.jpg','witness.docx','motion.pdf','sketch.png','ruling.pdf','surveillance.mp4','police.pdf','financials.xlsx','wiretap.wav','timeline.jpg','contract_1992.tiff','photo.jpg','sticky.jpg','fax.pdf','bodycam.mp4','plea_notes.jpg','discovery.mbox','phone.csv','crime_scene.zip','newspaper.png','testimony.mp4','dictaphone.mp3','steno.srt','notarized.tiff','jailhouse.wav','evidence.raw'],video:{speaker:'Witness: Michael Torres',clipTag:'Exact 4s clip',answer:'"I need to correct that. I was not there at 9 PM. I arrived closer to 11."',source:'Case #2024-CV-4891',duration:4},visual:'compare',compareData:{before:{label:'March 3 Testimony',text:'"I arrived at approximately 9 PM"'},after:{label:'March 17 Revised',text:'"I arrived closer to 11 PM"'}},text:{type:'doc',typeLabel:'Contradiction Detected',cite:'Deposition Transcripts',stats:['2hr gap','3 docs']},counter:{num:'4,000 hrs depositions',time:'0.2s'}},
+      {domain:'Finance',query:'What did the CFO announce about Q3 restructuring?',chaos:['earnings.mp4','10K.pdf','balance.xlsx','deck.pptx','audit.pdf','revenue.csv','board.mp4','handwritten.jpg','analyst.png','receipts.zip','forecast.xlsm','compliance.pdf','voicemail.wav','whiteboard.jpg','invoice.tiff','trading.jpg','targets.jpg','fax.pdf','bloomberg.png','deal_notes.jpg','call.m4a','annual_2018.pdf','slack.json','zoom.mp4','napkin.jpg','wire.tiff','macro.xlsb','memo.mp3','tax.pdf','bank.jpg'],video:{speaker:'CFO Maria Rodriguez',clipTag:'Exact 6s clip',answer:'"$340 million restructuring. 12 facilities, approximately 2,400 positions."',source:'Q3 Earnings Call, Oct 2024',duration:6},visual:'table',tableData:[['Item','Amount'],['Facilities','$210M'],['Severance','$95M'],['IT Migration','$35M'],['Annual Savings','$180M']],text:{type:'data',typeLabel:'Financial Impact',cite:'10-Q, SEC EDGAR',stats:['$340M','$180M/yr']},counter:{num:'8 yrs of SEC filings',time:'0.1s'}},
+      {domain:'Education',query:'Why did the school board change the curriculum?',chaos:['board.mp4','curriculum.pdf','scores.xlsx','feedback.csv','survey.docx','budget.pdf','yearbook.zip','lesson_plan.jpg','minutes.png','research.pdf','enrollment.csv','slides.pptx','classroom.mp4','whiteboard.jpg','report_card.tiff','field_trip.jpg','ideas.jpg','voicemail.wav','IEP.mp4','attendance.jpg','export.zip','pta.mp4','drawing.png','textbook.pdf','lecture.m4a','slack.json','library.csv','nutrition.xlsx','bus.geojson','disciplinary.tiff'],video:{speaker:'Supt. James Park',clipTag:'Exact 8s clip',answer:'"34% improvement in critical thinking. We owe it to every student to expand this."',source:'Board Meeting, Sep 2024',duration:8},visual:'progress',progressData:[{label:'Critical Thinking',value:34,color:'#00D4FF'},{label:'Problem Solving',value:28,color:'#34d399'},{label:'Teacher Approval',value:92,color:'#a855f7'}],text:{type:'data',typeLabel:'Pilot Results (8 Schools)',cite:'District Report, AY 2023-24',stats:['34% gain','92% approval']},counter:{num:'340 districts',time:'0.2s'}},
+    ];
+    function getHFileType(f){if(f.match(/\.mp4|\.avi|\.mov|video|surveillance|bodycam|zoom|surgery|conference/i))return'vid';if(f.match(/\.wav|\.m4a|\.mp3|voicemail|audio|dictat|phone|wiretap|jailhouse|lecture/i))return'audio';if(f.match(/handwritten|sticky|post_it|whiteboard|napkin|drawing|sketch/i))return'hand';if(f.match(/\.jpg|\.png|photo|image|screenshot|yearbook/i))return'photo';if(f.match(/scan|fax|\.tiff|microfiche|notarized/i))return'scan';if(f.match(/\.pdf|report|filing|resolution|manual|motion|ruling|compliance/i))return'pdf';if(f.match(/\.xlsx|\.csv|\.xlsm|\.xlsb|data|log|matrix|record|enrollment/i))return'xls';return'img';}
+    const he={searchText:document.getElementById('heroSearchText'),searchBar:document.getElementById('heroSearchBar'),domainLabel:document.getElementById('heroDomainLabel'),resultArea:document.getElementById('heroResultArea'),chaosLayer:document.getElementById('chaosLayer'),counter:document.getElementById('heroCounter'),cNum:document.getElementById('hcNum'),cTime:document.getElementById('hcTime'),vSpeaker:document.getElementById('hvSpeaker'),vClipTag:document.getElementById('hvClipTag'),vAnswer:document.getElementById('hvAnswer'),vSource:document.getElementById('hvSource'),vProgress:document.getElementById('hvProgress'),videoEl:document.getElementById('heroVideoEl'),tType:document.getElementById('htType'),tVisual:document.getElementById('htVisual'),tCite:document.getElementById('htCite'),tStats:document.getElementById('htStats'),pulses:[document.getElementById('hp1'),document.getElementById('hp2'),document.getElementById('hp3')]};
+    let hCurrent=0,hProgInt=null;
+    function hCreateChaos(files){he.chaosLayer.innerHTML='';files.forEach(f=>{const p=document.createElement('div');p.className='chaos-piece '+getHFileType(f);p.textContent=f;p.style.left=(2+Math.random()*92)+'%';p.style.top=(2+Math.random()*92)+'%';p.style.setProperty('--rot',(Math.random()*40-20)+'deg');p.style.setProperty('--sx',(Math.random()*400-200)+'px');p.style.setProperty('--sy',(Math.random()*400-200)+'px');p.style.setProperty('--sr',(Math.random()*90-45)+'deg');p.style.fontSize=(8+Math.random()*5)+'px';p.style.zIndex=Math.floor(Math.random()*10);he.chaosLayer.appendChild(p);});}
+    function hAnimProg(dur){let el=0;he.vProgress.style.width='0%';if(hProgInt)clearInterval(hProgInt);hProgInt=setInterval(()=>{el+=50;const pct=Math.min(100,(el/(dur*1000))*100);he.vProgress.style.width=pct+'%';if(pct>=100)clearInterval(hProgInt);},50);}
+    function hBuildVisual(s){he.tVisual.innerHTML='';if(s.visual==='chart'){const mx=Math.max(...s.chartData.map(d=>d.value));let h='<div class="hero-mini-chart">';s.chartData.forEach(d=>{h+='<div style="flex:1;text-align:center"><div class="hero-mini-bar" style="height:'+(d.value/mx*100)+'%;background:'+d.color+';width:100%"></div><div class="hero-mini-label">'+d.label+'</div></div>';});h+='</div>';he.tVisual.innerHTML=h;}else if(s.visual==='quote'){he.tVisual.innerHTML='<div class="hero-highlight-quote">'+s.quoteText+'</div>';}else if(s.visual==='compare'){const c=s.compareData;he.tVisual.innerHTML='<div class="hero-compare"><div class="hero-compare-side hero-compare-before"><div class="hero-compare-label">'+c.before.label+'</div>'+c.before.text+'</div><div class="hero-compare-side hero-compare-after"><div class="hero-compare-label">'+c.after.label+'</div>'+c.after.text+'</div></div>';}else if(s.visual==='table'){let h='<table class="hero-mini-table">';s.tableData.forEach((r,i)=>{h+='<tr>';r.forEach((c,j)=>{h+=i===0?'<th>'+c+'</th>':'<td class="'+(j===1?'hl':'')+'">'+c+'</td>';});h+='</tr>';});h+='</table>';he.tVisual.innerHTML=h;}else if(s.visual==='progress'){let h='';s.progressData.forEach(d=>{h+='<div class="hero-progress-stat"><div class="hero-progress-label"><span>'+d.label+'</span><span style="color:'+d.color+';font-weight:600">'+d.value+'%</span></div><div class="hero-progress-bg"><div class="hero-progress-fill" style="width:'+d.value+'%;background:'+d.color+'"></div></div></div>';});he.tVisual.innerHTML=h;}}
+    function hSwitchDomain(d){he.domainLabel.classList.add('exit');setTimeout(()=>{he.domainLabel.textContent=d;he.domainLabel.classList.remove('exit');he.domainLabel.classList.add('enter');setTimeout(()=>he.domainLabel.classList.remove('enter'),50);},300);}
+    function hRun(){const s=hScenarios[hCurrent];he.resultArea.classList.remove('show');he.counter.classList.remove('show');he.searchText.textContent='';he.searchBar.classList.remove('active');hSwitchDomain(s.domain);hCreateChaos(s.chaos);he.videoEl.src=videoSources[hCurrent%videoSources.length];he.videoEl.load();let i=0;const ti=setInterval(()=>{if(i<s.query.length){he.searchText.textContent+=s.query[i];he.searchBar.classList.add('active');i++;}else{clearInterval(ti);setTimeout(()=>{he.pulses.forEach((p,x)=>{setTimeout(()=>{p.classList.remove('fire');void p.offsetWidth;p.classList.add('fire');},x*150);});const pcs=he.chaosLayer.querySelectorAll('.chaos-piece');pcs.forEach((p,x)=>{setTimeout(()=>p.classList.add('show'),x*30);});setTimeout(()=>{pcs.forEach((p,x)=>{setTimeout(()=>p.classList.add('scatter'),x*10);});},1800);setTimeout(()=>{he.vSpeaker.textContent=s.video.speaker;he.vClipTag.textContent=s.video.clipTag;he.vAnswer.textContent=s.video.answer;he.vSource.innerHTML='<span>'+s.video.source+'</span>';hAnimProg(s.video.duration);he.videoEl.play().catch(()=>{});he.tType.textContent=s.text.typeLabel;he.tType.className='hero-txt-type '+s.text.type;hBuildVisual(s);he.tCite.textContent=s.text.cite;he.tStats.innerHTML=s.text.stats.map(t=>'<span class="hero-txt-stat">'+t+'</span>').join('');he.cNum.textContent=s.counter.num;he.cTime.textContent=s.counter.time;he.resultArea.classList.add('show');setTimeout(()=>he.counter.classList.add('show'),300);},2400);},400);setTimeout(()=>{he.searchBar.classList.remove('active');he.resultArea.classList.remove('show');he.counter.classList.remove('show');hCurrent=(hCurrent+1)%hScenarios.length;setTimeout(hRun,600);},9000);}},35);}
+    setTimeout(hRun,400);
   </script>
 
 </body>
