@@ -40,6 +40,61 @@
     .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.9s ease, transform 0.9s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
+    /* Floating Nodes */
+    .nodes-container {
+      position: relative; width: 100%; max-width: 800px; height: 400px;
+      margin-top: 48px;
+    }
+    .node-canvas {
+      position: absolute; inset: 0; z-index: 0;
+    }
+    .floating-node {
+      position: absolute; display: flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: 24px; font-size: 13px; font-weight: 600;
+      cursor: pointer; z-index: 1; transition: all 0.6s ease;
+      animation: float-drift 6s ease-in-out infinite;
+    }
+    .floating-node .n-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+      box-shadow: 0 0 8px currentColor;
+    }
+    .floating-node.n-visible {
+      background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2);
+      color: var(--cyan);
+    }
+    .floating-node.n-visible .n-dot { background: var(--cyan); }
+    .floating-node.n-invisible {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+      color: #555; opacity: 0.6;
+    }
+    .floating-node.n-invisible .n-dot { background: #444; }
+    .floating-node.n-invisible:hover, .floating-node.n-invisible.perceived {
+      background: rgba(0,212,255,0.08); border-color: rgba(0,212,255,0.25);
+      color: var(--cyan); opacity: 1;
+    }
+    .floating-node.n-invisible:hover .n-dot, .floating-node.n-invisible.perceived .n-dot {
+      background: var(--cyan);
+    }
+    @keyframes float-drift {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(4px, -6px); }
+      50% { transform: translate(-3px, 4px); }
+      75% { transform: translate(5px, 2px); }
+    }
+    .floating-node:nth-child(2) { animation-delay: -1s; animation-duration: 7s; }
+    .floating-node:nth-child(3) { animation-delay: -2s; animation-duration: 5.5s; }
+    .floating-node:nth-child(4) { animation-delay: -0.5s; animation-duration: 6.5s; }
+    .floating-node:nth-child(5) { animation-delay: -3s; animation-duration: 8s; }
+    .floating-node:nth-child(6) { animation-delay: -1.5s; animation-duration: 5s; }
+    .floating-node:nth-child(7) { animation-delay: -2.5s; animation-duration: 7.5s; }
+    .floating-node:nth-child(8) { animation-delay: -0.8s; animation-duration: 6s; }
+    .floating-node:nth-child(9) { animation-delay: -3.5s; animation-duration: 5.8s; }
+    .floating-node:nth-child(10) { animation-delay: -1.2s; animation-duration: 7.2s; }
+    .floating-node:nth-child(11) { animation-delay: -2.8s; animation-duration: 6.8s; }
+    .floating-node:nth-child(12) { animation-delay: -0.3s; animation-duration: 5.3s; }
+    .floating-node:nth-child(13) { animation-delay: -1.8s; animation-duration: 6.2s; }
+    .floating-node:nth-child(14) { animation-delay: -3.2s; animation-duration: 7.8s; }
+
     /* ===== HERO ===== */
     .hero {
       min-height: 100vh; display: flex; flex-direction: column;
@@ -208,7 +263,7 @@
       justify-content: center; align-items: center; padding: 100px 48px;
       background: transparent;
     }
-    .how-label { font-size: 11px; font-weight: 600; color: var(--cyan); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+    .how-label { font-size: 14px; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 16px; }
     .how-title { font-size: 36px; font-weight: 800; letter-spacing: -1.5px; margin-bottom: 56px; color: var(--text); }
     .how-flow { display: flex; align-items: stretch; max-width: 1000px; width: 100%; }
     .how-step {
@@ -561,14 +616,17 @@
 
   <!-- NAV -->
   <nav>
-    <a href="#home" class="nav-logo-text"><span class="a">A</span>Intropy</a>
+    <div class="nav-logo">
+      <img src="images/logo.png" alt="AIntropy" class="nav-logo-img">
+      <a href="#home" class="nav-logo-text"><span class="a">A</span>Intropy</a>
+      <span class="nav-alpha">alpha</span>
+    </div>
     <div class="nav-links">
       <a href="#home">Home</a>
       <a href="#solutions">Solutions</a>
       <a href="#lab">From the Lab</a>
       <a href="#team">Team</a>
       <a href="mailto:know@aintropy.ai?subject=I%20want%20to%20scale%20AI%20on%20my%20messy%20multimodal%20data">Contact</a>
-      <a href="https://njopendata.aintropy.ai" class="nav-cta" style="font-size:11px;font-weight:600;color:#00D4FF !important;border:1px solid rgba(0,212,255,0.3);padding:6px 16px;border-radius:6px;background:none !important;">Try Kurious →</a>
     </div>
     <button class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('open')">
       <span></span><span></span><span></span>
@@ -582,7 +640,6 @@
     <a href="#lab" onclick="document.getElementById('mobile-menu').classList.remove('open')">From the Lab</a>
     <a href="#team" onclick="document.getElementById('mobile-menu').classList.remove('open')">Team</a>
     <a href="mailto:know@aintropy.ai?subject=I%20want%20to%20scale%20AI%20on%20my%20messy%20multimodal%20data" onclick="document.getElementById('mobile-menu').classList.remove('open')">Contact</a>
-    <a href="https://njopendata.aintropy.ai" class="nav-cta">Try Kurious →</a>
   </div>
 
   <!-- HERO WITH ANIMATION -->
@@ -591,10 +648,10 @@
     .new-hero .brand { text-align: center; position: relative; z-index: 20; }
     .new-hero .brand h1 { font-size: 44px; font-weight: 900; letter-spacing: -2px; color: var(--text); }
     .new-hero .brand h1 .a { color: var(--cyan); }
-    .new-hero .brand-tagline { font-size: 10px; font-weight: 500; color: var(--dim); text-transform: uppercase; letter-spacing: 3px; margin-top: 12px; }
-    .new-hero .problem-line { position: relative; z-index: 20; text-align: center; margin-top: 22px; font-size: 19px; font-weight: 600; color: var(--muted); letter-spacing: -0.3px; }
+    .new-hero .brand-tagline { font-size: 14px; font-weight: 600; color: var(--cyan); text-transform: uppercase; letter-spacing: 4px; margin-top: 14px; }
+    .new-hero .problem-line { position: relative; z-index: 20; text-align: center; margin-top: 22px; font-size: 22px; font-weight: 500; color: var(--body); letter-spacing: -0.3px; }
     .new-hero .problem-line .bold { color: #fff; }
-    .new-hero .search-bar { position: relative; z-index: 20; width: 100%; max-width: 560px; background: rgba(14,14,14,0.95); border: 1px solid rgba(0,212,255,0.15); border-radius: 14px; padding: 14px 20px; margin-top: 28px; box-shadow: 0 0 40px rgba(0,212,255,0.05); display: flex; align-items: center; gap: 12px; transition: border-color 0.3s, box-shadow 0.3s; }
+    .new-hero .search-bar { position: relative; z-index: 20; width: 100%; max-width: 560px; background: rgba(14,14,14,0.95); border: 1px solid rgba(0,212,255,0.15); border-radius: 14px; padding: 14px 20px; margin-top: 100px; box-shadow: 0 0 40px rgba(0,212,255,0.05); display: flex; align-items: center; gap: 12px; transition: border-color 0.3s, box-shadow 0.3s; }
     .new-hero .search-bar.active { border-color: rgba(0,212,255,0.3); box-shadow: 0 0 50px rgba(0,212,255,0.08); }
     .new-hero .search-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; box-shadow: 0 0 10px rgba(0,212,255,0.5); }
     .new-hero .search-input { font-size: 14px; color: #fff; font-family: 'Inter', sans-serif; flex: 1; min-height: 20px; }
@@ -617,9 +674,15 @@
     .chaos-piece.photo { background: rgba(14,165,233,0.07); border: 1px solid rgba(14,165,233,0.12); color: rgba(14,165,233,0.5); }
     .chaos-piece.scan { background: rgba(163,163,163,0.07); border: 1px solid rgba(163,163,163,0.12); color: rgba(163,163,163,0.5); }
     .chaos-piece.img { background: rgba(168,85,247,0.07); border: 1px solid rgba(168,85,247,0.12); color: rgba(168,85,247,0.5); }
-    .chaos-piece.show { opacity: 0.85; animation: chaosAppear 0.3s cubic-bezier(0.23,1,0.32,1) forwards; }
-    @keyframes chaosAppear { 0% { opacity: 0; transform: scale(0.3); } 100% { opacity: 0.85; transform: scale(1) rotate(var(--rot)); } }
-    .chaos-piece.scatter { opacity: 0 !important; transform: translate(var(--sx), var(--sy)) rotate(var(--sr)) scale(0.2) !important; transition: all 0.35s cubic-bezier(0.55,0,1,0.45) !important; }
+    .chaos-piece.show { opacity: 0.8; }
+    .vortex-glow { position: absolute; z-index: 9; pointer-events: none; width: 0; height: 0; border-radius: 50%; background: radial-gradient(circle, rgba(0,212,255,0.2) 0%, rgba(0,212,255,0.05) 40%, transparent 70%); transform: translate(-50%,-50%); transition: width 1.5s, height 1.5s, opacity 0.3s; opacity: 0; }
+    .vortex-glow.active { opacity: 1; }
+    .vortex-spark { position: absolute; z-index: 11; pointer-events: none; width: 3px; height: 3px; border-radius: 50%; background: #00D4FF; box-shadow: 0 0 6px #00D4FF, 0 0 12px rgba(0,212,255,0.3); }
+    .vortex-ring { position: absolute; z-index: 8; pointer-events: none; border: 1px dashed rgba(0,212,255,0.15); border-radius: 50%; transform: translate(-50%,-50%); opacity: 0; }
+    .vortex-ring.active { opacity: 1; }
+    @keyframes vortexBurst { 0% { width: 10px; height: 10px; opacity: 0.8; border-width: 2px; } 100% { width: 500px; height: 500px; opacity: 0; border-width: 0.5px; } }
+    .vortex-burst { position: absolute; z-index: 12; pointer-events: none; border: 2px solid #00D4FF; border-radius: 50%; transform: translate(-50%,-50%); opacity: 0; }
+    .vortex-burst.fire { animation: vortexBurst 0.6s ease-out forwards; }
     .hero-result-area { position: relative; z-index: 15; display: flex; gap: 12px; margin-top: 12px; opacity: 0; transform: translateY(25px) scale(0.97); transition: all 0.6s cubic-bezier(0.23,1,0.32,1); width: 100%; max-width: 640px; }
     .hero-result-area.show { opacity: 1; transform: translateY(0) scale(1); }
     .hero-vid-result { flex: 1.4; background: rgba(14,14,14,0.95); border: 1px solid rgba(0,212,255,0.2); border-radius: 12px; overflow: hidden; }
@@ -663,16 +726,16 @@
     .hero-progress-fill { height: 100%; border-radius: 3px; }
     .hero-txt-cite { font-size: 9px; color: #444; margin-top: auto; padding-top: 8px; border-top: 1px solid #1a1a1a; }
     .hero-txt-stat { display: inline-block; font-size: 8px; font-weight: 600; color: var(--cyan); background: rgba(0,212,255,0.06); padding: 2px 7px; border-radius: 4px; margin-top: 6px; margin-right: 4px; }
-    .hero-counter { position: relative; z-index: 20; margin-top: 16px; font-size: 11px; color: #333; text-align: center; opacity: 0; transform: translateY(8px); transition: all 0.4s; }
-    .hero-counter.show { opacity: 1; transform: translateY(0); color: var(--dim); }
+    .hero-counter { position: relative; z-index: 20; margin-top: 16px; font-size: 12px; color: #333; text-align: center; opacity: 0; transform: translateY(8px); transition: all 0.4s; }
+    .hero-counter.show { opacity: 1; transform: translateY(0); color: var(--body); }
     .hero-counter span { color: var(--cyan); font-weight: 600; }
     .hero-cta-wrap { position: relative; z-index: 20; text-align: center; margin-top: 20px; }
     .hero-main-cta, .hero-main-cta:visited, .hero-main-cta:link { display: inline-block; font-size: 15px; font-weight: 600; color: #000 !important; background: var(--cyan); padding: 14px 44px; border-radius: 10px; text-decoration: none; box-shadow: 0 0 30px rgba(0,212,255,0.15); animation: ctaGlow 3s ease-in-out infinite; transition: all 0.15s; }
     @keyframes ctaGlow { 0%,100% { box-shadow: 0 0 25px rgba(0,212,255,0.12); } 50% { box-shadow: 0 0 45px rgba(0,212,255,0.25); } }
     .hero-main-cta:hover { opacity: 0.9; transform: translateY(-2px); }
-    .hero-social-proof { position: relative; z-index: 20; margin-top: 24px; text-align: center; padding: 12px 24px; border-top: 1px solid rgba(255,255,255,0.04); }
-    .hero-social-proof p { font-size: 12px; color: #444; }
-    .hero-social-proof span { color: #777; }
+    .hero-social-proof { position: relative; z-index: 20; margin-top: 32px; text-align: center; padding: 14px 28px; background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.1); border-radius: 50px; display: inline-block; }
+    .hero-social-proof p { font-size: 14px; color: #bbb; font-weight: 400; }
+    .hero-social-proof span { color: var(--cyan); font-weight: 700; }
     @media (max-width: 768px) {
       .new-hero .brand h1 { font-size: 32px; }
       .new-hero .problem-line { font-size: 15px; }
@@ -687,18 +750,22 @@
     <div class="hero-pulse" id="hp2"></div>
     <div class="hero-pulse" id="hp3"></div>
     <div class="chaos-layer" id="chaosLayer"></div>
+    <div class="vortex-glow" id="vGlow"></div>
+    <div class="vortex-ring" id="vRing1"></div>
+    <div class="vortex-ring" id="vRing2"></div>
+    <div class="vortex-burst" id="vBurst1"></div>
+    <div class="vortex-burst" id="vBurst2"></div>
 
     <div class="brand">
       <h1><span class="a">A</span>Intropy</h1>
-      <div class="brand-tagline">Universal Knowledge Perception Platform</div>
+      <div class="brand-tagline">Universal Knowledge Perception</div>
     </div>
 
-    <p class="problem-line"><span class="bold">Your data is messy.</span> Your answers don't have to be.</p>
+    <p class="problem-line">Messy video. Scattered documents. Siloed records.<br>One AI to read, connect, and deliver.</p>
 
     <div class="search-bar" id="heroSearchBar">
       <div class="search-dot"></div>
-      <div class="search-input" id="heroSearchText"></div>
-      <span class="search-cursor-el"></span>
+      <div class="search-input"><span id="heroSearchText"></span><span class="search-cursor-el"></span></div>
       <div class="domain-wrapper"><div class="domain-label" id="heroDomainLabel">Government</div></div>
     </div>
 
@@ -726,186 +793,610 @@
 
     <div class="hero-counter" id="heroCounter">Searched <span id="hcNum">85M records</span> in <span id="hcTime">0.2s</span></div>
 
-    <div class="hero-cta-wrap">
-      <a href="https://njopendata.aintropy.ai" class="hero-main-cta">Try it yourself →</a>
-    </div>
-
     <div class="hero-social-proof">
       <p>Built by the minds behind <span>50+ patents</span> and <span>80+ research papers</span>. Now making knowledge perceivable.</p>
     </div>
   </div>
 
-  <!-- HOW IT WORKS -->
-  <div class="how-section grid-bg reveal">
-    <div class="how-label">How it works</div>
-    <div class="how-title">Three steps. Any data type.</div>
-    <div class="how-flow">
-      <div class="how-step">
-        <div class="how-num">01</div>
-        <div class="how-name">Perceive</div>
-        <div class="how-stat">8+</div>
-        <div class="how-stat-label">Data types we understand</div>
-        <div class="how-example">
-          <div class="how-example-label">Example</div>
-          <div class="how-example-text">4,000 hours of council meetings ingested. Every word transcribed. Every speaker identified.</div>
-        </div>
-      </div>
-      <div class="how-arrow"></div>
-      <div class="how-step">
-        <div class="how-num">02</div>
-        <div class="how-name">Understand</div>
-        <div class="how-stat">12</div>
-        <div class="how-stat-label">Speakers, organizations, decisions, locations — all connected</div>
-        <div class="how-example">
-          <div class="how-example-label">Example</div>
-          <div class="how-example-text">Speaker identified: Chair Diane Gutierrez-Scaccetti. Connected to 3 documents and 2 prior decisions.</div>
-        </div>
-      </div>
-      <div class="how-arrow"></div>
-      <div class="how-step">
-        <div class="how-num">03</div>
-        <div class="how-name">Act</div>
-        <div class="how-stat">0.2s</div>
-        <div class="how-stat-label">Seconds to answer</div>
-        <div class="how-example">
-          <div class="how-example-label">What you get</div>
-          <div class="how-example-text">The exact 4-second clip of the zoning decision, with transcript and 3 cited sources.</div>
-        </div>
+  <!-- PROBLEM STATEMENT -->
+  <div class="section-glow"></div>
+  <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px 48px 0;" class="reveal">
+
+    <div style="font-size: 14px; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 12px;">The Problem</div>
+
+    <!-- STATIC headline - always visible -->
+    <p style="font-size: 26px; font-weight: 700; color: #f0f0f0; max-width: 650px; line-height: 1.5; margin-bottom: 4px;">
+      400 million terabytes of data flows through the world every day.
+    </p>
+    <p style="font-size: 18px; color: #999; max-width: 550px; margin-bottom: 8px;">
+      Less than 5% has ever been read by any AI model you know.
+    </p>
+
+    <!-- SPHERE with DOM legend -->
+    <div style="position: relative; display: inline-block;">
+      <canvas id="sphereCanvas" width="900" height="380" style="max-width: 100%;"></canvas>
+      <div style="position: absolute; top: 50px; left: 20px; font-family: 'Inter', sans-serif;">
+        <div style="font-size: 11px; font-weight: 700; color: #ef4444; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;">Unstructured</div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: #3399ff;"></div><span style="font-size: 13px; font-weight: 500; color: #999;">Video</span></div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: #44ee77;"></div><span style="font-size: 13px; font-weight: 500; color: #999;">Sensors</span></div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: #ff9933;"></div><span style="font-size: 13px; font-weight: 500; color: #999;">Actions</span></div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: #dd55dd;"></div><span style="font-size: 13px; font-weight: 500; color: #999;">Audio</span></div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: #44dddd;"></div><span style="font-size: 13px; font-weight: 500; color: #999;">Images</span></div>
+        <div style="font-size: 11px; font-weight: 700; color: #00D4FF; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;">Structured</div>
+        <div style="display: flex; align-items: center; gap: 10px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: #ffffff;"></div><span style="font-size: 13px; font-weight: 500; color: #999;">Text</span></div>
       </div>
     </div>
+
+    <!-- DYNAMIC line - shows result after scan -->
+    <p id="sphereStatus" style="font-size: 18px; font-weight: 600; color: #666; margin-top: 4px; min-height: 65px; transition: all 0.5s ease;">
+    </p>
+
   </div>
 
-  <!-- NUMBERS + SOLUTIONS (combined) -->
-  <div class="solutions reveal" id="solutions">
-    <div class="sol-label">Proven at scale</div>
-
-    <div class="numbers-inner" style="margin-bottom: 48px;">
-      <div class="num-item">
-        <div class="num-value">85M+</div>
-        <div class="num-label">Records and counting</div>
-      </div>
-      <div class="num-item">
-        <div class="num-value">4,000+</div>
-        <div class="num-label">Hours of video and growing</div>
-      </div>
-      <div class="num-item">
-        <div class="num-value">0.2s</div>
-        <div class="num-label">As fast as 0.2 seconds</div>
-      </div>
-      <div class="num-item">
-        <div class="num-value">#1</div>
-        <div class="num-label">On published benchmarks</div>
-      </div>
-    </div>
-
-    <p style="font-size: 15px; color: var(--body); margin-bottom: 8px; text-align: center;">Proven on public data. Ready for your enterprise.</p>
-    <div class="verify-line" style="margin-bottom: 48px;">
-      <a href="https://huggingface.co/datasets/aintropy-ai/nj-open-data-rag" target="_blank" class="verify-link">Open benchmark. Open results. Verify it yourself &#8594;</a>
-    </div>
-
-    <div class="sol-grid">
-      <div class="sol-card">
-        <div class="sol-badge live">Live</div>
-        <div class="sol-name">NJ Open Data</div>
-        <div class="sol-desc">85 million government records across 23 agencies. One search across documents, spreadsheets, images, and video.</div>
-        <div class="sol-stat"><strong>85M</strong> records · <strong>23</strong> agencies · <strong>8+</strong> formats</div>
-        <a href="https://njopendata.aintropy.ai" class="sol-cta">Try it yourself &#8594;</a>
-      </div>
-      <div class="sol-card">
-        <div class="sol-badge live">Live</div>
-        <div class="sol-name">Legal Videos</div>
-        <div class="sol-desc">4,000 hours of council meetings and legal proceedings. Find the exact moment a decision was made.</div>
-        <div class="sol-stat"><strong>4,000+</strong> hours · <strong>12</strong> entity types</div>
-        <a href="https://aintropy-ai.github.io/Product-kurious-v2/chat" class="sol-cta">Try it yourself &#8594;</a>
-      </div>
-    </div>
-    <p class="domains-line" style="margin-top: 24px;"><span>Government</span> · <span>Legal</span> · <span>Healthcare</span> · <span>Finance</span> · Any industry with data trapped in video, documents, and silos.</p>
+  <!-- Problem bridge - consequence line -->
+  <div class="reveal" style="text-align: center; padding: 8px 48px 32px; max-width: 750px; margin: 0 auto;">
+    <p style="font-size: 15px; color: var(--body); line-height: 1.7;">
+      Your legal team can't search <span style="color: var(--cyan); font-weight: 700;">4,000 hours</span> of video.
+      Your analysts can't query <span style="color: var(--cyan); font-weight: 700;">85 million records</span>.
+      Every frontier model you use is blind to it.
+    </p>
   </div>
 
   <div class="section-glow"></div>
 
-  <!-- BREATHER -->
-  <div class="breather reveal-right">
-    <h2>We don't just retrieve.<br>We <span class="pop">perceive</span>.</h2>
-    <p class="tagline">The hippocampus for AI.</p>
+  <!-- SOLUTIONS (Option A - full-width rows with product UI) -->
+  <div class="section-glow"></div>
+  <div id="solutions" class="reveal" style="padding: 80px 48px;">
+    <div style="text-align: center; margin-bottom: 16px;">
+      <p style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px;">Solutions</p>
+      <p style="font-size: 28px; font-weight: 800; letter-spacing: -1px; color: var(--text); margin-bottom: 8px;">See what Kurious does today.</p>
+      <p style="font-size: 15px; color: var(--muted);">Live products. Real data. <span id="rotatingUseCase" style="color: var(--cyan); font-weight: 700; transition: opacity 0.3s ease;">Try them yourself.</span></p>
+    </div>
+
+    <div style="max-width: 1000px; margin: 48px auto 0;">
+
+      <!-- NJ Open Data - full width row -->
+      <div class="reveal" style="display: flex; gap: 40px; align-items: center; padding: 48px 0; border-bottom: 1px solid rgba(0,212,255,0.08);">
+        <div style="flex: 1;">
+          <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(52,211,153,0.3); color: #34d399;">Live</span>
+            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0,212,255,0.3); color: #00d4ff;">Government</span>
+          </div>
+          <h2 style="font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 10px;">NJ Open Data</h2>
+          <p style="font-size: 15px; color: var(--body); line-height: 1.7; margin-bottom: 20px;">85 million records across 23 agencies and 8+ formats. Ask any question that spans departments, budgets, and datasets.</p>
+          <div style="display: flex; gap: 24px; margin-bottom: 24px;">
+            <div><span style="font-size: 28px; font-weight: 800; color: #00d4ff;">85M+</span><p style="font-size: 11px; color: var(--muted); margin-top: 2px;">records indexed</p></div>
+            <div><span style="font-size: 28px; font-weight: 800; color: #00d4ff;">&lt;5s</span><p style="font-size: 11px; color: var(--muted); margin-top: 2px;">response time</p></div>
+          </div>
+          <a href="https://njopendata.aintropy.ai/chat" target="_blank" style="display: inline-block; background: #00d4ff; color: #0a0a0a; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none;">Go Explore NJ &rarr;</a>
+        </div>
+        <!-- Animated product UI (NJ) -->
+        <div id="njDemo" style="flex: 1; background: #0E0E0E; border: 1px solid var(--border); border-radius: 14px; overflow: hidden;">
+          <div style="background: rgba(0,212,255,0.04); padding: 10px 16px; border-bottom: 1px solid rgba(0,212,255,0.08); display: flex; align-items: center; gap: 8px;">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #00d4ff;"></div>
+            <span style="font-size: 12px; color: var(--muted);">njopendata.aintropy.ai</span>
+          </div>
+          <div style="padding: 20px;">
+            <div style="background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.1); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+              <div style="width: 6px; height: 6px; border-radius: 50%; background: #00d4ff;"></div>
+              <span id="njQueryText" style="font-size: 12px; color: var(--body);"></span><span id="njCursor" style="display: inline-block; width: 1px; height: 14px; background: #00d4ff; vertical-align: middle; animation: solBlink 1s step-end infinite;"></span>
+            </div>
+            <div id="njLoading" style="display: none; padding: 12px; border-radius: 8px;">
+              <div style="height: 10px; width: 70%; background: linear-gradient(90deg, rgba(0,212,255,0.05), rgba(0,212,255,0.12), rgba(0,212,255,0.05)); background-size: 200% 100%; animation: solShimmer 1.2s ease-in-out infinite; border-radius: 4px; margin-bottom: 8px;"></div>
+              <div style="height: 10px; width: 90%; background: linear-gradient(90deg, rgba(0,212,255,0.05), rgba(0,212,255,0.12), rgba(0,212,255,0.05)); background-size: 200% 100%; animation: solShimmer 1.2s ease-in-out infinite 0.1s; border-radius: 4px; margin-bottom: 8px;"></div>
+              <div style="height: 10px; width: 50%; background: linear-gradient(90deg, rgba(0,212,255,0.05), rgba(0,212,255,0.12), rgba(0,212,255,0.05)); background-size: 200% 100%; animation: solShimmer 1.2s ease-in-out infinite 0.2s; border-radius: 4px;"></div>
+            </div>
+            <div id="njAnswer" style="display: none; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 2px solid #00d4ff; opacity: 0; transform: translateY(8px); transition: opacity 0.5s, transform 0.5s;">
+              <p style="font-size: 12px; color: var(--body); line-height: 1.7;">"The NJ DOT allocated <span style="color: #00d4ff; font-weight: 600;">$48 million</span> for Route 21 interchange expansion, approved unanimously by the Transportation Authority in June 2024."</p>
+              <div style="margin-top: 8px; display: flex; gap: 6px;">
+                <span style="font-size: 9px; padding: 2px 8px; border-radius: 4px; background: rgba(0,212,255,0.08); color: #00d4ff;">DOT Budget FY24.pdf</span>
+                <span style="font-size: 9px; padding: 2px 8px; border-radius: 4px; background: rgba(0,212,255,0.08); color: #00d4ff;">Board Resolution</span>
+              </div>
+            </div>
+            <div id="njMeta" style="display: none; margin-top: 10px; font-size: 9px; color: var(--muted); opacity: 0; transition: opacity 0.4s;">Searched 85M records in 0.2s</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legal Video - full width row (reversed) -->
+      <div class="reveal" style="display: flex; gap: 40px; align-items: center; padding: 48px 0; border-bottom: 1px solid rgba(0,212,255,0.08); flex-direction: row-reverse;">
+        <div style="flex: 1;">
+          <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(52,211,153,0.3); color: #34d399;">Live</span>
+            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(167,139,250,0.3); color: #a78bfa;">Video</span>
+          </div>
+          <h2 style="font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 10px;">Legal Video Search</h2>
+          <p style="font-size: 15px; color: var(--body); line-height: 1.7; margin-bottom: 20px;">4,000+ hours of city council meetings, planning hearings, and legislative sessions. Ask a question, get the exact video clip with timestamp.</p>
+          <div style="display: flex; gap: 24px; margin-bottom: 24px;">
+            <div><span id="solHoursCounter" style="font-size: 28px; font-weight: 800; color: #a78bfa;">4,000+</span><p style="font-size: 11px; color: var(--muted); margin-top: 2px;">hours of video</p></div>
+            <div><span style="font-size: 28px; font-weight: 800; color: #a78bfa;">94%</span><p style="font-size: 11px; color: var(--muted); margin-top: 2px;">accuracy</p></div>
+          </div>
+          <a href="http://kurious-dev.centralus.cloudapp.azure.com/signup" target="_blank" style="display: inline-block; background: #a78bfa; color: #0a0a0a; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none;">Dig into Footage &rarr;</a>
+        </div>
+        <!-- Animated video UI (Legal) -->
+        <div id="legalDemo" style="flex: 1; background: #0E0E0E; border: 1px solid var(--border); border-radius: 14px; overflow: hidden;">
+          <div style="background: rgba(167,139,250,0.04); padding: 10px 16px; border-bottom: 1px solid rgba(167,139,250,0.08); display: flex; align-items: center; gap: 8px;">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #a78bfa;"></div>
+            <span style="font-size: 12px; color: var(--muted);">kurious / legal video</span>
+          </div>
+          <div style="padding: 20px;">
+            <div style="background: rgba(167,139,250,0.04); border: 1px solid rgba(167,139,250,0.1); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+              <div style="width: 6px; height: 6px; border-radius: 50%; background: #a78bfa;"></div>
+              <span id="legalQueryText" style="font-size: 12px; color: var(--body);"></span><span id="legalCursor" style="display: inline-block; width: 1px; height: 14px; background: #a78bfa; vertical-align: middle; animation: solBlink 1s step-end infinite;"></span>
+            </div>
+            <div id="legalLoading" style="display: none; padding: 12px; border-radius: 8px;">
+              <div style="height: 60px; width: 100%; background: linear-gradient(90deg, rgba(167,139,250,0.05), rgba(167,139,250,0.12), rgba(167,139,250,0.05)); background-size: 200% 100%; animation: solShimmer 1.2s ease-in-out infinite; border-radius: 6px; margin-bottom: 8px;"></div>
+              <div style="height: 10px; width: 70%; background: linear-gradient(90deg, rgba(167,139,250,0.05), rgba(167,139,250,0.12), rgba(167,139,250,0.05)); background-size: 200% 100%; animation: solShimmer 1.2s ease-in-out infinite 0.15s; border-radius: 4px;"></div>
+            </div>
+            <div id="legalAnswer" style="display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.5s, transform 0.5s;">
+              <div style="background: #080808; border-radius: 8px; overflow: hidden; margin-bottom: 12px;">
+                <div style="height: 100px; background: linear-gradient(135deg, #0a0a14, #12121e); display: flex; align-items: center; justify-content: center; position: relative;">
+                  <div id="legalWave" style="position: absolute; bottom: 16px; left: 14px; right: 14px; height: 24px; display: flex; align-items: end; gap: 2px;"></div>
+                  <span style="position: absolute; top: 8px; left: 10px; font-size: 9px; background: rgba(0,0,0,0.7); color: #fff; padding: 3px 8px; border-radius: 4px;"><span style="display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #ef4444; margin-right: 4px; animation: solBlink 1.5s ease-in-out infinite;"></span>Witness: Michael Torres</span>
+                  <span style="position: absolute; top: 8px; right: 10px; font-size: 8px; background: rgba(0,0,0,0.7); color: #a78bfa; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px;">Exact 4s clip</span>
+                  <div id="legalProgress" style="position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.05);"><div id="legalProgressFill" style="width: 0%; height: 100%; background: #a78bfa; transition: width 0.1s linear;"></div></div>
+                </div>
+              </div>
+              <p style="font-size: 11px; color: var(--body); font-style: italic; line-height: 1.5;">"I need to correct that. I was not there at 9 PM. I arrived closer to 11."</p>
+              <span style="font-size: 9px; color: var(--muted); display: block; margin-top: 6px;">Case #2024-CV-4891 - Timestamp: 01:23:47</span>
+            </div>
+            <div id="legalMeta" style="display: none; margin-top: 10px; font-size: 9px; color: var(--muted); opacity: 0; transition: opacity 0.4s;">Found in 4,000+ hours in 0.2s</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Your Data - subtle CTA -->
+      <div style="text-align: center; padding: 48px 0;">
+        <p style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Your data. Your questions. Answers in seconds.</p>
+        <p style="font-size: 14px; color: var(--muted); margin-bottom: 20px;">No fine-tuning, no training, no waiting.</p>
+        <a href="mailto:know@aintropy.ai?subject=I%20want%20to%20scale%20AI%20on%20my%20messy%20multimodal%20data" style="display: inline-block; color: #00d4ff; border: 1px solid rgba(0,212,255,0.25); padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none;">Connect Your Data &rarr;</a>
+      </div>
+
+    </div>
   </div>
 
+  <div class="section-glow"></div>
+
+  <!-- HOW WE FIT IN -->
+  <div class="how-section grid-bg reveal" style="padding-bottom: 60px;">
+    <div class="how-label">Where we fit</div>
+    <div class="how-title">We make AI understand reality.</div>
+    <p style="font-size: 18px; color: var(--body); margin-top: -40px; margin-bottom: 48px; font-weight: 500; letter-spacing: 0.3px;">The Hippocampus of Your Private AI</p>
+
+    <!-- Funnel - AIntropy on top, domains below -->
+    <div style="max-width: 900px; width: 100%; margin: 0 auto 24px;">
+      <svg viewBox="0 0 900 480" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%;">
+        <defs>
+          <filter id="fGlow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="fGlowBig"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+
+        <!-- AIntropy node at TOP -->
+        <g transform="translate(450, 45)">
+          <rect x="-80" y="-28" width="160" height="56" rx="8" fill="#0E0E0E" stroke="#00D4FF" stroke-width="2" filter="url(#fGlowBig)"/>
+          <text x="0" y="6" text-anchor="middle" fill="#00D4FF" font-family="Inter, sans-serif" font-size="18" font-weight="800">AIntropy</text>
+          <circle cx="0" cy="-18" r="3" fill="#00D4FF">
+            <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
+            <animate attributeName="r" values="3;5;3" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
+        </g>
+
+        <!-- Row 1: 4 domains -->
+        <!-- World Models -->
+        <g transform="translate(112, 220)">
+          <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#00D4FF" stroke-width="1.5" filter="url(#fGlow)"/>
+          <circle cx="0" cy="0" r="16" fill="none" stroke="#00D4FF" stroke-width="0.8"/>
+          <circle cx="0" cy="0" r="6" fill="none" stroke="#00D4FF" stroke-width="0.8"/>
+          <line x1="-16" y1="0" x2="16" y2="0" stroke="#00D4FF" stroke-width="0.6"/>
+          <line x1="0" y1="-16" x2="0" y2="16" stroke="#00D4FF" stroke-width="0.6"/>
+          <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">World Models</text>
+        </g>
+
+        <!-- Healthcare -->
+        <g transform="translate(337, 220)">
+          <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#44ee77" stroke-width="1.5" filter="url(#fGlow)"/>
+          <path d="M-8,-6 C-8,-12 8,-12 8,-6 C8,0 2,5 0,8 C-2,5 -8,0 -8,-6Z" fill="none" stroke="#44ee77" stroke-width="1.5"/>
+          <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">Healthcare</text>
+        </g>
+
+        <!-- Robotics -->
+        <g transform="translate(562, 220)">
+          <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#ff9933" stroke-width="1.5" filter="url(#fGlow)"/>
+          <circle cx="0" cy="0" r="10" fill="none" stroke="#ff9933" stroke-width="1.2"/>
+          <circle cx="0" cy="0" r="3" fill="#ff9933"/>
+          <line x1="-12" y1="0" x2="-18" y2="0" stroke="#ff9933" stroke-width="1.2"/>
+          <line x1="12" y1="0" x2="18" y2="0" stroke="#ff9933" stroke-width="1.2"/>
+          <line x1="0" y1="-12" x2="0" y2="-18" stroke="#ff9933" stroke-width="1.2"/>
+          <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">Robotics</text>
+        </g>
+
+        <!-- Manufacturing -->
+        <g transform="translate(787, 220)">
+          <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#dd55dd" stroke-width="1.5" filter="url(#fGlow)"/>
+          <rect x="-10" y="-4" width="8" height="12" fill="none" stroke="#dd55dd" stroke-width="1"/>
+          <rect x="2" y="-8" width="8" height="16" fill="none" stroke="#dd55dd" stroke-width="1"/>
+          <line x1="-14" y1="8" x2="14" y2="8" stroke="#dd55dd" stroke-width="1"/>
+          <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">Manufacturing</text>
+        </g>
+
+        <!-- Row 2: 4 more domains -->
+        <!-- BCI -->
+        <g transform="translate(112, 390)">
+          <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#44dddd" stroke-width="1.5" filter="url(#fGlow)"/>
+          <ellipse cx="0" cy="-2" rx="12" ry="8" fill="none" stroke="#44dddd" stroke-width="1"/>
+          <line x1="-8" y1="6" x2="8" y2="6" stroke="#44dddd" stroke-width="1"/>
+          <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">BCI</text>
+        </g>
+
+        <!-- Autonomous Systems -->
+        <g transform="translate(337, 390)">
+          <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#f97316" stroke-width="1.5" filter="url(#fGlow)"/>
+          <circle cx="0" cy="0" r="8" fill="none" stroke="#f97316" stroke-width="1"/>
+          <circle cx="0" cy="-14" r="3" fill="#f97316"/>
+          <line x1="0" y1="-11" x2="0" y2="-8" stroke="#f97316" stroke-width="1"/>
+          <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">Autonomous</text>
+        </g>
+
+        <!-- Government -->
+        <g transform="translate(562, 390)">
+          <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#8b8bfa" stroke-width="1.5" filter="url(#fGlow)"/>
+          <rect x="-10" y="-6" width="20" height="14" fill="none" stroke="#8b8bfa" stroke-width="1"/>
+          <line x1="-10" y1="-6" x2="0" y2="-14" stroke="#8b8bfa" stroke-width="1"/>
+          <line x1="10" y1="-6" x2="0" y2="-14" stroke="#8b8bfa" stroke-width="1"/>
+          <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">Government</text>
+        </g>
+
+        <!-- Rotating domain -->
+        <g transform="translate(787, 390)">
+          <!-- Outer spinning ring -->
+          <circle cx="0" cy="0" r="34" fill="none" stroke="url(#rotGrad)" stroke-width="2" stroke-dasharray="8,6" opacity="0.6">
+            <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="6s" repeatCount="indefinite"/>
+          </circle>
+          <!-- Inner circle -->
+          <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#00D4FF" stroke-width="1.5" filter="url(#fGlow)">
+            <animate attributeName="stroke" values="#00D4FF;#44ee77;#ff9933;#dd55dd;#ef4444;#00D4FF" dur="10s" repeatCount="indefinite"/>
+          </circle>
+          <!-- Pulsing plus -->
+          <text x="0" y="5" text-anchor="middle" fill="#00D4FF" font-family="Inter, sans-serif" font-size="22" font-weight="700">
+            +
+            <animate attributeName="fill" values="#00D4FF;#44ee77;#ff9933;#dd55dd;#ef4444;#00D4FF" dur="10s" repeatCount="indefinite"/>
+          </text>
+          <!-- Pulsing glow -->
+          <circle cx="0" cy="0" r="30" fill="none" stroke="#00D4FF" stroke-width="1" opacity="0.3">
+            <animate attributeName="r" values="30;40;30" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="stroke" values="#00D4FF;#44ee77;#ff9933;#dd55dd;#ef4444;#00D4FF" dur="10s" repeatCount="indefinite"/>
+          </circle>
+          <text id="rotatingDomain" x="0" y="46" text-anchor="middle" fill="#ccc" font-family="Inter, sans-serif" font-size="14" font-weight="700">Legal</text>
+        </g>
+
+        <!-- Gradient for spinning ring -->
+        <defs>
+          <linearGradient id="rotGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00D4FF"/>
+            <stop offset="50%" stop-color="#ff9933"/>
+            <stop offset="100%" stop-color="#dd55dd"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Lines from AIntropy to Row 1 -->
+        <path d="M450,73 C450,130 112,150 112,190" stroke="#00D4FF" stroke-width="1.5" opacity="0.2" fill="none"/>
+        <path d="M450,73 C450,120 337,140 337,190" stroke="#44ee77" stroke-width="1.5" opacity="0.2" fill="none"/>
+        <path d="M450,73 C450,120 562,140 562,190" stroke="#ff9933" stroke-width="1.5" opacity="0.2" fill="none"/>
+        <path d="M450,73 C450,130 787,150 787,190" stroke="#dd55dd" stroke-width="1.5" opacity="0.2" fill="none"/>
+
+        <!-- Lines from AIntropy to Row 2 -->
+        <path d="M450,73 C450,200 112,280 112,360" stroke="#44dddd" stroke-width="1.5" opacity="0.15" fill="none"/>
+        <path d="M450,73 C450,200 337,280 337,360" stroke="#f97316" stroke-width="1.5" opacity="0.15" fill="none"/>
+        <path d="M450,73 C450,200 562,280 562,360" stroke="#8b8bfa" stroke-width="1.5" opacity="0.15" fill="none"/>
+        <path d="M450,73 C450,200 787,280 787,360" stroke="#ef4444" stroke-width="1.5" opacity="0.15" fill="none"/>
+
+        <!-- Animated dots flowing from AIntropy to Row 1 -->
+        <circle r="3" fill="#00D4FF" opacity="0.8">
+          <animateMotion dur="2.5s" repeatCount="indefinite" path="M450,73 C450,130 112,150 112,190"/>
+        </circle>
+        <circle r="3" fill="#44ee77" opacity="0.8">
+          <animateMotion dur="2.2s" repeatCount="indefinite" path="M450,73 C450,120 337,140 337,190"/>
+        </circle>
+        <circle r="3" fill="#ff9933" opacity="0.8">
+          <animateMotion dur="2.4s" repeatCount="indefinite" path="M450,73 C450,120 562,140 562,190"/>
+        </circle>
+        <circle r="3" fill="#dd55dd" opacity="0.8">
+          <animateMotion dur="2.7s" repeatCount="indefinite" path="M450,73 C450,130 787,150 787,190"/>
+        </circle>
+
+        <!-- Animated dots flowing from AIntropy to Row 2 -->
+        <circle r="3" fill="#44dddd" opacity="0.7">
+          <animateMotion dur="3.5s" repeatCount="indefinite" path="M450,73 C450,200 112,280 112,360"/>
+        </circle>
+        <circle r="3" fill="#f97316" opacity="0.7">
+          <animateMotion dur="3.2s" repeatCount="indefinite" path="M450,73 C450,200 337,280 337,360"/>
+        </circle>
+        <circle r="3" fill="#8b8bfa" opacity="0.7">
+          <animateMotion dur="3.4s" repeatCount="indefinite" path="M450,73 C450,200 562,280 562,360"/>
+        </circle>
+        <circle r="3" fill="#ef4444" opacity="0.7">
+          <animateMotion dur="3.7s" repeatCount="indefinite" path="M450,73 C450,200 787,280 787,360"/>
+        </circle>
+
+      </svg>
+    </div>
+
+  </div>
+
+  <!-- HOW WE DO IT -->
+  <div class="section-glow"></div>
+  <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 80px 48px;" class="reveal">
+    <div style="font-size: 14px; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 16px;">The Engine</div>
+    <div style="font-size: 36px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); margin-bottom: 40px;">How we turn the world's data into searchable knowledge.</div>
+    <canvas id="engineCanvas" width="1000" height="450" style="max-width: 100%;"></canvas>
+    <p id="engineCounter" style="font-size: 20px; font-weight: 800; color: rgba(0,212,255,0.85); margin-top: 20px; letter-spacing: 1px;">0 items perceived</p>
+  </div>
+  <div class="section-glow"></div>
+
   <!-- FROM THE LAB -->
-  <div class="lab reveal" id="lab">
-    <div class="lab-label">From the Lab</div>
-    <div class="lab-title">What we're building</div>
-    <div class="lab-grid">
-      <a href="https://arxiv.org/abs/2404.07220" target="_blank" class="lab-card" style="text-decoration:none;">
-        <div class="lab-card-accent"></div>
-        <!-- PLACEHOLDER: Add thumbnail image for paper -->
-        <div class="lab-thumb">thumbnail</div>
-        <div class="lab-tag">Research</div>
-        <div class="lab-name">Universal Knowledge Perception</div>
-        <div class="lab-desc">Our published research on multimodal knowledge retrieval across text, video, images, and structured data at enterprise scale.</div>
-      </a>
-      <div class="lab-card">
-        <div class="lab-card-accent"></div>
-        <!-- PLACEHOLDER: Add thumbnail image for how it works -->
-        <div class="lab-thumb">thumbnail</div>
-        <div class="lab-tag">How it works</div>
-        <div class="lab-name">Finding a needle in 4,000 hours of video</div>
-        <div class="lab-desc">How Kurious identifies speakers, understands unclear audio, and describes visual-only content.</div>
+  <div class="section-glow"></div>
+  <div id="lab" class="reveal" style="padding: 80px 32px;">
+    <div style="max-width: 1100px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 48px;">
+        <p style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px;">From the Lab</p>
+        <p style="font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -1px;">Research, engineering, and stories.</p>
       </div>
-      <div class="lab-card">
-        <div class="lab-card-accent"></div>
-        <!-- PLACEHOLDER: Add thumbnail image for NJ Open Data story -->
-        <div class="lab-thumb">thumbnail</div>
-        <div class="lab-tag">Stories</div>
-        <div class="lab-name">How we searched 85 million government records</div>
-        <div class="lab-desc">The story behind building multimodal search across NJ Open Data: 23 agencies, 8 formats, 0.2 seconds.</div>
+
+      <!-- Blog Cards -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 56px;">
+
+        <!-- Research Blog -->
+        <a href="blog-post-research.html" style="text-decoration: none; background: #0E0E0E; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: border-color 0.3s, transform 0.3s; display: flex; flex-direction: column;">
+          <div style="height: 160px; background: linear-gradient(135deg, #081420, #0d2030); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border); position: relative; overflow: hidden;">
+            <div style="position: absolute; font-size: 100px; font-weight: 900; color: rgba(0,212,255,0.05); letter-spacing: -5px; top: 50%; left: 50%; transform: translate(-50%, -50%);">94.89</div>
+            <div style="text-align: center; position: relative;">
+              <div style="font-size: 42px; font-weight: 900; color: #fff; letter-spacing: -2px;">94.89<span style="font-size: 20px; color: var(--cyan);">%</span></div>
+              <div style="font-size: 11px; color: var(--cyan); font-weight: 600; margin-top: 4px;">SQuAD · No Fine-Tuning</div>
+            </div>
+          </div>
+          <div style="padding: 24px; flex-grow: 1;">
+            <div style="font-size: 10px; font-weight: 600; color: var(--cyan); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">Research</div>
+            <div style="font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.4;">Blended RAG: Improving RAG Accuracy with Semantic Search</div>
+            <div style="font-size: 13px; color: var(--muted); line-height: 1.6;">Hybrid BM25 + kNN retrieval achieving 94.89% Top-5 on SQuAD. Published on arxiv.</div>
+          </div>
+          <div style="padding: 0 24px 20px;">
+            <span style="font-size: 13px; color: var(--cyan); font-weight: 600;">Read paper &rarr;</span>
+          </div>
+        </a>
+
+        <!-- Engineering Blog -->
+        <a href="blog-post-engineering.html" style="text-decoration: none; background: #0E0E0E; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: border-color 0.3s, transform 0.3s;">
+          <div style="height: 160px; background: linear-gradient(135deg, #1a0d05, #201508); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border); position: relative; overflow: hidden;">
+            <div style="position: absolute; font-size: 90px; font-weight: 900; color: rgba(255,153,51,0.05); letter-spacing: -4px; top: 50%; left: 50%; transform: translate(-50%, -50%);">4000</div>
+            <div style="text-align: center; position: relative;">
+              <div style="font-size: 42px; font-weight: 900; color: #fff; letter-spacing: -2px;">4,000<span style="font-size: 16px; color: #ff9933;">hrs</span></div>
+              <div style="font-size: 11px; color: #ff9933; font-weight: 600; margin-top: 4px;">One Needle Found</div>
+            </div>
+          </div>
+          <div style="padding: 24px; flex-grow: 1;">
+            <div style="font-size: 10px; font-weight: 600; color: #ff9933; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">Engineering</div>
+            <div style="font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.4;">Finding a Needle in 4,000 Hours of Legal Video</div>
+            <div style="font-size: 13px; color: var(--muted); line-height: 1.6;">From single-pass retrieval to agentic deep thinking. Quick mode: 6.9s, 90% accuracy. Deep mode: 94%.</div>
+          </div>
+          <div style="padding: 0 24px 20px;">
+            <span style="font-size: 13px; color: #ff9933; font-weight: 600;">Read blog &rarr;</span>
+          </div>
+        </a>
+
+        <!-- Story Blog -->
+        <a href="blog-post-story.html" style="text-decoration: none; background: #0E0E0E; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: border-color 0.3s, transform 0.3s;">
+          <div style="height: 160px; background: linear-gradient(135deg, #120818, #1a0d20); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border); position: relative; overflow: hidden;">
+            <div style="position: absolute; font-size: 100px; font-weight: 900; color: rgba(221,85,221,0.05); letter-spacing: -5px; top: 50%; left: 50%; transform: translate(-50%, -50%);">85M</div>
+            <div style="text-align: center; position: relative;">
+              <div style="font-size: 42px; font-weight: 900; color: #fff; letter-spacing: -2px;">85M</div>
+              <div style="font-size: 11px; color: #dd55dd; font-weight: 600; margin-top: 4px;">Records · 23 Agencies · 0.2s</div>
+            </div>
+          </div>
+          <div style="padding: 24px; flex-grow: 1;">
+            <div style="font-size: 10px; font-weight: 600; color: #dd55dd; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">Story</div>
+            <div style="font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 10px; line-height: 1.4;">Your AI Has Never Seen Your Data</div>
+            <div style="font-size: 13px; color: var(--muted); line-height: 1.6;">85 million records. 23 agencies. 8 formats. Every frontier model sees none of it. Here is why, and what we built.</div>
+          </div>
+          <div style="padding: 0 24px 20px;">
+            <span style="font-size: 13px; color: #dd55dd; font-weight: 600;">Read blog &rarr;</span>
+          </div>
+        </a>
+
       </div>
+
+      <!-- Live Benchmarks -->
+      <div style="text-align: center; margin-bottom: 28px;">
+        <p style="font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px;">Live Benchmarks</p>
+        <p style="font-size: 16px; color: #bbb;">Open results. Verify it yourself.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+
+        <!-- NJ Open Data Leaderboard -->
+        <a href="https://huggingface.co/spaces/aintropy-ai/nj-open-data-leaderboard-v1" target="_blank" style="text-decoration: none; background: #0E0E0E; border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; transition: border-color 0.3s;">
+          <div style="font-size: 32px; font-weight: 900; color: var(--cyan); margin-bottom: 4px;">#1</div>
+          <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px;">NJ Open Data</div>
+          <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">85M records, 23 agencies</div>
+          <div style="font-size: 11px; color: var(--cyan); font-weight: 600;">View on HuggingFace &rarr;</div>
+        </a>
+
+        <!-- ChemRAG Leaderboard -->
+        <a href="https://huggingface.co/spaces/aintropy-ai/chemRAG-leaderboard-v1" target="_blank" style="text-decoration: none; background: #0E0E0E; border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; transition: border-color 0.3s;">
+          <div style="font-size: 32px; font-weight: 900; color: #44ee77; margin-bottom: 4px;">94.89%</div>
+          <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px;">ChemRAG</div>
+          <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">Chemical domain benchmark</div>
+          <div style="font-size: 11px; color: #44ee77; font-weight: 600;">View on HuggingFace &rarr;</div>
+        </a>
+
+        <!-- Legal Videos Leaderboard (Coming Soon) -->
+        <div style="background: #0E0E0E; border: 1px dashed #333; border-radius: 12px; padding: 24px; text-align: center;">
+          <div style="font-size: 32px; font-weight: 900; color: #555; margin-bottom: 4px;">94%</div>
+          <div style="font-size: 14px; font-weight: 700; color: #555; margin-bottom: 6px;">Legal Videos</div>
+          <div style="font-size: 12px; color: #444; margin-bottom: 12px;">4,000+ hrs video benchmark</div>
+          <div style="font-size: 11px; color: #555; font-weight: 600;">Coming soon</div>
+        </div>
+
+      </div>
+
     </div>
   </div>
 
   <!-- TEAM -->
-  <div class="team reveal" id="team">
-    <div class="team-label">Team</div>
-    <div class="team-title">Who we are</div>
-    <div class="team-grid">
-      <!-- PLACEHOLDER: Replace "photo" text with <img src="kunal.jpg"> etc when photos are ready -->
-      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Kunal Sawarkar</div><div class="tm-role">Co-Founder, CEO</div></a></div>
-      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Nirmit Desai</div><div class="tm-role">Co-Founder</div></a></div>
-      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Robin D'Souza</div><div class="tm-role">Advisor</div></a></div>
-      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Shivangi Mishra</div><div class="tm-role">Lead Product Manager</div></a></div>
-      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Aditya</div><div class="tm-role">Engineering</div></a></div>
-      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Himadri</div><div class="tm-role">Engineering</div></a></div>
-      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Siddharth</div><div class="tm-role">Engineering</div></a></div>
-      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Eric Song</div><div class="tm-role">Research</div></a></div>
-      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">Kevin Park</div><div class="tm-role">Research</div></a></div>
-      <div class="tm"><a href="#" target="_blank"><div class="tm-photo">photo</div><div class="tm-name">DK</div><div class="tm-role">Research</div></a></div>
+  <div class="section-glow"></div>
+  <div id="team" style="max-width: 1000px; margin: 0 auto; padding: 80px 32px;">
+
+    <div style="text-align: center; margin-bottom: 20px;">
+        <p style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px;">The Team</p>
+        <p style="font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 8px;">We built AI that shipped. Now we are building AI that perceives.</p>
+        <p style="font-size: 16px; color: #999;">53+ patents. 90+ papers. 2,800+ citations. Products reaching millions.</p>
     </div>
-  </div>
 
-  <!-- CONTACT -->
-  <div class="contact reveal">
-    <h2>Want to learn more?</h2>
-    <p>We're building the knowledge foundation for the next generation of AI.</p>
-    <button class="contact-btn" onclick="document.getElementById('contact-modal').classList.add('open')">Get in touch &#8594;</button>
-  </div>
-
-  <!-- Contact Modal -->
-  <div id="contact-modal" class="contact-modal" onclick="if(event.target===this)this.classList.remove('open')">
-    <div class="contact-box" style="position:relative;">
-      <button class="contact-box-close" onclick="document.getElementById('contact-modal').classList.remove('open')">&#10005;</button>
-      <div id="contact-form">
-        <h3>Get in touch</h3>
-        <p>Enter your email and we'll reach out to you.</p>
-        <div class="contact-input-wrap">
-          <input type="email" id="contact-email-input" class="contact-input" placeholder="your@email.com">
-          <button class="contact-submit" onclick="document.getElementById('contact-form').style.display='none'; document.getElementById('contact-success').style.display='block';">Submit</button>
+    <!-- Credential ticker -->
+    <div style="margin: 40px -32px 48px; border-top: 1px solid #0e0e0e;">
+        <div style="overflow: hidden; white-space: nowrap; padding: 8px 0; border-bottom: 1px solid #0e0e0e;">
+            <div style="display: inline-block; animation: teamTicker 40s linear infinite;">
+                <span class="t-pill t-hl">23 Patents</span><span class="t-pill">Distinguished Engineer</span><span class="t-pill t-hl">Harvard</span><span class="t-pill">Chief AI Scientist</span><span class="t-pill">$300M Revenue</span><span class="t-pill t-hl">IBM Research</span><span class="t-pill">Watson NLP</span><span class="t-pill">40 Under 40</span><span class="t-pill t-hl">30+ Patents</span><span class="t-pill">Granite LLMs</span><span class="t-pill t-hl">Princeton</span><span class="t-pill">80+ Papers</span>
+                <span class="t-pill t-hl">23 Patents</span><span class="t-pill">Distinguished Engineer</span><span class="t-pill t-hl">Harvard</span><span class="t-pill">Chief AI Scientist</span><span class="t-pill">$300M Revenue</span><span class="t-pill t-hl">IBM Research</span><span class="t-pill">Watson NLP</span><span class="t-pill">40 Under 40</span><span class="t-pill t-hl">30+ Patents</span><span class="t-pill">Granite LLMs</span><span class="t-pill t-hl">Princeton</span><span class="t-pill">80+ Papers</span>
+            </div>
         </div>
-      </div>
-      <div id="contact-success" style="display:none; padding: 20px 0; text-align: center;">
-        <div style="font-size: 32px; margin-bottom: 12px;">&#10003;</div>
-        <div style="font-size: 16px; color: #F0F0F0; font-weight: 600;">Thank you!</div>
-        <div style="font-size: 13px; color: #888; margin-top: 8px;">Someone from our team will reach out to you shortly.</div>
-      </div>
+        <div style="overflow: hidden; white-space: nowrap; padding: 8px 0; border-bottom: 1px solid #0e0e0e;">
+            <div style="display: inline-block; animation: teamTicker 35s linear infinite reverse;">
+                <span class="t-pill">PhD NC State</span><span class="t-pill t-hl">2,669 Citations</span><span class="t-pill">Millions of Users</span><span class="t-pill t-hl">Yale</span><span class="t-pill">NSA Recognized</span><span class="t-pill">MIT Tech Review</span><span class="t-pill t-hl">NCSU Hall of Fame</span><span class="t-pill">Book Author</span><span class="t-pill t-hl">US Open Tech</span><span class="t-pill">AAAI · IEEE</span><span class="t-pill">Forbes Featured</span><span class="t-pill t-hl">Neuronal Computing</span>
+                <span class="t-pill">PhD NC State</span><span class="t-pill t-hl">2,669 Citations</span><span class="t-pill">Millions of Users</span><span class="t-pill t-hl">Yale</span><span class="t-pill">NSA Recognized</span><span class="t-pill">MIT Tech Review</span><span class="t-pill t-hl">NCSU Hall of Fame</span><span class="t-pill">Book Author</span><span class="t-pill t-hl">US Open Tech</span><span class="t-pill">AAAI · IEEE</span><span class="t-pill">Forbes Featured</span><span class="t-pill t-hl">Neuronal Computing</span>
+            </div>
+        </div>
     </div>
+
+    <style>
+        @keyframes teamTicker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .t-pill { display: inline-block; padding: 6px 20px; margin: 0 8px; font-size: 14px; font-weight: 600; color: #999; border: 1px solid #2a2a2a; border-radius: 6px; }
+        .t-hl { color: var(--cyan); border-color: rgba(0,212,255,0.3); background: rgba(0,212,255,0.05); }
+    </style>
+
+    <!-- Founders -->
+    <div style="margin-bottom: 56px;">
+        <!-- Kunal -->
+        <div class="reveal" style="display: flex; gap: 40px; align-items: flex-start; padding: 48px 0; border-bottom: 1px solid #111;">
+            <div style="width: 200px; height: 250px; border-radius: 12px; overflow: hidden; flex-shrink: 0;">
+                <img src="images/kunal.png" alt="Kunal" style="width: 100%; height: 100%; object-fit: cover; object-position: top;">
+            </div>
+            <div>
+                <div style="font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 4px;">Kunal Sawarkar</div>
+                <div style="font-size: 14px; color: var(--cyan); font-weight: 600; margin-bottom: 16px;">Co-Founder & CEO</div>
+                <div style="display: flex; gap: 20px; margin-bottom: 16px; flex-wrap: wrap;">
+                    <div style="text-align: center;"><span style="font-size: 22px; font-weight: 800; color: #fff; display: block;">23+</span><span style="font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Patents</span></div>
+                    <div style="text-align: center;"><span style="font-size: 22px; font-weight: 800; color: #fff; display: block;">14</span><span style="font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Years at IBM</span></div>
+                    <div style="text-align: center;"><span style="font-size: 22px; font-weight: 800; color: #fff; display: block;">$300M</span><span style="font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Revenue Impact</span></div>
+                    <div style="text-align: center;"><span style="font-size: 22px; font-weight: 800; color: #fff; display: block;">173</span><span style="font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Citations</span></div>
+                </div>
+                <div style="font-size: 15px; color: #bbb; line-height: 1.7;">Distinguished Engineer for Generative AI and Chief AI Scientist at IBM. Led Enterprise AI to convert research into revenue-making products. Author of "Deep Learning with PyTorch Lightning" (Packt). Harvard, Applied Statistics.</div>
+                <div style="display: flex; flex-wrap: nowrap; gap: 6px; margin-top: 12px;">
+                    <span style="font-size: 11px; color: #aaa; border: 1px solid #2a2a2a; border-radius: 20px; padding: 5px 12px; white-space: nowrap;">IBM Distinguished Engineer</span>
+                    <span style="font-size: 11px; color: #aaa; border: 1px solid #2a2a2a; border-radius: 20px; padding: 5px 12px; white-space: nowrap;">Harvard University</span>
+                    <span style="font-size: 11px; color: #aaa; border: 1px solid #2a2a2a; border-radius: 20px; padding: 5px 12px; white-space: nowrap;">40 Under 40</span>
+                    <span style="font-size: 11px; color: #aaa; border: 1px solid #2a2a2a; border-radius: 20px; padding: 5px 12px; white-space: nowrap;">Watson NLP & Speech</span>
+                    <span style="font-size: 11px; color: #aaa; border: 1px solid #2a2a2a; border-radius: 20px; padding: 5px 12px; white-space: nowrap;">Angel Investor</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nirmit -->
+        <div class="reveal" style="display: flex; gap: 40px; align-items: flex-start; padding: 48px 0; border-bottom: 1px solid #111; flex-direction: row-reverse;">
+            <div style="width: 200px; height: 250px; border-radius: 12px; overflow: hidden; flex-shrink: 0;">
+                <img src="images/nirmit.png" alt="Nirmit" style="width: 100%; height: 100%; object-fit: cover; object-position: top;">
+            </div>
+            <div>
+                <div style="font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 4px;">Nirmit Desai</div>
+                <div style="font-size: 14px; color: var(--cyan); font-weight: 600; margin-bottom: 16px;">Co-Founder & CTO</div>
+                <div style="display: flex; gap: 20px; margin-bottom: 16px; flex-wrap: wrap;">
+                    <div style="text-align: center;"><span style="font-size: 22px; font-weight: 800; color: #fff; display: block;">30+</span><span style="font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Patents</span></div>
+                    <div style="text-align: center;"><span style="font-size: 22px; font-weight: 800; color: #fff; display: block;">90+</span><span style="font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Papers</span></div>
+                    <div style="text-align: center;"><span style="font-size: 22px; font-weight: 800; color: #fff; display: block;">2,669</span><span style="font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Citations</span></div>
+                    <div style="text-align: center;"><span style="font-size: 22px; font-weight: 800; color: #fff; display: block;">17+</span><span style="font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;">Years at IBM</span></div>
+                </div>
+                <div style="font-size: 15px; color: #bbb; line-height: 1.7;">Director of Data and Tools for AI Models at IBM Research. Led the global data pipeline for IBM's Granite foundation models. Built Mesh Network Alerts reaching millions of users (MIT Tech Review). PhD Computer Science, NC State.</div>
+                <div style="display: flex; flex-wrap: nowrap; gap: 6px; margin-top: 12px;">
+                    <span style="font-size: 11px; color: #aaa; border: 1px solid #2a2a2a; border-radius: 20px; padding: 5px 12px; white-space: nowrap;">IBM Research Director</span>
+                    <span style="font-size: 11px; color: #aaa; border: 1px solid #2a2a2a; border-radius: 20px; padding: 5px 12px; white-space: nowrap;">Granite LLMs Builder</span>
+                    <span style="font-size: 11px; color: #aaa; border: 1px solid #2a2a2a; border-radius: 20px; padding: 5px 12px; white-space: nowrap;">NCSU Hall of Fame</span>
+                    <span style="font-size: 11px; color: #aaa; border: 1px solid #2a2a2a; border-radius: 20px; padding: 5px 12px; white-space: nowrap;">IEEE EDGE Chair</span>
+                    <span style="font-size: 11px; color: #aaa; border: 1px solid #2a2a2a; border-radius: 20px; padding: 5px 12px; white-space: nowrap;">MIT Tech Review</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Research Team -->
+    <div style="margin-bottom: 48px;">
+        <p style="font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #555; margin-bottom: 20px;">Research & Product</p>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;">
+            <div class="reveal" style="background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 12px; padding: 24px; text-align: center;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; margin: 0 auto 14px;"><img src="images/kevin.png" alt="Kevin" style="width: 100%; height: 100%; object-fit: cover; object-position: top;"></div>
+                <div style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px;">Kevin Park</div>
+                <div style="font-size: 13px; color: var(--cyan); margin-bottom: 8px;">AI Research Scientist</div>
+                <div style="font-size: 13px; color: #999;">Princeton University</div>
+            </div>
+            <div class="reveal" style="background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 12px; padding: 24px; text-align: center;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; margin: 0 auto 14px;"><img src="images/dongkon.png" alt="Dongkon" style="width: 100%; height: 100%; object-fit: cover; object-position: top;"></div>
+                <div style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px;">Dongkon Lee</div>
+                <div style="font-size: 13px; color: var(--cyan); margin-bottom: 8px;">AI Research Scientist</div>
+                <div style="font-size: 13px; color: #999;">Princeton University</div>
+            </div>
+            <div class="reveal" style="background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 12px; padding: 24px; text-align: center;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; margin: 0 auto 14px;"><img src="images/eric.png" alt="Eric" style="width: 100%; height: 100%; object-fit: cover; object-position: top;"></div>
+                <div style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px;">Eric Song</div>
+                <div style="font-size: 13px; color: var(--cyan); margin-bottom: 8px;">AI Research Scientist</div>
+                <div style="font-size: 13px; color: #999;">Yale University</div>
+            </div>
+            <div class="reveal" style="background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 12px; padding: 24px; text-align: center;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; margin: 0 auto 14px;"><img src="images/shivangi.png" alt="Shivangi" style="width: 100%; height: 100%; object-fit: cover; object-position: top;"></div>
+                <div style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px;">Shivangi Mishra</div>
+                <div style="font-size: 13px; color: var(--cyan); margin-bottom: 8px;">Lead Product Manager</div>
+                <div style="font-size: 13px; color: #999;">MBA, Univ. of San Francisco</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Join CTA with dropdown -->
+    <div style="text-align: center; background: rgba(0,212,255,0.03); border: 1px solid rgba(0,212,255,0.1); border-radius: 14px; padding: 48px 32px;">
+        <p style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 12px;">Build with us.</p>
+        <p style="font-size: 16px; color: #bbb; margin-bottom: 28px; max-width: 450px; margin-left: auto; margin-right: auto;">We are looking for researchers and engineers who want to teach AI to perceive the world.</p>
+        <button style="background: var(--cyan); color: #000; padding: 14px 32px; border-radius: 8px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;" onclick="var dd=document.getElementById('homeRolesDropdown');var ar=document.getElementById('homeJoinArrow');if(dd.style.maxHeight==='500px'){dd.style.maxHeight='0';dd.style.opacity='0';ar.style.transform='rotate(0deg)';}else{dd.style.maxHeight='500px';dd.style.opacity='1';ar.style.transform='rotate(180deg)';}">
+            Join the Team
+            <svg id="homeJoinArrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition: transform 0.3s;"><path d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div id="homeRolesDropdown" style="max-height: 0; overflow: hidden; transition: max-height 0.5s ease, opacity 0.4s ease; opacity: 0; margin-top: 24px;">
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 600px; margin: 0 auto; text-align: left;">
+                <a href="https://docs.google.com/forms/d/1tdQaYkWGgqRzKGL2D6Crq1cnmXDlxDvZxKz43Wbx95U/viewform" target="_blank" style="text-decoration: none; background: #0a0a0a; border: 1px solid #1e1e1e; border-radius: 10px; padding: 18px; transition: border-color 0.2s;">
+                    <div style="font-size: 10px; font-weight: 600; color: var(--cyan); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">AI Research</div>
+                    <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">Perception Alchemist</div>
+                    <div style="font-size: 12px; color: #888;">Build the brain that perceives the world through pixels, frequencies, and sensory streams.</div>
+                    <div style="font-size: 12px; color: var(--cyan); font-weight: 600; margin-top: 8px;">Apply &rarr;</div>
+                </a>
+                <a href="https://docs.google.com/forms/d/1tdQaYkWGgqRzKGL2D6Crq1cnmXDlxDvZxKz43Wbx95U/viewform" target="_blank" style="text-decoration: none; background: #0a0a0a; border: 1px solid #1e1e1e; border-radius: 10px; padding: 18px; transition: border-color 0.2s;">
+                    <div style="font-size: 10px; font-weight: 600; color: #44ee77; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Cloud Engineering</div>
+                    <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">Cloud Cartographer</div>
+                    <div style="font-size: 12px; color: #888;">Design the backbone that scales, performs, and pays for itself.</div>
+                    <div style="font-size: 12px; color: #44ee77; font-weight: 600; margin-top: 8px;">Apply &rarr;</div>
+                </a>
+                <a href="https://docs.google.com/forms/d/1tdQaYkWGgqRzKGL2D6Crq1cnmXDlxDvZxKz43Wbx95U/viewform" target="_blank" style="text-decoration: none; background: #0a0a0a; border: 1px solid #1e1e1e; border-radius: 10px; padding: 18px; transition: border-color 0.2s;">
+                    <div style="font-size: 10px; font-weight: 600; color: #ff9933; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Product & Growth</div>
+                    <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">Momentum Architect</div>
+                    <div style="font-size: 12px; color: #888;">Find Product-Market Fit and craft the story that makes people realize they need us.</div>
+                    <div style="font-size: 12px; color: #ff9933; font-weight: 600; margin-top: 8px;">Apply &rarr;</div>
+                </a>
+                <a href="https://docs.google.com/forms/d/1tdQaYkWGgqRzKGL2D6Crq1cnmXDlxDvZxKz43Wbx95U/viewform" target="_blank" style="text-decoration: none; background: #0a0a0a; border: 1px solid #1e1e1e; border-radius: 10px; padding: 18px; transition: border-color 0.2s;">
+                    <div style="font-size: 10px; font-weight: 600; color: #dd55dd; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Operations & Strategy</div>
+                    <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px;">AI COO Builder</div>
+                    <div style="font-size: 12px; color: #888;">Partner with the CEO to translate vision into results at startup speed.</div>
+                    <div style="font-size: 12px; color: #dd55dd; font-weight: 600; margin-top: 8px;">Apply &rarr;</div>
+                </a>
+            </div>
+        </div>
+        <style>#homeRolesDropdown.open { max-height: 500px; opacity: 1; } #homeRolesDropdown a:hover { border-color: rgba(0,212,255,0.3) !important; }</style>
+    </div>
+
   </div>
 
 
@@ -913,7 +1404,7 @@
   <footer>
     <div>
       <div class="f-logo">
-        <img src="logo.png" alt="AIntropy" class="f-logo-img">
+        <img src="images/logo.png" alt="AIntropy" class="f-logo-img">
         <div class="f-logo-text"><span>A</span>Intropy</div>
         <span class="nav-alpha">alpha</span>
       </div>
@@ -966,6 +1457,276 @@
     }, { threshold: 0.3 });
     const diffGrid = document.querySelector('.diff-grid');
     if (diffGrid) diffObserver.observe(diffGrid);
+
+    // Full canvas animation - Perception visualization
+    (function() {
+      const canvas = document.getElementById('percCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const container = document.getElementById('percContainer');
+      let W, H, cx, cy;
+      let perceived = false;
+      let sweepAngle = -1; // -1 = not sweeping
+      let sweepSpeed = 0.02;
+      let particles = [];
+
+      const dataTypes = [
+        // Visible (already perceived)
+        { label: 'Text', visible: true, angle: 4.2, dist: 0.25, size: 14 },
+        { label: 'PDFs', visible: true, angle: 3.5, dist: 0.2, size: 12 },
+        { label: 'Code', visible: true, angle: 5.0, dist: 0.22, size: 12 },
+        // Invisible (need perception)
+        { label: 'Video', visible: false, angle: 0.3, dist: 0.55, size: 16 },
+        { label: 'Sensor Streams', visible: false, angle: 0.8, dist: 0.7, size: 14 },
+        { label: 'Meetings', visible: false, angle: 1.2, dist: 0.45, size: 13 },
+        { label: 'Medical Imaging', visible: false, angle: 1.7, dist: 0.65, size: 14 },
+        { label: 'Bodycam', visible: false, angle: 2.1, dist: 0.5, size: 13 },
+        { label: 'Gameplay', visible: false, angle: 2.5, dist: 0.72, size: 13 },
+        { label: 'Trajectories', visible: false, angle: 2.9, dist: 0.58, size: 12 },
+        { label: 'Legal', visible: false, angle: 3.3, dist: 0.68, size: 12 },
+        { label: 'Audio', visible: false, angle: 3.8, dist: 0.62, size: 12 },
+        { label: 'Robotics', visible: false, angle: 4.6, dist: 0.75, size: 14 },
+        { label: 'Telemetry', visible: false, angle: 5.3, dist: 0.6, size: 12 },
+        { label: 'Surgical', visible: false, angle: 5.8, dist: 0.48, size: 12 },
+        { label: 'Satellite', visible: false, angle: 0.0, dist: 0.42, size: 11 },
+        { label: 'Factory Logs', visible: false, angle: 1.5, dist: 0.8, size: 12 },
+        { label: 'Wearables', visible: false, angle: 3.0, dist: 0.78, size: 11 },
+        { label: 'Drones', visible: false, angle: 4.0, dist: 0.52, size: 11 },
+        { label: 'LIDAR', visible: false, angle: 5.5, dist: 0.68, size: 11 },
+      ];
+
+      // Each node gets runtime state
+      dataTypes.forEach(d => {
+        d.perceived = d.visible;
+        d.brightness = d.visible ? 1 : 0.15;
+        d.targetBrightness = d.visible ? 1 : 0.15;
+        d.pulsePhase = Math.random() * Math.PI * 2;
+        d.orbitSpeed = (0.0003 + Math.random() * 0.0004) * (Math.random() > 0.5 ? 1 : -1);
+        d.wobble = Math.random() * Math.PI * 2;
+      });
+
+      function resize() {
+        W = canvas.width = container.offsetWidth;
+        H = canvas.height = container.offsetHeight;
+        cx = W / 2;
+        cy = H / 2;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      // Spawn particles
+      function spawnParticles(x, y, color) {
+        for (let i = 0; i < 6; i++) {
+          particles.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 3,
+            vy: (Math.random() - 0.5) * 3,
+            life: 1,
+            color
+          });
+        }
+      }
+
+      function getNodePos(d, time) {
+        const a = d.angle + time * d.orbitSpeed;
+        const wobbleX = Math.sin(time * 0.001 + d.wobble) * 8;
+        const wobbleY = Math.cos(time * 0.0012 + d.wobble) * 6;
+        const r = d.dist * Math.min(W, H) * 0.48;
+        return {
+          x: cx + Math.cos(a) * r + wobbleX,
+          y: cy + Math.sin(a) * r + wobbleY
+        };
+      }
+
+      let lastTime = 0;
+      function draw(time) {
+        const dt = time - lastTime;
+        lastTime = time;
+        ctx.clearRect(0, 0, W, H);
+
+        // Center glow
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 60);
+        grad.addColorStop(0, perceived ? 'rgba(0,212,255,0.15)' : 'rgba(0,212,255,0.06)');
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
+        ctx.fillRect(cx - 80, cy - 80, 160, 160);
+
+        // Center label
+        ctx.font = '600 11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = perceived ? 'rgba(0,212,255,0.8)' : 'rgba(0,212,255,0.4)';
+        ctx.fillText('AINTROPY', cx, cy - 4);
+        ctx.font = '400 9px Inter, sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        ctx.fillText('perception engine', cx, cy + 10);
+
+        // Orbit rings
+        for (let r = 0.25; r <= 0.8; r += 0.18) {
+          ctx.beginPath();
+          ctx.arc(cx, cy, r * Math.min(W, H) * 0.48, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+
+        // Sweep radar
+        if (sweepAngle >= 0) {
+          const sweepGrad = ctx.createConicalGradient
+            ? null // not supported everywhere
+            : null;
+          // Radar sweep line
+          const sr = Math.min(W, H) * 0.48 * 0.85;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + Math.cos(sweepAngle) * sr, cy + Math.sin(sweepAngle) * sr);
+          ctx.strokeStyle = 'rgba(0,212,255,0.4)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Sweep trail
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.arc(cx, cy, sr, sweepAngle - 0.4, sweepAngle);
+          ctx.closePath();
+          const trailGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, sr);
+          trailGrad.addColorStop(0, 'rgba(0,212,255,0.06)');
+          trailGrad.addColorStop(1, 'rgba(0,212,255,0.02)');
+          ctx.fillStyle = trailGrad;
+          ctx.fill();
+
+          sweepAngle += sweepSpeed;
+
+          // Perceive nodes as sweep passes
+          dataTypes.forEach(d => {
+            if (!d.perceived) {
+              const diff = ((d.angle + time * d.orbitSpeed) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+              const sw = (sweepAngle % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+              if (Math.abs(diff - sw) < 0.15) {
+                d.perceived = true;
+                d.targetBrightness = 1;
+                const pos = getNodePos(d, time);
+                spawnParticles(pos.x, pos.y, 'rgba(0,212,255,');
+              }
+            }
+          });
+
+          if (sweepAngle > Math.PI * 2.5) {
+            sweepAngle = -1;
+            perceived = true;
+          }
+        }
+
+        // Draw connections
+        const positions = dataTypes.map(d => ({ ...getNodePos(d, time), perceived: d.perceived, brightness: d.brightness }));
+        for (let i = 0; i < positions.length; i++) {
+          for (let j = i + 1; j < positions.length; j++) {
+            const dx = positions[i].x - positions[j].x;
+            const dy = positions[i].y - positions[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 180) {
+              const both = positions[i].perceived && positions[j].perceived;
+              const alpha = both ? 0.08 * (1 - dist / 180) : 0.015 * (1 - dist / 180);
+              ctx.beginPath();
+              ctx.moveTo(positions[i].x, positions[i].y);
+              ctx.lineTo(positions[j].x, positions[j].y);
+              ctx.strokeStyle = both ? `rgba(0,212,255,${alpha})` : `rgba(255,255,255,${alpha})`;
+              ctx.lineWidth = both ? 1 : 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Draw nodes
+        dataTypes.forEach((d, i) => {
+          d.brightness += (d.targetBrightness - d.brightness) * 0.03;
+          const pos = positions[i];
+          const pulse = 0.85 + Math.sin(time * 0.002 + d.pulsePhase) * 0.15;
+          const b = d.brightness * pulse;
+
+          // Glow
+          if (d.perceived) {
+            const glow = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, d.size * 2.5);
+            glow.addColorStop(0, `rgba(0,212,255,${0.12 * b})`);
+            glow.addColorStop(1, 'transparent');
+            ctx.fillStyle = glow;
+            ctx.fillRect(pos.x - d.size * 3, pos.y - d.size * 3, d.size * 6, d.size * 6);
+          }
+
+          // Dot
+          ctx.beginPath();
+          ctx.arc(pos.x, pos.y, d.size * 0.35, 0, Math.PI * 2);
+          if (d.perceived) {
+            ctx.fillStyle = `rgba(0,212,255,${b})`;
+            ctx.shadowColor = 'rgba(0,212,255,0.5)';
+            ctx.shadowBlur = 10;
+          } else {
+            ctx.fillStyle = `rgba(100,100,100,${b})`;
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+          }
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          // Label
+          ctx.font = `${d.perceived ? '600' : '400'} ${d.size * 0.8}px Inter, sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.fillStyle = d.perceived ? `rgba(0,212,255,${b * 0.9})` : `rgba(150,150,150,${b * 0.6})`;
+          ctx.fillText(d.label, pos.x, pos.y + d.size * 0.8 + 8);
+        });
+
+        // Particles
+        particles = particles.filter(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.life -= 0.02;
+          if (p.life <= 0) return false;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 2 * p.life, 0, Math.PI * 2);
+          ctx.fillStyle = p.color + p.life + ')';
+          ctx.fill();
+          return true;
+        });
+
+        requestAnimationFrame(draw);
+      }
+      requestAnimationFrame(draw);
+
+      // Hover detection
+      canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        dataTypes.forEach(d => {
+          if (d.perceived) return;
+          const pos = getNodePos(d, performance.now());
+          const dx = pos.x - mx;
+          const dy = pos.y - my;
+          if (Math.sqrt(dx * dx + dy * dy) < 30) {
+            d.perceived = true;
+            d.targetBrightness = 1;
+            spawnParticles(pos.x, pos.y, 'rgba(0,212,255,');
+          }
+        });
+      });
+
+      // Perceive Everything - radar sweep
+      const btn = document.getElementById('perceiveBtn');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          if (sweepAngle >= 0) return;
+          sweepAngle = 0;
+          btn.textContent = 'Perceiving...';
+          btn.style.background = 'rgba(0,212,255,0.2)';
+          setTimeout(() => {
+            btn.textContent = 'Perceived.';
+            setTimeout(() => {
+              btn.textContent = 'Perceive Everything';
+              btn.style.background = 'rgba(0,212,255,0.1)';
+            }, 3000);
+          }, 4000);
+        });
+      }
+    })();
 
     // Connected nodes background
     (function() {
@@ -1065,13 +1826,847 @@
     function getHFileType(f){if(f.match(/\.mp4|\.avi|\.mov|video|surveillance|bodycam|zoom|surgery|conference/i))return'vid';if(f.match(/\.wav|\.m4a|\.mp3|voicemail|audio|dictat|phone|wiretap|jailhouse|lecture/i))return'audio';if(f.match(/handwritten|sticky|post_it|whiteboard|napkin|drawing|sketch/i))return'hand';if(f.match(/\.jpg|\.png|photo|image|screenshot|yearbook/i))return'photo';if(f.match(/scan|fax|\.tiff|microfiche|notarized/i))return'scan';if(f.match(/\.pdf|report|filing|resolution|manual|motion|ruling|compliance/i))return'pdf';if(f.match(/\.xlsx|\.csv|\.xlsm|\.xlsb|data|log|matrix|record|enrollment/i))return'xls';return'img';}
     const he={searchText:document.getElementById('heroSearchText'),searchBar:document.getElementById('heroSearchBar'),domainLabel:document.getElementById('heroDomainLabel'),resultArea:document.getElementById('heroResultArea'),chaosLayer:document.getElementById('chaosLayer'),counter:document.getElementById('heroCounter'),cNum:document.getElementById('hcNum'),cTime:document.getElementById('hcTime'),vSpeaker:document.getElementById('hvSpeaker'),vClipTag:document.getElementById('hvClipTag'),vAnswer:document.getElementById('hvAnswer'),vSource:document.getElementById('hvSource'),vProgress:document.getElementById('hvProgress'),videoEl:document.getElementById('heroVideoEl'),tType:document.getElementById('htType'),tVisual:document.getElementById('htVisual'),tCite:document.getElementById('htCite'),tStats:document.getElementById('htStats'),pulses:[document.getElementById('hp1'),document.getElementById('hp2'),document.getElementById('hp3')]};
     let hCurrent=0,hProgInt=null;
-    function hCreateChaos(files){he.chaosLayer.innerHTML='';files.forEach(f=>{const p=document.createElement('div');p.className='chaos-piece '+getHFileType(f);p.textContent=f;p.style.left=(2+Math.random()*92)+'%';p.style.top=(2+Math.random()*92)+'%';p.style.setProperty('--rot',(Math.random()*40-20)+'deg');p.style.setProperty('--sx',(Math.random()*400-200)+'px');p.style.setProperty('--sy',(Math.random()*400-200)+'px');p.style.setProperty('--sr',(Math.random()*90-45)+'deg');p.style.fontSize=(8+Math.random()*5)+'px';p.style.zIndex=Math.floor(Math.random()*10);he.chaosLayer.appendChild(p);});}
+    let hPills=[],hAnimId=null,hAnswerShown=false;
+    function hCreateChaos(files){
+      he.chaosLayer.innerHTML='';hPills=[];
+      const W=window.innerWidth,H=window.innerHeight;
+      const cxZ=W/2,cyZ=H*0.45,avoidW=300,avoidH=H*0.4;
+      files.forEach((f,i)=>{
+        const el=document.createElement('div');el.className='chaos-piece '+getHFileType(f);el.textContent=f;
+        el.style.fontSize=(9+Math.random()*4)+'px';
+        let x,y,tries=0;
+        do{x=Math.random()*(W-140);y=Math.random()*(H-30);tries++;}
+        while(tries<20&&x>(cxZ-avoidW/2)&&x<(cxZ+avoidW/2)&&y>(cyZ-avoidH/2)&&y<(cyZ+avoidH/2));
+        el.style.left=x+'px';el.style.top=y+'px';
+        he.chaosLayer.appendChild(el);
+        hPills.push({el,x,y,homeX:x,homeY:y,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,rot:(Math.random()-0.5)*10,rotV:(Math.random()-0.5)*0.2,phase:'idle'});
+      });
+    }
+    function hIdleDrift(){
+      const W=window.innerWidth,H=window.innerHeight;
+      hPills.forEach(p=>{if(p.phase!=='idle')return;p.x+=p.vx;p.y+=p.vy;p.rot+=p.rotV;if(p.x<10||p.x>W-150)p.vx*=-1;if(p.y<10||p.y>H-40)p.vy*=-1;p.el.style.transform='translate('+(p.x-p.homeX)+'px,'+(p.y-p.homeY)+'px) rotate('+p.rot+'deg)';});
+      hAnimId=requestAnimationFrame(hIdleDrift);
+    }
+    function hStartVortex(s){
+      const ra=he.resultArea.getBoundingClientRect();const tX=ra.left+ra.width/2,tY=ra.top+ra.height/2;
+      const vG=document.getElementById('vGlow'),vR1=document.getElementById('vRing1'),vR2=document.getElementById('vRing2'),vB1=document.getElementById('vBurst1'),vB2=document.getElementById('vBurst2');
+      [vG,vR1,vR2,vB1,vB2].forEach(e=>{e.style.left=tX+'px';e.style.top=tY+'px';});
+      vG.classList.add('active');vG.style.width='60px';vG.style.height='60px';
+      vR1.classList.add('active');vR1.style.width='200px';vR1.style.height='200px';
+      vR2.classList.add('active');vR2.style.width='350px';vR2.style.height='350px';
+      let rA1=0,rA2=0;
+      hPills.forEach(p=>{p.phase='vortex';p.angle=Math.atan2(p.y-tY,p.x-tX);p.dist=Math.sqrt((p.x-tX)**2+(p.y-tY)**2);p.spinSpeed=0.08+Math.random()*0.06;p.pullSpeed=0.035+Math.random()*0.02;});
+      if(hAnimId)cancelAnimationFrame(hAnimId);
+      let consumed=0;const sparks=[];hAnswerShown=false;
+      function vLoop(){
+        const gS=60+consumed*12;vG.style.width=gS+'px';vG.style.height=gS+'px';
+        rA1+=2;rA2-=1.5;vR1.style.transform='translate(-50%,-50%) rotate('+rA1+'deg)';vR2.style.transform='translate(-50%,-50%) rotate('+rA2+'deg)';
+        const rS=Math.max(0.2,1-consumed/hPills.length);vR1.style.width=(200*rS)+'px';vR1.style.height=(200*rS)+'px';vR2.style.width=(350*rS)+'px';vR2.style.height=(350*rS)+'px';
+        hPills.forEach(p=>{
+          if(p.phase==='consumed')return;
+          p.angle+=p.spinSpeed;p.dist*=(1-p.pullSpeed);
+          if(p.dist<300){p.spinSpeed*=1.01;p.pullSpeed*=1.015;}
+          if(p.dist<100){p.spinSpeed*=1.02;p.pullSpeed*=1.02;}
+          p.x=tX+Math.cos(p.angle)*p.dist;p.y=tY+Math.sin(p.angle)*p.dist;
+          const sc=Math.max(0.1,Math.min(1,p.dist/300)),op=Math.max(0,Math.min(0.8,p.dist/150));
+          p.rot+=p.spinSpeed*15;
+          p.el.style.transform='translate('+(p.x-p.homeX)+'px,'+(p.y-p.homeY)+'px) rotate('+p.rot+'deg) scale('+sc+')';p.el.style.opacity=op;
+          if(p.dist<120&&Math.random()>0.85){const sp=document.createElement('div');sp.className='vortex-spark';sp.style.left=p.x+'px';sp.style.top=p.y+'px';he.chaosLayer.appendChild(sp);sparks.push({el:sp,x:p.x,y:p.y,vx:(Math.random()-0.5)*4,vy:(Math.random()-0.5)*4,life:1});}
+          if(p.dist<15){p.phase='consumed';p.el.style.opacity='0';consumed++;if(!hAnswerShown&&consumed>=hPills.length*0.8){hAnswerShown=true;hShowAnswer(s,vG,vR1,vR2,vB1,vB2);}}
+        });
+        for(let i=sparks.length-1;i>=0;i--){const sp=sparks[i];sp.x+=sp.vx;sp.y+=sp.vy;sp.life-=0.04;sp.el.style.left=sp.x+'px';sp.el.style.top=sp.y+'px';sp.el.style.opacity=sp.life;sp.el.style.transform='scale('+sp.life+')';if(sp.life<=0){sp.el.remove();sparks.splice(i,1);}}
+        if(consumed<hPills.length)hAnimId=requestAnimationFrame(vLoop);
+      }
+      hAnimId=requestAnimationFrame(vLoop);
+    }
+    function hShowAnswer(s,vG,vR1,vR2,vB1,vB2){
+      vB1.classList.remove('fire');void vB1.offsetWidth;vB1.classList.add('fire');
+      setTimeout(()=>{vB2.classList.remove('fire');void vB2.offsetWidth;vB2.classList.add('fire');},100);
+      vG.style.transition='all 0.3s';vG.style.width='600px';vG.style.height='600px';
+      setTimeout(()=>{vG.classList.remove('active');vG.style.width='0';vG.style.height='0';vR1.classList.remove('active');vR2.classList.remove('active');vG.style.transition='width 1.5s,height 1.5s,opacity 0.3s';},400);
+      he.resultArea.classList.add('show');hAnimProg(s.video.duration);he.videoEl.play().catch(()=>{});
+      setTimeout(()=>{he.chaosLayer.innerHTML='';he.counter.classList.add('show');},300);
+    }
     function hAnimProg(dur){let el=0;he.vProgress.style.width='0%';if(hProgInt)clearInterval(hProgInt);hProgInt=setInterval(()=>{el+=50;const pct=Math.min(100,(el/(dur*1000))*100);he.vProgress.style.width=pct+'%';if(pct>=100)clearInterval(hProgInt);},50);}
     function hBuildVisual(s){he.tVisual.innerHTML='';if(s.visual==='chart'){const mx=Math.max(...s.chartData.map(d=>d.value));let h='<div class="hero-mini-chart">';s.chartData.forEach(d=>{h+='<div style="flex:1;text-align:center"><div class="hero-mini-bar" style="height:'+(d.value/mx*100)+'%;background:'+d.color+';width:100%"></div><div class="hero-mini-label">'+d.label+'</div></div>';});h+='</div>';he.tVisual.innerHTML=h;}else if(s.visual==='quote'){he.tVisual.innerHTML='<div class="hero-highlight-quote">'+s.quoteText+'</div>';}else if(s.visual==='compare'){const c=s.compareData;he.tVisual.innerHTML='<div class="hero-compare"><div class="hero-compare-side hero-compare-before"><div class="hero-compare-label">'+c.before.label+'</div>'+c.before.text+'</div><div class="hero-compare-side hero-compare-after"><div class="hero-compare-label">'+c.after.label+'</div>'+c.after.text+'</div></div>';}else if(s.visual==='table'){let h='<table class="hero-mini-table">';s.tableData.forEach((r,i)=>{h+='<tr>';r.forEach((c,j)=>{h+=i===0?'<th>'+c+'</th>':'<td class="'+(j===1?'hl':'')+'">'+c+'</td>';});h+='</tr>';});h+='</table>';he.tVisual.innerHTML=h;}else if(s.visual==='progress'){let h='';s.progressData.forEach(d=>{h+='<div class="hero-progress-stat"><div class="hero-progress-label"><span>'+d.label+'</span><span style="color:'+d.color+';font-weight:600">'+d.value+'%</span></div><div class="hero-progress-bg"><div class="hero-progress-fill" style="width:'+d.value+'%;background:'+d.color+'"></div></div></div>';});he.tVisual.innerHTML=h;}}
     function hSwitchDomain(d){he.domainLabel.classList.add('exit');setTimeout(()=>{he.domainLabel.textContent=d;he.domainLabel.classList.remove('exit');he.domainLabel.classList.add('enter');setTimeout(()=>he.domainLabel.classList.remove('enter'),50);},300);}
-    function hRun(){const s=hScenarios[hCurrent];he.resultArea.classList.remove('show');he.counter.classList.remove('show');he.searchText.textContent='';he.searchBar.classList.remove('active');hSwitchDomain(s.domain);hCreateChaos(s.chaos);he.videoEl.src=videoSources[hCurrent%videoSources.length];he.videoEl.load();let i=0;const ti=setInterval(()=>{if(i<s.query.length){he.searchText.textContent+=s.query[i];he.searchBar.classList.add('active');i++;}else{clearInterval(ti);setTimeout(()=>{he.pulses.forEach((p,x)=>{setTimeout(()=>{p.classList.remove('fire');void p.offsetWidth;p.classList.add('fire');},x*150);});const pcs=he.chaosLayer.querySelectorAll('.chaos-piece');pcs.forEach((p,x)=>{setTimeout(()=>p.classList.add('show'),x*30);});setTimeout(()=>{pcs.forEach((p,x)=>{setTimeout(()=>p.classList.add('scatter'),x*10);});},1800);setTimeout(()=>{he.vSpeaker.textContent=s.video.speaker;he.vClipTag.textContent=s.video.clipTag;he.vAnswer.textContent=s.video.answer;he.vSource.innerHTML='<span>'+s.video.source+'</span>';hAnimProg(s.video.duration);he.videoEl.play().catch(()=>{});he.tType.textContent=s.text.typeLabel;he.tType.className='hero-txt-type '+s.text.type;hBuildVisual(s);he.tCite.textContent=s.text.cite;he.tStats.innerHTML=s.text.stats.map(t=>'<span class="hero-txt-stat">'+t+'</span>').join('');he.cNum.textContent=s.counter.num;he.cTime.textContent=s.counter.time;he.resultArea.classList.add('show');setTimeout(()=>he.counter.classList.add('show'),300);},2400);},400);setTimeout(()=>{he.searchBar.classList.remove('active');he.resultArea.classList.remove('show');he.counter.classList.remove('show');hCurrent=(hCurrent+1)%hScenarios.length;setTimeout(hRun,600);},9000);}},35);}
+    function hRun(){
+      const s=hScenarios[hCurrent];
+      if(hAnimId)cancelAnimationFrame(hAnimId);
+      he.resultArea.classList.remove('show');he.counter.classList.remove('show');he.searchText.textContent='';he.searchBar.classList.remove('active');
+      hSwitchDomain(s.domain);hCreateChaos(s.chaos);
+      he.videoEl.src=videoSources[hCurrent%videoSources.length];he.videoEl.load();
+      /* Show chaos + idle drift */
+      hPills.forEach((p,i)=>{setTimeout(()=>{p.el.classList.add('show');},i*25);});
+      hIdleDrift();
+      /* Type after 1.5s */
+      setTimeout(()=>{let i=0;he.searchBar.classList.add('active');
+        const ti=setInterval(()=>{if(i<s.query.length){he.searchText.textContent+=s.query[i];i++;}else{clearInterval(ti);
+          /* Prepare answer content */
+          he.vSpeaker.textContent=s.video.speaker;he.vClipTag.textContent=s.video.clipTag;he.vAnswer.textContent=s.video.answer;he.vSource.innerHTML='<span>'+s.video.source+'</span>';
+          he.tType.textContent=s.text.typeLabel;he.tType.className='hero-txt-type '+s.text.type;hBuildVisual(s);he.tCite.textContent=s.text.cite;
+          he.tStats.innerHTML=s.text.stats.map(t=>'<span class="hero-txt-stat">'+t+'</span>').join('');
+          he.cNum.textContent=s.counter.num;he.cTime.textContent=s.counter.time;
+          /* Start vortex */
+          setTimeout(()=>hStartVortex(s),200);
+          /* Reset and loop */
+          setTimeout(()=>{he.searchBar.classList.remove('active');he.resultArea.classList.remove('show');he.counter.classList.remove('show');hCurrent=(hCurrent+1)%hScenarios.length;setTimeout(hRun,600);},8000);
+        }},35);
+      },1500);
+    }
     setTimeout(hRun,400);
   </script>
 
+<script>
+(function() {
+    const c = document.getElementById('sphereCanvas');
+    const ctx = c.getContext('2d');
+    const W = c.width, H = c.height;
+    const cx = W / 2, cy = H / 2 - 10;
+    const R = 140;
+
+    const types = [
+        { color: '#3399ff', label: 'Video', weight: 0.28 },
+        { color: '#44ee77', label: 'Sensors', weight: 0.22 },
+        { color: '#ff9933', label: 'Actions', weight: 0.18 },
+        { color: '#dd55dd', label: 'Audio', weight: 0.15 },
+        { color: '#44dddd', label: 'Images', weight: 0.12 },
+        { color: '#ffffff', label: 'Text', weight: 0.05, isText: true },
+    ];
+
+    const dots = [];
+    const NUM = 2500;
+
+    for (let i = 0; i < NUM; i++) {
+        // Pick type based on weight
+        let r = Math.random();
+        let type = types[0];
+        let cumulative = 0;
+        for (const t of types) {
+            cumulative += t.weight;
+            if (r <= cumulative) { type = t; break; }
+        }
+
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+        const radius = R * (0.8 + Math.random() * 0.2);
+
+        dots.push({
+            theta, phi, r: radius,
+            color: type.color,
+            isText: type.isText || false,
+            label: type.label,
+            alive: true,
+            brightness: 1,
+            size: type.isText ? 2 : (2.5 + Math.random() * 2.5),
+            deathFlash: 0,
+        });
+    }
+
+    let rotY = 0;
+    let sweepAngle = -0.5;
+    let phase = 'before'; // before, sweeping, after, reset
+    let phaseTimer = 0;
+    let beforeTimer = 0;
+
+    // Labels around sphere
+    const labels = [
+        { angle: 0.3, label: 'Video', color: '#3399ff' },
+        { angle: 1.2, label: 'Sensors', color: '#44ee77' },
+        { angle: 2.5, label: 'Actions', color: '#ff9933' },
+        { angle: 3.8, label: 'Audio', color: '#dd55dd' },
+        { angle: 5.0, label: 'Images', color: '#44dddd' },
+    ];
+
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, W, H);
+
+        rotY += 0.003;
+
+        // Phase management
+        if (phase === 'before') {
+            beforeTimer++;
+            if (beforeTimer > 30) { phase = 'sweeping'; sweepAngle = 0; } // 0.5s glimpse
+        } else if (phase === 'sweeping') {
+            sweepAngle += 0.035; // fast sweep ~3 seconds
+            if (sweepAngle > Math.PI * 2.2) { phase = 'after'; phaseTimer = 0; }
+        } else if (phase === 'after') {
+            phaseTimer++;
+            if (phaseTimer > 180) { phase = 'reset'; phaseTimer = 0; }
+        } else if (phase === 'reset') {
+            phaseTimer++;
+            dots.forEach(d => {
+                d.brightness += (1 - d.brightness) * 0.02;
+                d.alive = true;
+            });
+            if (phaseTimer > 60) { phase = 'before'; beforeTimer = 0; }
+        }
+
+        // Update DOM status line below canvas
+        const statusEl = document.getElementById('sphereStatus');
+        if (statusEl) {
+            if (phase === 'before' || phase === 'reset') {
+                statusEl.textContent = '';
+            } else if (phase === 'sweeping') {
+                statusEl.textContent = 'Scanning...';
+                statusEl.style.color = '#ef4444';
+            } else if (phase === 'after') {
+                statusEl.innerHTML = '<span style="font-size:24px;color:#ef4444;font-weight:700;">Only 5% has ever been visible to AI.</span><br><span style="font-size:24px;color:#00D4FF;font-weight:700;">We are unlocking the other 95%.</span>';
+            }
+        }
+
+        // Floating type labels around sphere
+        if (phase === 'before' || phase === 'reset') {
+            labels.forEach(l => {
+                const lx = cx + Math.cos(l.angle + rotY * 0.5) * (R + 50);
+                const ly = cy + Math.sin(l.angle + rotY * 0.5) * (R + 30);
+                ctx.font = '700 13px Inter, sans-serif';
+                ctx.fillStyle = l.color;
+                ctx.globalAlpha = 0.85;
+                ctx.textAlign = 'center';
+                ctx.fillText(l.label, lx, ly);
+                // Line to sphere edge
+                const edgeX = cx + Math.cos(l.angle + rotY * 0.5) * R;
+                const edgeY = cy + Math.sin(l.angle + rotY * 0.5) * R;
+                ctx.strokeStyle = l.color;
+                ctx.globalAlpha = 0.15;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(lx, ly + 5);
+                ctx.lineTo(edgeX, edgeY);
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            });
+        }
+
+        // Kill dots during sweep
+        if (phase === 'sweeping') {
+            dots.forEach(d => {
+                if (d.isText || !d.alive) return;
+                const dotAngle = ((d.theta + rotY) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+                const sweep = (sweepAngle % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+                const diff = (dotAngle - sweep + Math.PI * 2) % (Math.PI * 2);
+                if (diff < 0.2 && diff > 0) {
+                    d.alive = false;
+                    d.deathFlash = 1;
+                }
+            });
+        }
+
+        // Sweep beam
+        if (phase === 'sweeping') {
+            const beamLen = R * 1.3;
+            const bx = cx + Math.cos(sweepAngle) * beamLen;
+            const by = cy + Math.sin(sweepAngle) * beamLen * 0.6;
+
+            // Beam trail (arc)
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, beamLen, sweepAngle - 0.3, sweepAngle);
+            ctx.closePath();
+            const trailGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, beamLen);
+            trailGrad.addColorStop(0, 'rgba(239,68,68,0.08)');
+            trailGrad.addColorStop(1, 'rgba(239,68,68,0.02)');
+            ctx.fillStyle = trailGrad;
+            ctx.fill();
+
+            // Beam line
+            ctx.strokeStyle = 'rgba(239,68,68,0.5)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(bx, by);
+            ctx.stroke();
+
+            // Beam tip
+            ctx.fillStyle = 'rgba(239,68,68,0.8)';
+            ctx.beginPath();
+            ctx.arc(bx, by, 4, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Project and draw dots
+        const projected = dots.map(d => {
+            const x3 = d.r * Math.sin(d.phi) * Math.cos(d.theta + rotY);
+            const y3 = d.r * Math.cos(d.phi);
+            const z3 = d.r * Math.sin(d.phi) * Math.sin(d.theta + rotY);
+            const scale = 500 / (500 + z3);
+            return { sx: cx + x3 * scale, sy: cy + y3 * scale * 0.85, z: z3, d, scale };
+        });
+
+        projected.sort((a, b) => a.z - b.z);
+
+        projected.forEach(p => {
+            const d = p.d;
+
+            // Death flash
+            if (d.deathFlash > 0) {
+                d.deathFlash -= 0.05;
+                ctx.globalAlpha = d.deathFlash * 0.6;
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(p.sx, p.sy, d.size * p.scale * 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Smooth brightness transition
+            const targetB = d.alive ? 1 : (d.isText ? 1 : 0.03);
+            d.brightness += (targetB - d.brightness) * 0.06;
+
+            const alpha = (0.5 + p.scale * 0.5) * d.brightness;
+            if (alpha < 0.01) return;
+
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = d.alive ? d.color : '#0a0a0a';
+            ctx.beginPath();
+            ctx.arc(p.sx, p.sy, Math.max(0.5, d.size * p.scale * d.brightness), 0, Math.PI * 2);
+            ctx.fill();
+
+            // Glow for alive dots
+            if (d.alive && d.brightness > 0.7) {
+                ctx.globalAlpha = alpha * 0.15;
+                ctx.fillStyle = d.color;
+                ctx.beginPath();
+                ctx.arc(p.sx, p.sy, d.size * p.scale * 2.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        });
+        ctx.globalAlpha = 1;
+
+        // Legend now rendered as DOM elements
+
+        // Stats now shown in DOM, not canvas
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+})();
+
+// Rotating domain label
+(function() {
+    const domains = ['Legal', 'Finance', 'Education', 'Defense', 'Energy', 'Logistics', 'Insurance', 'Pharma', 'Retail', 'Gaming'];
+    let idx = 0;
+    const el = document.getElementById('rotatingDomain');
+    if (!el) return;
+    setInterval(() => {
+        el.style.opacity = '0';
+        setTimeout(() => {
+            idx = (idx + 1) % domains.length;
+            el.textContent = domains[idx];
+            el.style.opacity = '1';
+        }, 300);
+    }, 2000);
+    el.style.transition = 'opacity 0.3s ease';
+})();
+
+// Solutions - rotating use case
+(function() {
+    const useCases = ['courtroom depositions', 'bodycam footage', 'medical imaging', 'factory telemetry', 'satellite imagery', 'municipal meetings', 'pharma research', 'defense intelligence'];
+    let ucIdx = 0;
+    const ucEl = document.getElementById('rotatingUseCase');
+    if (!ucEl) return;
+    setInterval(() => {
+        ucEl.style.opacity = '0';
+        setTimeout(() => {
+            ucIdx = (ucIdx + 1) % useCases.length;
+            ucEl.textContent = useCases[ucIdx];
+            ucEl.style.opacity = '1';
+        }, 300);
+    }, 2500);
+})();
+
+// Solutions - hours counter
+(function() {
+    const el = document.getElementById('solHoursCounter');
+    if (!el) return;
+    const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                let h = 0;
+                const target = 4000;
+                const ease = (t) => 1 - Math.pow(1 - t, 3);
+                let frame = 0;
+                const steps = 180;
+                const ramp = setInterval(() => {
+                    frame++;
+                    h = Math.floor(target * ease(frame / steps));
+                    el.textContent = h.toLocaleString();
+                    if (frame >= steps) {
+                        clearInterval(ramp);
+                        h = target;
+                        el.textContent = h.toLocaleString();
+                        setInterval(() => { h++; el.textContent = h.toLocaleString(); }, 800);
+                    }
+                }, 16);
+                obs.disconnect();
+            }
+        });
+    }, { threshold: 0.3 });
+    obs.observe(el);
+})();
+
+</script>
+<script>
+(function() {
+    const canvas = document.getElementById('engineCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const counterEl = document.getElementById('engineCounter');
+
+    // Layout zones
+    const LANES_END = W * 0.3;       // left 30% = racing lanes
+    const ENGINE_START = W * 0.3;
+    const ENGINE_END = W * 0.45;      // 15% = engine stages
+    const OUTPUT_START = W * 0.48;
+    let totalProcessed = 12847593;
+
+    // ========================
+    // LANE PACKETS (left side)
+    // ========================
+    const lanes = [
+        { y: H * 0.2, label: 'VIDEO', color: '#ef4444', packets: [] },
+        { y: H * 0.5, label: 'SENSORS', color: '#3b82f6', packets: [] },
+        { y: H * 0.8, label: 'ACTIONS', color: '#22c55e', packets: [] },
+    ];
+
+    function spawnPacket(lane) {
+        lane.packets.push({
+            x: -10 - Math.random() * 40,
+            w: 6 + Math.random() * 12,
+            h: 3 + Math.random() * 5,
+            speed: 2.5 + Math.random() * 3,
+            rot: (Math.random() - 0.5) * 0.3,
+            jitter: Math.random() * Math.PI * 2,
+        });
+    }
+    lanes.forEach(l => { for (let i = 0; i < 12; i++) { spawnPacket(l); l.packets[l.packets.length - 1].x = Math.random() * LANES_END; } });
+
+    // ========================
+    // ENGINE STAGES (center)
+    // ========================
+    const stages = [
+        { label: 'POLYMATH INDEX', y: H * 0.15, flash: 0, particles: [] },
+        { label: 'AUTO-TUNE RANKERS', y: H * 0.38, flash: 0, particles: [] },
+        { label: 'DIDACTIC QUERIES', y: H * 0.62, flash: 0, particles: [] },
+        { label: 'MULTI-MODAL GRAPH', y: H * 0.85, flash: 0, particles: [] },
+    ];
+    const engineX = (ENGINE_START + ENGINE_END) / 2;
+
+    // ========================
+    // OUTPUT PARTICLES (right side) - form "KNOWLEDGE"
+    // ========================
+    const outputParticles = [];
+    const targetPositions = [];
+
+    // Pre-render target text
+    const offscreen = document.createElement('canvas');
+    offscreen.width = W * 0.5;
+    offscreen.height = H;
+    const oCtx = offscreen.getContext('2d');
+    oCtx.fillStyle = '#fff';
+    oCtx.font = '900 48px Inter';
+    oCtx.textAlign = 'center';
+    oCtx.fillText('PERCEIVED.', offscreen.width / 2, H * 0.28);
+    oCtx.fillText('INDEXED.', offscreen.width / 2, H * 0.45);
+    oCtx.fillText('DELIVERED.', offscreen.width / 2, H * 0.62);
+
+    // Scan pixels for target positions
+    const imgData = oCtx.getImageData(0, 0, offscreen.width, offscreen.height).data;
+    for (let y = 0; y < offscreen.height; y += 3) {
+        for (let x = 0; x < offscreen.width; x += 3) {
+            const i = (y * offscreen.width + x) * 4;
+            if (imgData[i + 3] > 128) {
+                targetPositions.push({ x: OUTPUT_START + x, y: y });
+            }
+        }
+    }
+
+    // Create output particles
+    for (let i = 0; i < targetPositions.length; i++) {
+        outputParticles.push({
+            x: ENGINE_END + Math.random() * 20,
+            y: H * (0.2 + Math.random() * 0.6),
+            tx: targetPositions[i].x,
+            ty: targetPositions[i].y,
+            resolved: false,
+            resolveDelay: 0,
+            color: 'rgba(0,212,255,0.8)',
+            noiseX: ENGINE_END + Math.random() * (W - ENGINE_END),
+            noiseY: Math.random() * H,
+            size: 2,
+        });
+    }
+
+    // Wave for revealing output
+    let waveX = OUTPUT_START - 20;
+    let wavePhase = 'sweep'; // sweep, hold, reset
+    let waveTimer = 0;
+
+    // ========================
+    // BURST PARTICLES (engine flash)
+    // ========================
+    const bursts = [];
+
+    function spawnBurst(x, y) {
+        for (let i = 0; i < 5; i++) {
+            const a = Math.random() * Math.PI * 2;
+            bursts.push({
+                x, y,
+                vx: Math.cos(a) * (1.5 + Math.random() * 2),
+                vy: Math.sin(a) * (1.5 + Math.random() * 2),
+                life: 1,
+            });
+        }
+    }
+
+    // ========================
+    // CONNECTING LINES in engine
+    // ========================
+    const crossLines = [];
+
+    // ========================
+    // MAIN DRAW LOOP
+    // ========================
+    function draw() {
+        ctx.fillStyle = '#050505';
+        ctx.fillRect(0, 0, W, H);
+
+        // --- LEFT: Racing lanes ---
+        lanes.forEach((l, li) => {
+            // Lane line
+            ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 8]);
+            ctx.beginPath();
+            ctx.moveTo(0, l.y);
+            ctx.lineTo(LANES_END, l.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Label
+            ctx.font = '600 12px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#ffffff';
+            ctx.globalAlpha = 0.85;
+            ctx.fillText(l.label, 8, l.y - 14);
+            ctx.globalAlpha = 1;
+
+            // Packets
+            for (let i = l.packets.length - 1; i >= 0; i--) {
+                const p = l.packets[i];
+                p.x += p.speed;
+                const jy = Math.sin(Date.now() * 0.005 + p.jitter) * 3;
+
+                if (p.x >= LANES_END) {
+                    l.packets.splice(i, 1);
+                    spawnPacket(l);
+                    // Trigger random stage flash
+                    const si = Math.floor(Math.random() * stages.length);
+                    stages[si].flash = 1;
+                    spawnBurst(engineX, stages[si].y);
+                    totalProcessed += Math.floor(Math.random() * 500 + 200);
+                    continue;
+                }
+
+                // Motion blur trail
+                ctx.globalAlpha = 0.15;
+                ctx.fillStyle = l.color;
+                ctx.fillRect(p.x - p.w * 1.5, l.y + jy - p.h / 2, p.w * 1.2, p.h);
+                ctx.globalAlpha = 0.3;
+                ctx.fillRect(p.x - p.w * 0.8, l.y + jy - p.h / 2, p.w * 0.6, p.h);
+
+                // Main packet
+                ctx.globalAlpha = 0.85;
+                ctx.save();
+                ctx.translate(p.x, l.y + jy);
+                ctx.rotate(p.rot);
+                ctx.fillStyle = l.color;
+                ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                ctx.restore();
+                ctx.globalAlpha = 1;
+            }
+        });
+
+        // --- CENTER: Engine stages ---
+        // Subtle vertical line only, no background block
+        ctx.strokeStyle = 'rgba(0,212,255,0.06)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(engineX, 0);
+        ctx.lineTo(engineX, H);
+        ctx.stroke();
+
+        // Connecting lines between stages
+        if (Math.random() > 0.85) {
+            const s1 = stages[Math.floor(Math.random() * 3)];
+            const s2 = stages[Math.floor(Math.random() * 3)];
+            if (s1 !== s2) {
+                crossLines.push({ x1: engineX - 8, y1: s1.y, x2: engineX + 8, y2: s2.y, life: 1 });
+            }
+        }
+        for (let i = crossLines.length - 1; i >= 0; i--) {
+            const cl = crossLines[i];
+            cl.life -= 0.03;
+            if (cl.life <= 0) { crossLines.splice(i, 1); continue; }
+            ctx.strokeStyle = `rgba(0,212,255,${cl.life * 0.3})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(cl.x1, cl.y1);
+            ctx.lineTo(cl.x2, cl.y2);
+            ctx.stroke();
+        }
+
+        // Stage nodes
+        stages.forEach(s => {
+            s.flash *= 0.9;
+            const glow = 0.25 + s.flash * 0.75;
+
+            // Glow
+            if (s.flash > 0.1) {
+                const sg = ctx.createRadialGradient(engineX, s.y, 0, engineX, s.y, 35);
+                sg.addColorStop(0, `rgba(0,212,255,${s.flash * 0.4})`);
+                sg.addColorStop(1, 'transparent');
+                ctx.fillStyle = sg;
+                ctx.fillRect(engineX - 35, s.y - 35, 70, 70);
+            }
+
+            // Ring
+            ctx.beginPath();
+            ctx.arc(engineX, s.y, 14, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(0,212,255,${glow})`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Inner dot
+            ctx.beginPath();
+            ctx.arc(engineX, s.y, 3, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(0,212,255,${glow})`;
+            ctx.fill();
+
+            // Label
+            ctx.font = '600 12px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = `rgba(255,255,255,${0.8 + s.flash * 0.2})`;
+            ctx.fillText(s.label, engineX, s.y + 30);
+
+            // Arrow going right
+            const arrowX = engineX + 22;
+            ctx.strokeStyle = `rgba(0,212,255,${0.15 + s.flash * 0.5})`;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(engineX + 16, s.y);
+            ctx.lineTo(arrowX + 10, s.y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(arrowX + 10, s.y);
+            ctx.lineTo(arrowX + 5, s.y - 3);
+            ctx.moveTo(arrowX + 10, s.y);
+            ctx.lineTo(arrowX + 5, s.y + 3);
+            ctx.stroke();
+        });
+
+        // Burst particles
+        for (let i = bursts.length - 1; i >= 0; i--) {
+            const b = bursts[i];
+            b.x += b.vx;
+            b.y += b.vy;
+            b.vx *= 0.97;
+            b.vy *= 0.97;
+            b.life -= 0.025;
+            if (b.life <= 0) { bursts.splice(i, 1); continue; }
+            ctx.globalAlpha = b.life;
+            ctx.fillStyle = '#00D4FF';
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, 2 * b.life, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        // --- RIGHT: Output particles forming KNOWLEDGE ---
+
+        // Wave control
+        if (wavePhase === 'sweep') {
+            waveX += 2.5;
+            if (waveX > W + 30) { wavePhase = 'hold'; waveTimer = 0; }
+        } else if (wavePhase === 'hold') {
+            waveTimer++;
+            if (waveTimer > 150) { wavePhase = 'reset'; waveTimer = 0; }
+        } else if (wavePhase === 'reset') {
+            waveTimer++;
+            if (waveTimer > 100) {
+                wavePhase = 'sweep';
+                waveX = OUTPUT_START - 20;
+                outputParticles.forEach(p => {
+                    p.resolved = false;
+                    p.x = p.noiseX;
+                    p.y = p.noiseY;
+                });
+            }
+        }
+
+        // Wave line
+        if (wavePhase === 'sweep' && waveX > OUTPUT_START && waveX < W) {
+            ctx.strokeStyle = 'rgba(0,212,255,0.5)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(waveX, 0);
+            ctx.lineTo(waveX, H);
+            ctx.stroke();
+
+            // Glow trail
+            const wg = ctx.createLinearGradient(waveX - 50, 0, waveX, 0);
+            wg.addColorStop(0, 'transparent');
+            wg.addColorStop(1, 'rgba(0,212,255,0.04)');
+            ctx.fillStyle = wg;
+            ctx.fillRect(waveX - 50, 0, 50, H);
+        }
+
+        // Draw output particles
+        outputParticles.forEach(p => {
+            if (wavePhase === 'sweep' && !p.resolved && p.tx < waveX) {
+                p.resolved = true;
+            }
+
+            if (p.resolved && wavePhase !== 'reset') {
+                p.x += (p.tx - p.x) * 0.12;
+                p.y += (p.ty - p.y) * 0.12;
+                ctx.fillStyle = '#ffffff';
+                ctx.globalAlpha = 0.9;
+            } else if (wavePhase === 'reset') {
+                p.x += (p.noiseX - p.x) * 0.04;
+                p.y += (p.noiseY - p.y) * 0.04;
+                ctx.fillStyle = 'rgba(0,212,255,0.2)';
+                ctx.globalAlpha = 0.3;
+            } else {
+                // Jitter
+                p.x += (Math.random() - 0.5) * 2.5;
+                p.y += (Math.random() - 0.5) * 2.5;
+                p.x = Math.max(OUTPUT_START, Math.min(W, p.x));
+                p.y = Math.max(0, Math.min(H, p.y));
+                ctx.fillStyle = 'rgba(0,212,255,0.15)';
+                ctx.globalAlpha = 0.25;
+            }
+
+            ctx.fillRect(p.x, p.y, p.size, p.size);
+        });
+        ctx.globalAlpha = 1;
+
+        // Counter
+        counterEl.textContent = totalProcessed.toLocaleString() + ' items perceived';
+
+        requestAnimationFrame(draw);
+    }
+
+    draw();
+})();
+
+
+</script>
+
+<!-- Solution Demo Animations -->
+<style>
+@keyframes solBlink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes solShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@keyframes solWaveBar { 0%,100% { height: 20%; } 50% { height: 100%; } }
+</style>
+<script>
+(function() {
+  const njQuery = 'What was the transportation budget for 2024?';
+  const njText = document.getElementById('njQueryText');
+  const njCursor = document.getElementById('njCursor');
+  const njLoading = document.getElementById('njLoading');
+  const njAnswer = document.getElementById('njAnswer');
+  const njMeta = document.getElementById('njMeta');
+
+  const legalQuery = 'When did the witness change their testimony?';
+  const legalText = document.getElementById('legalQueryText');
+  const legalCursor = document.getElementById('legalCursor');
+  const legalLoading = document.getElementById('legalLoading');
+  const legalAnswer = document.getElementById('legalAnswer');
+  const legalMeta = document.getElementById('legalMeta');
+  const legalWave = document.getElementById('legalWave');
+  const legalProgressFill = document.getElementById('legalProgressFill');
+
+  if (!njText || !legalText) return;
+
+  for (let i = 0; i < 40; i++) {
+    const bar = document.createElement('div');
+    bar.style.cssText = 'flex:1;background:#a78bfa;border-radius:1px;opacity:0.4;animation:solWaveBar 1.5s ease-in-out infinite;animation-delay:' + (i * 0.04) + 's;height:' + (15 + Math.random() * 85) + '%;';
+    legalWave.appendChild(bar);
+  }
+
+  function typeText(el, text, cb) {
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < text.length) { el.textContent += text[i]; i++; }
+      else { clearInterval(interval); if (cb) cb(); }
+    }, 40);
+  }
+
+  function runNjDemo() {
+    njText.textContent = '';
+    njLoading.style.display = 'none';
+    njAnswer.style.display = 'none';
+    njAnswer.style.opacity = '0';
+    njAnswer.style.transform = 'translateY(8px)';
+    njMeta.style.display = 'none';
+    njMeta.style.opacity = '0';
+    njCursor.style.display = 'inline-block';
+
+    typeText(njText, njQuery, () => {
+      njCursor.style.display = 'none';
+      njLoading.style.display = 'block';
+      setTimeout(() => {
+        njLoading.style.display = 'none';
+        njAnswer.style.display = 'block';
+        setTimeout(() => { njAnswer.style.opacity = '1'; njAnswer.style.transform = 'translateY(0)'; }, 50);
+        setTimeout(() => { njMeta.style.display = 'block'; setTimeout(() => { njMeta.style.opacity = '1'; }, 50); }, 600);
+        setTimeout(runNjDemo, 5000);
+      }, 1200);
+    });
+  }
+
+  function runLegalDemo() {
+    legalText.textContent = '';
+    legalLoading.style.display = 'none';
+    legalAnswer.style.display = 'none';
+    legalAnswer.style.opacity = '0';
+    legalAnswer.style.transform = 'translateY(8px)';
+    legalMeta.style.display = 'none';
+    legalMeta.style.opacity = '0';
+    legalCursor.style.display = 'inline-block';
+    legalProgressFill.style.width = '0%';
+
+    typeText(legalText, legalQuery, () => {
+      legalCursor.style.display = 'none';
+      legalLoading.style.display = 'block';
+      setTimeout(() => {
+        legalLoading.style.display = 'none';
+        legalAnswer.style.display = 'block';
+        setTimeout(() => { legalAnswer.style.opacity = '1'; legalAnswer.style.transform = 'translateY(0)'; }, 50);
+        let prog = 0;
+        const progInterval = setInterval(() => {
+          prog += 0.5;
+          legalProgressFill.style.width = Math.min(prog, 100) + '%';
+          if (prog >= 100) clearInterval(progInterval);
+        }, 20);
+        setTimeout(() => { legalMeta.style.display = 'block'; setTimeout(() => { legalMeta.style.opacity = '1'; }, 50); }, 600);
+        setTimeout(runLegalDemo, 6000);
+      }, 1200);
+    });
+  }
+
+  const njObs = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) { setTimeout(runNjDemo, 300); njObs.disconnect(); }
+  }, { threshold: 0.3 });
+  njObs.observe(document.getElementById('njDemo'));
+
+  const legalObs = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) { setTimeout(runLegalDemo, 800); legalObs.disconnect(); }
+  }, { threshold: 0.3 });
+  legalObs.observe(document.getElementById('legalDemo'));
+})();
+</script>
 </body>
 </html>
