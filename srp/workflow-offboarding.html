@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offboarding Workflow — Full Spec (20 Steps)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; padding: 40px; min-height: 100vh; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 48px; }
+    .header .tag { display: inline-block; font-size: 10px; font-weight: 700; background: rgba(0,212,255,0.08); color: #00d4ff; padding: 4px 14px; border-radius: 20px; border: 1px solid rgba(0,212,255,0.2); margin-bottom: 16px; letter-spacing: 0.5px; text-transform: uppercase; }
+    .header h1 { font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+    .header h1 span { color: #00d4ff; }
+    .header p { font-size: 13px; color: #666; }
+
+    .timeline { position: relative; padding-left: 56px; }
+    .timeline::before { content: ''; position: absolute; left: 19px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #00d4ff, rgba(0,212,255,0.05)); }
+
+    .step { position: relative; margin-bottom: 24px; }
+    .step-dot { position: absolute; left: -56px; width: 38px; height: 38px; border-radius: 50%; background: #111; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; z-index: 1; }
+    .step-dot.trigger { border: 2px solid #eab308; color: #eab308; }
+    .step-dot.auto { border: 2px solid #34d399; color: #34d399; }
+    .step-dot.approval { border: 2px solid #f59e0b; color: #f59e0b; }
+    .step-dot.conversation { border: 2px solid #a78bfa; color: #a78bfa; }
+    .step-dot.proactive { border: 2px solid #f472b6; color: #f472b6; }
+    .step-dot.complete { border: 2px solid #34d399; color: #34d399; background: rgba(52,211,153,0.1); }
+    .step-dot.error { border: 2px solid #ef4444; color: #ef4444; }
+    .step-dot.placeholder { border: 2px solid #6b7280; color: #6b7280; }
+
+    .step-card { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 18px 22px; }
+    .step-card.trigger-card { border-color: rgba(234,179,8,0.3); }
+    .step-card.auto-card { border-color: rgba(52,211,153,0.15); }
+    .step-card.approval-card { border-color: rgba(245,158,11,0.25); }
+    .step-card.conversation-card { border-color: rgba(167,139,250,0.25); }
+    .step-card.proactive-card { border-color: rgba(244,114,182,0.25); }
+    .step-card.complete-card { border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.02); }
+    .step-card.error-card { border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.02); }
+    .step-card.placeholder-card { border-color: rgba(107,114,128,0.25); background: rgba(107,114,128,0.02); }
+
+    .step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .step-title { font-size: 15px; font-weight: 700; color: #fff; }
+    .step-badge { font-size: 9px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+    .badge-trigger { background: rgba(234,179,8,0.12); color: #eab308; border: 1px solid rgba(234,179,8,0.2); }
+    .badge-auto { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+    .badge-approval { background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+    .badge-conversation { background: rgba(167,139,250,0.12); color: #a78bfa; border: 1px solid rgba(167,139,250,0.2); }
+    .badge-proactive { background: rgba(244,114,182,0.12); color: #f472b6; border: 1px solid rgba(244,114,182,0.2); }
+    .badge-complete { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+    .badge-error { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+    .badge-placeholder { background: rgba(107,114,128,0.12); color: #6b7280; border: 1px solid rgba(107,114,128,0.2); }
+
+    .step-body { font-size: 12px; color: #888; line-height: 1.7; }
+    .step-body strong { color: #e5e5e5; }
+
+    .condition { background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 8px; padding: 12px 16px; margin-top: 10px; font-size: 11px; color: #a0a0a0; line-height: 1.8; }
+    .condition .if { color: #00d4ff; font-weight: 600; }
+    .condition .then { color: #34d399; }
+    .condition .else { color: #f59e0b; }
+    .condition .fail { color: #ef4444; }
+
+    .notify { background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.1); border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 11px; color: #888; line-height: 1.7; }
+    .notify-label { font-size: 9px; font-weight: 600; color: #00d4ff; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+
+    .substeps { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .substep { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 8px; padding: 10px 14px; }
+    .substep-title { font-size: 11px; font-weight: 600; color: #e5e5e5; margin-bottom: 4px; }
+    .substep-body { font-size: 11px; color: #777; line-height: 1.6; }
+
+    .matrix { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 10px; }
+    .matrix th { background: #0d0d0d; color: #00d4ff; padding: 8px 6px; text-align: left; border: 1px solid #1a1a1a; font-weight: 600; }
+    .matrix td { background: #0a0a0a; color: #888; padding: 6px; border: 1px solid #1a1a1a; }
+    .matrix td.yes { color: #34d399; }
+    .matrix td.no { color: #ef4444; }
+    .matrix td.conditional { color: #f59e0b; }
+
+    .section-divider { text-align: center; padding: 16px 0; font-size: 10px; font-weight: 600; color: #333; text-transform: uppercase; letter-spacing: 1px; }
+
+    .footer { text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid #1e1e1e; }
+    .footer-stats { display: flex; justify-content: center; gap: 32px; margin-bottom: 16px; }
+    .footer-stat { text-align: center; }
+    .footer-num { font-size: 20px; font-weight: 800; color: #34d399; }
+    .footer-label { font-size: 10px; color: #555; }
+    .footer p { font-size: 12px; color: #555; }
+    .footer .highlight { color: #00d4ff; font-weight: 600; }
+
+    .legend { display: flex; gap: 16px; justify-content: center; margin-bottom: 32px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #666; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .legend-dot.t { background: #eab308; }
+    .legend-dot.a { background: #34d399; }
+    .legend-dot.ap { background: #f59e0b; }
+    .legend-dot.c { background: #a78bfa; }
+    .legend-dot.p { background: #f472b6; }
+    .legend-dot.e { background: #ef4444; }
+    .legend-dot.pl { background: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="tag">Full detailed spec — 20 steps</div>
+      <h1><span>Offboarding</span> Workflow</h1>
+      <p>Every step, every condition, every notification, every error case. Flow adapts based on employment type and departure reason.</p>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot t"></div> Trigger</div>
+      <div class="legend-item"><div class="legend-dot a"></div> Automatic</div>
+      <div class="legend-item"><div class="legend-dot ap"></div> Needs Approval</div>
+      <div class="legend-item"><div class="legend-dot p"></div> Proactive</div>
+      <div class="legend-item"><div class="legend-dot pl"></div> Placeholder</div>
+      <div class="legend-item"><div class="legend-dot e"></div> Error Handling</div>
+    </div>
+
+    <div class="timeline">
+
+      <!-- STEP 1: TRIGGER -->
+      <div class="step">
+        <div class="step-dot trigger">1</div>
+        <div class="step-card trigger-card">
+          <div class="step-header">
+            <div class="step-title">Manager or Admin Initiates Offboarding</div>
+            <div class="step-badge badge-trigger">TRIGGER</div>
+          </div>
+          <div class="step-body">
+            Someone says "Offboard [name]" in Kuri. Agent first checks who is making the request before proceeding.
+          </div>
+          <div class="condition">
+            <strong>Permission check:</strong><br>
+            <span class="if">IF</span> reporting manager <span class="then">&#8594; allow and proceed</span><br>
+            <span class="if">IF</span> admin <span class="then">&#8594; allow and proceed</span><br>
+            <span class="if">IF</span> neither <span class="fail">&#8594; deny: "Only [name]'s reporting manager or an admin can initiate offboarding."</span>
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Data collected:</div>
+              <div class="substep-body">Employee name, last working day, reason for departure (resignation, termination, layoff, contract end, internship end), notice period</div>
+            </div>
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> all details provided <span class="then">&#8594; proceed to Step 2</span><br>
+            <span class="if">IF</span> any detail missing <span class="else">&#8594; ask manager for missing info</span><br>
+            <span class="if">IF</span> contractor with contract end date <span class="then">&#8594; agent may auto-detect and suggest</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: CLASSIFY -->
+      <div class="step">
+        <div class="step-dot auto">2</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Classify Offboarding & Generate Plan</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            <strong>This is the foundational step.</strong> The agent classifies the departure and generates a tailored offboarding plan. Every step that follows is shaped by this classification.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Agent checks three things:</div>
+              <div class="substep-body">
+                <strong>A. Employment type:</strong> Full-time, Contractor, Intern, Advisor<br>
+                <strong>B. Reason for departure:</strong> Resignation, Termination, Layoff, Contract end, Internship end<br>
+                <strong>C. Jurisdiction:</strong> Country, state/province, company policy, legal requirements
+              </div>
+            </div>
+          </div>
+          <table class="matrix">
+            <tr>
+              <th>Step</th>
+              <th>FT Resignation</th>
+              <th>FT Termination</th>
+              <th>FT Layoff</th>
+              <th>Contractor</th>
+              <th>Intern</th>
+              <th>Advisor</th>
+            </tr>
+            <tr>
+              <td><strong>Notice period</strong></td>
+              <td class="yes">Per policy</td>
+              <td class="no">Immediate</td>
+              <td class="conditional">Per WARN Act</td>
+              <td class="conditional">Per contract</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+            </tr>
+            <tr>
+              <td><strong>Exit interview</strong></td>
+              <td class="yes">Yes</td>
+              <td class="conditional">Optional</td>
+              <td class="yes">Yes</td>
+              <td class="conditional">Optional</td>
+              <td class="yes">Feedback</td>
+              <td class="no">No</td>
+            </tr>
+            <tr>
+              <td><strong>Exit documents</strong></td>
+              <td>Full package</td>
+              <td>Separation + release</td>
+              <td>Severance agreement</td>
+              <td>Contract closeout</td>
+              <td>NDA reminder</td>
+              <td>Equity closeout</td>
+            </tr>
+            <tr>
+              <td><strong>Knowledge transfer</strong></td>
+              <td class="yes">Full auto-scan</td>
+              <td class="yes">Immediate transfer</td>
+              <td class="yes">Full auto-scan</td>
+              <td class="conditional">Deliverable handoff</td>
+              <td class="conditional">Minimal</td>
+              <td class="conditional">Minimal</td>
+            </tr>
+            <tr>
+              <td><strong>Access revocation</strong></td>
+              <td>Last day</td>
+              <td class="no">Immediate</td>
+              <td>Last day</td>
+              <td>Contract end</td>
+              <td>Last day</td>
+              <td>Last day</td>
+            </tr>
+            <tr>
+              <td><strong>Sensitive approval</strong></td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes (urgent)</td>
+              <td class="yes">Yes</td>
+              <td class="conditional">If applicable</td>
+              <td class="no">No</td>
+              <td class="conditional">If applicable</td>
+            </tr>
+            <tr>
+              <td><strong>Final payment</strong></td>
+              <td>Salary + PTO</td>
+              <td>Immediate + severance</td>
+              <td>Severance package</td>
+              <td>Final invoice</td>
+              <td>Prorated stipend</td>
+              <td>Per agreement</td>
+            </tr>
+            <tr>
+              <td><strong>Team notification</strong></td>
+              <td class="yes">Auto-notify</td>
+              <td class="no">Manager controlled</td>
+              <td class="no">Manager controlled</td>
+              <td class="yes">Auto-notify</td>
+              <td class="yes">Auto-notify</td>
+              <td class="no">Not needed</td>
+            </tr>
+            <tr>
+              <td><strong>Rehire eligible</strong></td>
+              <td class="yes">Yes</td>
+              <td class="no">No (override OK)</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes (return offer)</td>
+              <td>N/A</td>
+            </tr>
+            <tr>
+              <td><strong>Benefits review</strong></td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+            </tr>
+          </table>
+          <div class="notify">
+            <div class="notify-label">Agent generates plan</div>
+            "I've classified [name]'s offboarding: [type] / [reason] / [jurisdiction]. Here's the plan with [X] steps that apply. I'll come to you for approvals on [list]."
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: TIMELINE -->
+      <div class="step">
+        <div class="step-dot auto">3</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Calculate Timeline</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent calculates the full offboarding timeline based on classification from Step 2.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> last day is today or passed <span class="fail">&#8594; URGENT. All steps execute immediately.</span><br>
+            <span class="if">IF</span> termination <span class="fail">&#8594; skip timeline, execute critical steps immediately</span><br>
+            <span class="if">IF</span> last day &gt; 30 days away <span class="then">&#8594; weekly check-in cadence</span><br>
+            <span class="if">IF</span> last day &lt; 2 weeks away <span class="else">&#8594; start all steps immediately</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: NOTIFY EMPLOYEE -->
+      <div class="step">
+        <div class="step-dot auto">4</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Notify Employee</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent sends personalized message. Tone determined by classification.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> resignation <span class="then">&#8594; supportive: "We're sorry to see you go..."</span><br>
+            <span class="if">IF</span> termination <span class="else">&#8594; professional: "Your employment ends on [date]..."</span><br>
+            <span class="if">IF</span> layoff <span class="else">&#8594; empathetic: "We want to make this transition smooth..."</span><br>
+            <span class="if">IF</span> contract end <span class="then">&#8594; neutral: "Your contract ends on [date]..."</span><br>
+            <span class="if">IF</span> internship end <span class="then">&#8594; warm: "Your internship wraps up on [date]. Thank you..."</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: EXIT INTERVIEW -->
+      <div class="step">
+        <div class="step-dot auto">5</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Exit Interview</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            <strong>Applies to:</strong> Resignation, Layoff, Intern end. <strong>Optional:</strong> Termination, Contractor. <strong>N/A:</strong> Advisor.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> applicable per matrix <span class="then">&#8594; schedule from calendars, send pre-survey</span><br>
+            <span class="if">IF</span> employee declines <span class="else">&#8594; log as declined, don't force</span><br>
+            <span class="if">IF</span> 3+ exits mention same issue <span class="fail">&#8594; flag pattern to admin</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6: EXIT DOCUMENTS -->
+      <div class="step">
+        <div class="step-dot approval">6</div>
+        <div class="step-card approval-card">
+          <div class="step-header">
+            <div class="step-title">Exit Documents</div>
+            <div class="step-badge badge-approval">NEEDS APPROVAL</div>
+          </div>
+          <div class="step-body">
+            Agent drafts exit documents based on classification. <strong>Admin must review before sending.</strong>
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Documents by classification:</div>
+              <div class="substep-body">
+                <strong>FT Resignation:</strong> NDA reaffirm, non-compete, IP assignment, separation ack, PTO calc<br>
+                <strong>FT Termination:</strong> Separation + release, NDA, IP, immediate pay, COBRA<br>
+                <strong>FT Layoff:</strong> Severance + release, NDA, WARN Act, benefits continuation<br>
+                <strong>Contractor:</strong> Contract closeout, deliverable sign-off, final invoice<br>
+                <strong>Intern:</strong> NDA reminder, simple separation ack<br>
+                <strong>Advisor:</strong> Equity closeout, confidentiality reminder
+              </div>
+            </div>
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> admin approves <span class="then">&#8594; send to employee for signature</span><br>
+            <span class="if">IF</span> employee signs <span class="then">&#8594; stored, proceed</span><br>
+            <span class="if">IF</span> no sign in 48hrs <span class="else">&#8594; reminder</span><br>
+            <span class="if">IF</span> refuses <span class="fail">&#8594; flag to admin and legal</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 7: EXIT CHECKLIST -->
+      <div class="step">
+        <div class="step-dot auto">7</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Exit Checklist for Employee</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Personalized checklist based on classification. Full-time gets full list, contractor gets deliverable + invoice focus, intern gets simplified version.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> item not done 3 days before last day <span class="else">&#8594; remind employee</span><br>
+            <span class="if">IF</span> item not done on last day <span class="fail">&#8594; escalate to manager</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 8: AUTOMATED WORK HANDOFF -->
+      <div class="step">
+        <div class="step-dot auto">8</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Automated Work Handoff</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            <strong>Fully automated.</strong> Agent scans all connected tools and reassigns all in-progress work. No manual handoff required.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Code & Engineering:</div>
+              <div class="substep-body">Scan GitHub for open PRs and assigned issues &#8594; auto-reassign to manager. Flag branches with uncommitted work.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Project Management:</div>
+              <div class="substep-body">Scan Trello/Jira/Notion for assigned tasks &#8594; auto-reassign. Flag tasks where person is sole assignee.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Calendar & Meetings:</div>
+              <div class="substep-body">Transfer organized meetings to manager. Flag external client meetings for re-introduction.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Documents & Files:</div>
+              <div class="substep-body">Scan Drive/Notion for sole-owner files &#8594; auto-transfer ownership. Ensure shared folders have other admins.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Communication:</div>
+              <div class="substep-body">Set up email auto-reply. Configure forwarding to manager (if admin approves).</div>
+            </div>
+          </div>
+          <div class="notify">
+            <div class="notify-label">Agent generates handoff summary</div>
+            "Here's everything [name] had in progress. I've automatically reassigned it all to [manager]: 3 open PRs, 7 tasks, 2 client meetings flagged, 5 sole-owner documents transferred. If you want to reassign anything, just tell me."
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> resignation/layoff/contract end <span class="then">&#8594; handoff runs during notice period</span><br>
+            <span class="if">IF</span> termination <span class="fail">&#8594; handoff runs immediately, same day</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 9: TEAM COMMUNICATION -->
+      <div class="step">
+        <div class="step-dot auto">9</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Team Communication</div>
+            <div class="step-badge badge-auto">AUTOMATIC / MANAGER-CONTROLLED</div>
+          </div>
+          <div class="step-body">
+            <strong>Routine departures:</strong> agent auto-sends (manager can edit). <strong>Sensitive departures:</strong> agent drafts, NEVER auto-sends.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Auto-notify (manager can edit before send):</div>
+              <div class="substep-body">
+                <strong>Resignation:</strong> "[Name] is leaving on [date]. We wish them well."<br>
+                <strong>Contract end:</strong> "[Name]'s contract concludes on [date]."<br>
+                <strong>Internship end:</strong> "[Name]'s internship wraps up on [date]. Thank you!"
+              </div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Manager-controlled (agent drafts, waits for explicit approval):</div>
+              <div class="substep-body">
+                <strong>Termination:</strong> Agent drafts but NEVER sends. Manager decides timing and wording.<br>
+                <strong>Layoff:</strong> Same. Agent drafts, manager controls everything.
+              </div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">If departing employee managed people:</div>
+              <div class="substep-body">Agent identifies direct reports &#8594; asks manager who they should report to &#8594; notifies direct reports privately before any team announcement.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">External contacts/clients:</div>
+              <div class="substep-body">Agent scans for client meetings/CRM entries &#8594; flags to manager for re-introduction. Agent does NOT contact external parties.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 10: SCHEDULE ACCESS REVOCATION -->
+      <div class="step">
+        <div class="step-dot auto">10</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Schedule Access Revocation</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent categorizes all tools and schedules revocation. Timing based on classification.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Non-sensitive (auto-revoke, no approval):</div>
+              <div class="substep-body">Slack, Google Calendar, Discord, Notion, shared drives</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Sensitive (requires admin approval):</div>
+              <div class="substep-body">GitHub, Claude Code, AWS/GCP, admin panels, financial tools, production systems</div>
+            </div>
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> resignation/layoff/contract/intern <span class="then">&#8594; non-sensitive on last day, sensitive approval 5 days before</span><br>
+            <span class="if">IF</span> termination <span class="fail">&#8594; ALL revocation requested immediately. URGENT.</span><br>
+            <span class="if">IF</span> last day passed and access still active <span class="fail">&#8594; daily URGENT alert: security risk</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 11: ADMIN APPROVES REVOCATION -->
+      <div class="step">
+        <div class="step-dot approval">11</div>
+        <div class="step-card approval-card">
+          <div class="step-header">
+            <div class="step-title">Admin Approves Sensitive Revocation</div>
+            <div class="step-badge badge-approval">NEEDS APPROVAL</div>
+          </div>
+          <div class="step-body">
+            Agent presents each sensitive tool with details. Options: [Revoke all now] [Revoke on last day] [Review individually]
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> no response 24hrs <span class="else">&#8594; reminder</span><br>
+            <span class="if">IF</span> no response 48hrs <span class="fail">&#8594; escalate to super admin</span><br>
+            <span class="if">IF</span> termination and no response 4hrs <span class="fail">&#8594; escalate immediately (security risk)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 12: CALCULATE FINAL PAYMENT -->
+      <div class="step">
+        <div class="step-dot auto">12</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Calculate Final Payment</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent calculates based on classification. Includes jurisdiction-specific rules.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-body">
+                <strong>FT Resignation:</strong> Prorated salary + PTO payout + expenses - deductions<br>
+                <strong>FT Termination:</strong> Immediate pay + severance (if applicable) + PTO + COBRA<br>
+                <strong>FT Layoff:</strong> Severance package + prorated salary + PTO + benefits<br>
+                <strong>Contractor:</strong> Final invoice per contract terms + expenses<br>
+                <strong>Intern:</strong> Prorated stipend<br>
+                <strong>Advisor:</strong> Per advisory agreement + equity vesting status
+              </div>
+            </div>
+          </div>
+          <div class="notify">
+            <div class="notify-label">Jurisdiction flags</div>
+            California: same-day final pay on termination. Other states: varies. India: gratuity if 5+ years. Canada: statutory severance. Agent flags timing requirements.
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 13: ADMIN APPROVES PAYMENT -->
+      <div class="step">
+        <div class="step-dot approval">13</div>
+        <div class="step-card approval-card">
+          <div class="step-header">
+            <div class="step-title">Admin Approves Final Payment</div>
+            <div class="step-badge badge-approval">NEEDS APPROVAL</div>
+          </div>
+          <div class="step-body">
+            Full breakdown shown. <strong>Agents NEVER release payment without admin approval.</strong> Options: [Approve] [Adjust] [Hold]
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> approved <span class="then">&#8594; proceed to execution</span><br>
+            <span class="if">IF</span> adjusted <span class="else">&#8594; recalculate, re-present</span><br>
+            <span class="if">IF</span> held <span class="else">&#8594; ask when to revisit</span><br>
+            <span class="if">IF</span> termination + jurisdiction requires immediate pay <span class="fail">&#8594; URGENT reminders from hour 1</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 14: EXECUTE -->
+      <div class="step">
+        <div class="step-dot auto">14</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Execute Revocations and Payment</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Revoke each tool, verify via API, log with timestamp. Initiate ACH payment. Notify employee and admin.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> revocation fails <span class="fail">&#8594; retry once, then alert admin for manual revocation</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 15: EQUIPMENT -->
+      <div class="step">
+        <div class="step-dot auto">15</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Equipment Return</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            <strong>Applies to:</strong> Full-time (all), Interns, Contractors (if equipment issued). <strong>N/A:</strong> Advisors.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> 3 days before last day <span class="then">&#8594; send reminder with specific item list</span><br>
+            <span class="if">IF</span> not returned by last day <span class="else">&#8594; daily reminder</span><br>
+            <span class="if">IF</span> not returned 7 days after <span class="fail">&#8594; escalate to admin</span><br>
+            <span class="if">IF</span> termination <span class="fail">&#8594; equipment return flagged as urgent from day 1</span><br>
+            <span class="if">IF</span> remote allowance (no physical equipment) <span class="then">&#8594; mark N/A</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 16: BENEFITS -->
+      <div class="step">
+        <div class="step-dot placeholder">16</div>
+        <div class="step-card placeholder-card">
+          <div class="step-header">
+            <div class="step-title">Benefits & Insurance Cutoff Review</div>
+            <div class="step-badge badge-placeholder">PLACEHOLDER</div>
+          </div>
+          <div class="step-body">
+            <strong>Applies to:</strong> Full-time employees only. <strong>Currently a skeleton step</strong> — creates a manual review task. Full automation to be built later.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">What the agent does now:</div>
+              <div class="substep-body">
+                Check if employee was enrolled in benefits (health, dental, vision, life, 401k).<br>
+                Calculate benefit cutoff date based on last day and company policy.<br>
+                Create task for admin: "Review benefits cutoff for [name]. Insurance ends [date]. Check COBRA/equivalent."
+              </div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">To be built later (with Nirmit):</div>
+              <div class="substep-body">
+                Automatic COBRA notice generation (US). Benefits continuation calculation. 401k rollover instructions. State-specific rules. Integration with benefits providers.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 17: REHIRE -->
+      <div class="step">
+        <div class="step-dot auto">17</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Rehire Eligibility</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent auto-sets rehire eligibility based on classification. Manager can override.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> resignation <span class="then">&#8594; Eligible</span><br>
+            <span class="if">IF</span> termination <span class="fail">&#8594; Not eligible (manager can override)</span><br>
+            <span class="if">IF</span> layoff <span class="then">&#8594; Eligible</span><br>
+            <span class="if">IF</span> contract end <span class="then">&#8594; Eligible for future contracts</span><br>
+            <span class="if">IF</span> internship end <span class="then">&#8594; Eligible (flag for return offer consideration)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 18: ALUMNI -->
+      <div class="step">
+        <div class="step-dot auto">18</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Create Alumni Record</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Permanent record: name, role, tenure, exit notes, rehire status, key contributions.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> resignation/layoff/contract/intern <span class="then">&#8594; always create</span><br>
+            <span class="if">IF</span> termination <span class="conditional">&#8594; manager decides whether to create</span><br>
+            <span class="if">IF</span> employee opts into alumni network <span class="then">&#8594; add to directory</span><br>
+            <span class="if">IF</span> opts out <span class="else">&#8594; internal record only</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 19: FINAL DAY CHECKLIST -->
+      <div class="step">
+        <div class="step-dot proactive">19</div>
+        <div class="step-card proactive-card">
+          <div class="step-header">
+            <div class="step-title">Final Day IT/Admin Checklist</div>
+            <div class="step-badge badge-proactive">PROACTIVE</div>
+          </div>
+          <div class="step-body">
+            On last day, agent runs a final automated verification of everything.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Verification checklist:</div>
+              <div class="substep-body">
+                &#9633; Email auto-reply set up and forwarding configured<br>
+                &#9633; All non-sensitive tool access revoked<br>
+                &#9633; All sensitive tool access revoked (with approval)<br>
+                &#9633; All in-progress work reassigned<br>
+                &#9633; All sole-owner documents transferred<br>
+                &#9633; Equipment return initiated or completed<br>
+                &#9633; Final payment approved and initiated<br>
+                &#9633; Exit documents signed<br>
+                &#9633; Benefits cutoff review task created<br>
+                &#9633; Team notification sent (if applicable)<br>
+                &#9633; Alumni record created
+              </div>
+            </div>
+          </div>
+          <div class="notify">
+            <div class="notify-label">End of day report to admin</div>
+            "End of day check for [name]'s offboarding: Completed: [X] items. Pending: [list]. Action needed: [list]."
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 20: COMPLETE -->
+      <div class="step">
+        <div class="step-dot complete">&#10003;</div>
+        <div class="step-card complete-card">
+          <div class="step-header">
+            <div class="step-title">Offboarding Complete</div>
+            <div class="step-badge badge-complete">COMPLETE</div>
+          </div>
+          <div class="step-body">
+            Agent verifies all success criteria are met based on classification.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Notifications:</div>
+              <div class="substep-body">
+                <strong>To admin:</strong> "Offboarding complete. Classification: [type]/[reason]. All access revoked, payment processed, work reassigned to [manager]. [X] items auto, [X] needed approval."<br><br>
+                <strong>To manager:</strong> "[Name]'s offboarding complete. All work reassigned to you. [X PRs, X tasks, X docs transferred]."<br><br>
+                <strong>To employee (resignation/contract/intern):</strong> "Thank you for your time at AIntropy. Your final payment is on its way. We wish you all the best."<br>
+                <strong>To employee (termination/layoff):</strong> Professional, factual closing message only.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider">Error States</div>
+
+      <!-- ERROR STATES -->
+      <div class="step">
+        <div class="step-dot error">!</div>
+        <div class="step-card error-card">
+          <div class="step-header">
+            <div class="step-title">Error Handling</div>
+            <div class="step-badge badge-error">EDGE CASES</div>
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Contract end auto-detected</div>
+              <div class="substep-body">Agent detects end date approaching &#8594; alerts admin: "Start offboarding?"</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Employee refuses exit checklist</div>
+              <div class="substep-body">Log refusal, notify manager. Agent does not force.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Revocation fails</div>
+              <div class="substep-body">Retry once. If fails, alert admin for manual revocation.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Equipment not returned 14 days</div>
+              <div class="substep-body">Escalate to admin. Options: deduct, formal notice, or write off.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Payment disputed</div>
+              <div class="substep-body">Pause payment, flag to admin and finance for review.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Employee rehired during offboarding</div>
+              <div class="substep-body">Halt all steps. Ask admin: cancel offboarding or complete and re-onboard?</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Manager leaves during offboarding</div>
+              <div class="substep-body">Alert admin to reassign. Pause manager-dependent steps.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Departing employee has direct reports</div>
+              <div class="substep-body">Flag to manager for reassignment before team notification.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Work handoff finds sensitive files</div>
+              <div class="substep-body">Flag to admin instead of auto-transferring.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SUCCESS CRITERIA -->
+    <div style="background:#111;border:1px solid #1e1e1e;border-radius:14px;padding:24px;margin-top:32px;">
+      <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:16px;">Success Criteria</div>
+      <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;font-size:11px;">
+        <div style="color:#555;font-weight:600;">Criteria</div>
+        <div style="color:#555;font-weight:600;">Required</div>
+        <div style="color:#555;font-weight:600;">Verified by</div>
+
+        <div style="color:#a0a0a0;">Offboarding classified correctly</div>
+        <div style="color:#34d399;">Yes</div>
+        <div style="color:#666;">Classification record exists</div>
+
+        <div style="color:#a0a0a0;">All tool access revoked</div>
+        <div style="color:#34d399;">Yes</div>
+        <div style="color:#666;">API verification for each tool</div>
+
+        <div style="color:#a0a0a0;">Sensitive tools approved before revocation</div>
+        <div style="color:#34d399;">Yes</div>
+        <div style="color:#666;">Admin approval record</div>
+
+        <div style="color:#a0a0a0;">Final payment processed</div>
+        <div style="color:#34d399;">Yes</div>
+        <div style="color:#666;">ACH confirmation</div>
+
+        <div style="color:#a0a0a0;">All in-progress work reassigned</div>
+        <div style="color:#34d399;">Yes</div>
+        <div style="color:#666;">Handoff summary generated</div>
+
+        <div style="color:#a0a0a0;">Equipment returned or accounted for</div>
+        <div style="color:#34d399;">Yes</div>
+        <div style="color:#666;">Return log or N/A flag</div>
+
+        <div style="color:#a0a0a0;">Team notification sent</div>
+        <div style="color:#34d399;">Per classification</div>
+        <div style="color:#666;">Notification log</div>
+
+        <div style="color:#a0a0a0;">Benefits cutoff review created</div>
+        <div style="color:#34d399;">Per classification</div>
+        <div style="color:#666;">Task exists (if full-time)</div>
+
+        <div style="color:#a0a0a0;">Rehire eligibility set</div>
+        <div style="color:#34d399;">Yes</div>
+        <div style="color:#666;">Record in alumni profile</div>
+
+        <div style="color:#a0a0a0;">Alumni record created</div>
+        <div style="color:#34d399;">Per classification</div>
+        <div style="color:#666;">Record exists</div>
+
+        <div style="color:#a0a0a0;">Exit interview completed</div>
+        <div style="color:#888;">Per classification</div>
+        <div style="color:#666;">Notes stored or declined</div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="footer-stats">
+        <div class="footer-stat">
+          <div class="footer-num">20</div>
+          <div class="footer-label">Steps</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-num">12</div>
+          <div class="footer-label">Automatic</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-num">4</div>
+          <div class="footer-label">Approvals</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-num">6</div>
+          <div class="footer-label">Classification types</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-num">9</div>
+          <div class="footer-label">Error cases</div>
+        </div>
+      </div>
+      <p>Manager says <span class="highlight">"offboard Rohan"</span>. Agent classifies, adapts the plan, handles everything. Admin approves <span class="highlight">4 items</span>. Zero access left behind.</p>
+    </div>
+  </div>
+</body>
+</html>

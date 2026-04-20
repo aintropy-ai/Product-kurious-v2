@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PTO &amp; Leave Workflow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; padding: 40px; min-height: 100vh; }
+    .container { max-width: 800px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 40px; }
+    .header .tag { display: inline-block; font-size: 10px; font-weight: 700; background: rgba(0,212,255,0.08); color: #00d4ff; padding: 4px 14px; border-radius: 20px; border: 1px solid rgba(0,212,255,0.2); margin-bottom: 16px; letter-spacing: 0.5px; text-transform: uppercase; }
+    .header h1 { font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+    .header h1 span { color: #00d4ff; }
+    .header p { font-size: 13px; color: #666; }
+    .timeline { position: relative; padding-left: 50px; }
+    .timeline::before { content: ''; position: absolute; left: 19px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #00d4ff, rgba(0,212,255,0.1)); }
+    .step { position: relative; margin-bottom: 20px; }
+    .step-dot { position: absolute; left: -50px; width: 38px; height: 38px; border-radius: 50%; background: #111; border: 2px solid #00d4ff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #00d4ff; z-index: 1; }
+    .step-dot.trigger { border-color: #eab308; color: #eab308; }
+    .step-dot.auto { border-color: #34d399; color: #34d399; }
+    .step-dot.approval { border-color: #f59e0b; color: #f59e0b; }
+    .step-dot.proactive { border-color: #f472b6; color: #f472b6; }
+    .step-dot.complete { border-color: #34d399; color: #34d399; background: rgba(52,211,153,0.1); }
+    .step-card { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 16px 20px; }
+    .step-card.trigger-card { border-color: rgba(234,179,8,0.3); }
+    .step-card.auto-card { border-color: rgba(52,211,153,0.2); }
+    .step-card.approval-card { border-color: rgba(245,158,11,0.3); }
+    .step-card.proactive-card { border-color: rgba(244,114,182,0.3); }
+    .step-card.complete-card { border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.03); }
+    .step-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .step-body { font-size: 12px; color: #888; line-height: 1.6; }
+    .step-badge { font-size: 9px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+    .badge-trigger { background: rgba(234,179,8,0.12); color: #eab308; border: 1px solid rgba(234,179,8,0.2); }
+    .badge-auto { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+    .badge-approval { background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+    .badge-proactive { background: rgba(244,114,182,0.12); color: #f472b6; border: 1px solid rgba(244,114,182,0.2); }
+    .badge-complete { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+    .condition { background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 11px; color: #a0a0a0; line-height: 1.7; }
+    .condition strong { color: #00d4ff; }
+    .footer { text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #1e1e1e; }
+    .footer p { font-size: 12px; color: #555; }
+    .footer .highlight { color: #00d4ff; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="tag">Workflow</div>
+      <h1><span>PTO &amp; Leave</span> Workflow</h1>
+      <p>From "I want Friday off" to calendar updated</p>
+    </div>
+
+    <div class="timeline">
+
+      <div class="step">
+        <div class="step-dot trigger">1</div>
+        <div class="step-card trigger-card">
+          <div class="step-title">Employee Requests Time Off <span class="step-badge badge-trigger">TRIGGER</span></div>
+          <div class="step-body">Employee says "I want Friday off" in free text via Kuri. No forms, no portals. Just a sentence.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot auto">2</div>
+        <div class="step-card auto-card">
+          <div class="step-title">Check Leave Balance <span class="step-badge badge-auto">AUTO</span></div>
+          <div class="step-body">Agent checks the employee's current leave balance against the requested days.</div>
+          <div class="condition"><strong>IF</strong> balance &ge; requested days &rarr; proceed.<br><strong>IF</strong> balance &lt; requested &rarr; tell employee: "You only have X days left."</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot auto">3</div>
+        <div class="step-card auto-card">
+          <div class="step-title">Check Team Calendar for Conflicts <span class="step-badge badge-auto">AUTO</span></div>
+          <div class="step-body">Agent checks the team calendar to identify any scheduling conflicts.</div>
+          <div class="condition"><strong>IF</strong> no conflicts &rarr; proceed.<br><strong>IF</strong> conflicts found &rarr; warn manager: "2 others are off the same week."</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot auto">4</div>
+        <div class="step-card auto-card">
+          <div class="step-title">Prepare Request with Full Context <span class="step-badge badge-auto">AUTO</span></div>
+          <div class="step-body">Agent assembles the complete request: dates, leave balance, conflict status, leave type, and any relevant notes for the manager.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot approval">5</div>
+        <div class="step-card approval-card">
+          <div class="step-title">Manager Approves <span class="step-badge badge-approval">APPROVAL NEEDED</span></div>
+          <div class="step-body">Sent to manager with all context. Shows: "Shivangi wants Friday off. 12 days remaining. No team conflicts."</div>
+          <div class="condition"><strong>PTO is always a manager decision.</strong> The agent gathers context, the human decides.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot auto">6</div>
+        <div class="step-card auto-card">
+          <div class="step-title">Calendar Updated &amp; Team Notified <span class="step-badge badge-auto">AUTO</span></div>
+          <div class="step-body">After approval: calendar updated, team notified, leave balance adjusted automatically.</div>
+          <div class="condition"><strong>IF</strong> rejected &rarr; employee notified with the manager's reason.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-dot proactive">7</div>
+        <div class="step-card proactive-card">
+          <div class="step-title">Manager Reminder <span class="step-badge badge-proactive">PROACTIVE</span></div>
+          <div class="step-body">If manager hasn't responded in 24 hours, agent sends a gentle reminder to the manager.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      <p><span class="highlight">One sentence from employee.</span> One click from manager. <span class="highlight">Everything else is automatic.</span></p>
+    </div>
+  </div>
+</body>
+</html>

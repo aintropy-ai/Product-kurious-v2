@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onboarding Workflow — Full Spec</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; padding: 40px; min-height: 100vh; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 48px; }
+    .header .tag { display: inline-block; font-size: 10px; font-weight: 700; background: rgba(0,212,255,0.08); color: #00d4ff; padding: 4px 14px; border-radius: 20px; border: 1px solid rgba(0,212,255,0.2); margin-bottom: 16px; letter-spacing: 0.5px; text-transform: uppercase; }
+    .header h1 { font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+    .header h1 span { color: #00d4ff; }
+    .header p { font-size: 13px; color: #666; }
+
+    .timeline { position: relative; padding-left: 56px; }
+    .timeline::before { content: ''; position: absolute; left: 19px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #00d4ff, rgba(0,212,255,0.05)); }
+
+    .step { position: relative; margin-bottom: 24px; }
+    .step-dot { position: absolute; left: -56px; width: 38px; height: 38px; border-radius: 50%; background: #111; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; z-index: 1; }
+    .step-dot.trigger { border: 2px solid #eab308; color: #eab308; }
+    .step-dot.auto { border: 2px solid #34d399; color: #34d399; }
+    .step-dot.approval { border: 2px solid #f59e0b; color: #f59e0b; }
+    .step-dot.conversation { border: 2px solid #a78bfa; color: #a78bfa; }
+    .step-dot.proactive { border: 2px solid #f472b6; color: #f472b6; }
+    .step-dot.complete { border: 2px solid #34d399; color: #34d399; background: rgba(52,211,153,0.1); }
+    .step-dot.error { border: 2px solid #ef4444; color: #ef4444; }
+
+    .step-card { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 18px 22px; }
+    .step-card.trigger-card { border-color: rgba(234,179,8,0.3); }
+    .step-card.auto-card { border-color: rgba(52,211,153,0.15); }
+    .step-card.approval-card { border-color: rgba(245,158,11,0.25); }
+    .step-card.conversation-card { border-color: rgba(167,139,250,0.25); }
+    .step-card.proactive-card { border-color: rgba(244,114,182,0.25); }
+    .step-card.complete-card { border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.02); }
+    .step-card.error-card { border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.02); }
+
+    .step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .step-title { font-size: 15px; font-weight: 700; color: #fff; }
+    .step-badge { font-size: 9px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+    .badge-trigger { background: rgba(234,179,8,0.12); color: #eab308; border: 1px solid rgba(234,179,8,0.2); }
+    .badge-auto { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+    .badge-approval { background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+    .badge-conversation { background: rgba(167,139,250,0.12); color: #a78bfa; border: 1px solid rgba(167,139,250,0.2); }
+    .badge-proactive { background: rgba(244,114,182,0.12); color: #f472b6; border: 1px solid rgba(244,114,182,0.2); }
+    .badge-complete { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+    .badge-error { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+
+    .step-body { font-size: 12px; color: #888; line-height: 1.7; }
+    .step-body strong { color: #e5e5e5; }
+
+    .condition { background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 8px; padding: 12px 16px; margin-top: 10px; font-size: 11px; color: #a0a0a0; line-height: 1.8; }
+    .condition .if { color: #00d4ff; font-weight: 600; }
+    .condition .then { color: #34d399; }
+    .condition .else { color: #f59e0b; }
+    .condition .fail { color: #ef4444; }
+
+    .notify { background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.1); border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 11px; color: #888; line-height: 1.7; }
+    .notify-label { font-size: 9px; font-weight: 600; color: #00d4ff; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+
+    .substeps { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .substep { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 8px; padding: 10px 14px; }
+    .substep-title { font-size: 11px; font-weight: 600; color: #e5e5e5; margin-bottom: 4px; }
+    .substep-body { font-size: 11px; color: #777; line-height: 1.6; }
+
+    .section-divider { text-align: center; padding: 16px 0; font-size: 10px; font-weight: 600; color: #333; text-transform: uppercase; letter-spacing: 1px; }
+
+    .footer { text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid #1e1e1e; }
+    .footer-stats { display: flex; justify-content: center; gap: 32px; margin-bottom: 16px; }
+    .footer-stat { text-align: center; }
+    .footer-num { font-size: 20px; font-weight: 800; color: #34d399; }
+    .footer-label { font-size: 10px; color: #555; }
+    .footer p { font-size: 12px; color: #555; }
+    .footer .highlight { color: #00d4ff; font-weight: 600; }
+
+    .legend { display: flex; gap: 16px; justify-content: center; margin-bottom: 32px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #666; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .legend-dot.t { background: #eab308; }
+    .legend-dot.a { background: #34d399; }
+    .legend-dot.ap { background: #f59e0b; }
+    .legend-dot.c { background: #a78bfa; }
+    .legend-dot.p { background: #f472b6; }
+    .legend-dot.e { background: #ef4444; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="tag">Full detailed spec</div>
+      <h1><span>Onboarding</span> Workflow</h1>
+      <p>Every step, every condition, every notification, every error case</p>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot t"></div> Trigger</div>
+      <div class="legend-item"><div class="legend-dot a"></div> Automatic</div>
+      <div class="legend-item"><div class="legend-dot ap"></div> Needs Approval</div>
+      <div class="legend-item"><div class="legend-dot c"></div> Conversation</div>
+      <div class="legend-item"><div class="legend-dot p"></div> Proactive</div>
+      <div class="legend-item"><div class="legend-dot e"></div> Error Handling</div>
+    </div>
+
+    <div class="timeline">
+
+      <!-- STEP 1: TRIGGER -->
+      <div class="step">
+        <div class="step-dot trigger">1</div>
+        <div class="step-card trigger-card">
+          <div class="step-header">
+            <div class="step-title">Contract Signed</div>
+            <div class="step-badge badge-trigger">TRIGGER</div>
+          </div>
+          <div class="step-body">
+            Contract signed on any connected HR tool (Gusto, BambooHR, or any registered source). Agent automatically detects and extracts all details.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Data extracted:</div>
+              <div class="substep-body">Full name, personal email, role and title, employment type (full-time, contractor, intern, advisor), country and state, start date, reporting manager, compensation details, work type (in-office, remote, hybrid)</div>
+            </div>
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> all required fields present <span class="then">→ proceed to Step 2</span><br>
+            <span class="if">IF</span> any field missing <span class="else">→ ask the user to provide the full details: "Alex Chen's contract is signed but I'm missing [field]. Can you provide this before I start onboarding?"</span><br>
+            <span class="if">IF</span> user doesn't respond in 4 hours <span class="else">→ reminder</span><br>
+            <span class="if">IF</span> user doesn't respond in 24 hours <span class="fail">→ escalate to super admin</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: EMAIL -->
+      <div class="step">
+        <div class="step-dot auto">2</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Create Company Email</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent creates email account: <strong>firstname.lastname@company.com</strong>. All employment types (full-time, contractor, intern) get full Google Workspace license.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> email available <span class="then">→ create account</span><br>
+            <span class="if">IF</span> email taken <span class="else">→ try alternatives: firstname.middleinitial@, firstname.lastname2@</span><br>
+            <span class="if">IF</span> no alternative works <span class="fail">→ ask user: "Standard email formats are taken for Alex Chen. What email should I use?"</span>
+          </div>
+          <div class="notify">
+            <div class="notify-label">On success</div>
+            Log: "Google Workspace created, alex.chen@aintropy.ai, 6:00 AM"<br>
+            Welcome email sent to personal email with login instructions.
+          </div>
+          <div class="condition" style="border-color: rgba(239,68,68,0.15);">
+            <span class="fail">ON FAILURE:</span> Retry once with alternate config. If still fails, alert user with specific error. Do NOT block remaining steps, continue provisioning other tools in parallel.
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: WELCOME -->
+      <div class="step">
+        <div class="step-dot auto">3</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Send Welcome Message via Kuri</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent sends a personalized welcome message showing what's already been set up and what's still in progress.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> employee has logged in <span class="then">→ show in Kuri directly</span><br>
+            <span class="if">IF</span> not logged in yet <span class="else">→ send welcome email with link to Kuri</span><br><br>
+            <span class="if">IF</span> all tools succeeded <span class="then">→ show all green checkmarks</span><br>
+            <span class="if">IF</span> any tool failed <span class="else">→ show honestly: "I'm still working on [tool]. I'll let you know when it's ready."</span>
+          </div>
+          <div class="notify">
+            <div class="notify-label">Welcome message content</div>
+            "Welcome to AIntropy, Alex! 🎉 I'm your onboarding assistant. While you were signing your contract, I've already set up everything you need:<br><br>
+            ✓ Google Workspace: alex.chen@aintropy.ai<br>
+            ✓ GitHub: added to aintropy-ai org<br>
+            ✓ Discord: invite sent<br>
+            ⏳ Claude Code: provisioning in progress<br><br>
+            Let's complete your profile now. It takes about 2 minutes."
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: POLICY ACKNOWLEDGEMENT (GATE) -->
+      <div class="step">
+        <div class="step-dot auto">4</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Policy Acknowledgement</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            <strong>This is a GATE step.</strong> No internal tools (GitHub, Discord, Slack, etc.) will be provisioned until the new hire has acknowledged all required policies.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Policies sent:</div>
+              <div class="substep-body">
+                Company handbook, NDA, code of conduct, security policy, acceptable use policy. List is configurable by admin.
+              </div>
+            </div>
+          </div>
+          <div class="condition">
+            Agent: "Before I give you access to our tools, I need you to review and acknowledge a few company policies. This is standard for all new hires."<br><br>
+            <span class="if">IF</span> employee acknowledges all <span class="then">→ proceed to tool provisioning (Step 5)</span><br>
+            <span class="if">IF</span> employee hasn't acknowledged within 24 hrs <span class="else">→ reminder</span><br>
+            <span class="if">IF</span> employee hasn't acknowledged within 48 hrs <span class="fail">→ escalate to admin: "Alex hasn't signed the required policies. Tool access is on hold."</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: GITHUB -->
+      <div class="step">
+        <div class="step-dot auto">5</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Provision GitHub Access</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            <strong>Gated by Step 4. Only proceeds after policy acknowledgement.</strong><br><br>
+            Agent adds user to GitHub organization with team assignment based on role.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> role is engineering, technical, or intern <span class="then">→ provision GitHub</span><br>
+            <span class="if">IF</span> role is HR, finance, marketing, advisor <span class="then">→ skip this step</span><br><br>
+            <strong>Team assignment:</strong><br>
+            <span class="if">IF</span> engineer <span class="then">→ engineering team, all eng repos</span><br>
+            <span class="if">IF</span> intern <span class="then">→ intern team, limited repos</span><br>
+            <span class="if">IF</span> contractor <span class="then">→ contractor team, read-only on sensitive repos</span>
+          </div>
+          <div class="condition" style="border-color: rgba(239,68,68,0.15);">
+            <span class="fail">ON FAILURE:</span> Check if email is already linked to another GitHub account. If yes, send invite to existing account. If no, retry once. If still fails, alert user: "GitHub invite failed. Their email may already be linked to another org."<br>
+            <strong>Continue to next step regardless.</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6: DISCORD -->
+      <div class="step">
+        <div class="step-dot auto">6</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Provision Discord</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            <strong>Gated by Step 4. Only proceeds after policy acknowledgement.</strong><br><br>
+            Everyone gets Discord with <strong>full access</strong> regardless of employment type. All channels, full member role. No restrictions.
+          </div>
+          <div class="notify">
+            <div class="notify-label">Admin notification</div>
+            "I've given Alex full access to Discord (all channels, full member role). If you want to adjust their channels or permissions, just let me know."
+          </div>
+          <div class="condition" style="border-color: rgba(239,68,68,0.15);">
+            <span class="fail">ON FAILURE:</span> Retry once. If fails, alert admin. Continue to next step.
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 7: OTHER TOOLS -->
+      <div class="step">
+        <div class="step-dot auto">7</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Provision All Other Registered Tools</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            <strong>Gated by Step 4. Only proceeds after policy acknowledgement.</strong><br><br>
+            Agent checks the data source registry for all other tools (Slack, Claude Code, Cloudflare, HuggingFace, Notion, Jira, etc.). <strong>Not hardcoded.</strong> When admin adds a new tool tomorrow, the agent automatically includes it.
+          </div>
+          <div class="condition">
+            <span class="if">FOR EACH</span> registered tool:<br>
+            <span class="if">IF</span> role-tool mapping says this role needs it <span class="then">→ provision</span><br>
+            <span class="if">IF</span> role-tool mapping says skip <span class="then">→ skip</span><br>
+            <span class="if">IF</span> not configured for this role <span class="else">→ ask admin: "Alex Chen (intern) needs access to [tool]. Should I provision it?"</span>
+          </div>
+          <div class="notify">
+            <div class="notify-label">Admin notification after all tools provisioned</div>
+            "Alex has signed all required policies. I've now provisioned full access to Google Workspace, GitHub, Discord, and all other registered tools. If you want to adjust any permissions, let me know."
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 8: PROFILE -->
+      <div class="step">
+        <div class="step-dot auto">8</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Create Employee Profile</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent creates profile in team directory: name, role, title, start date, reporting manager, team, location, work type, employment type. Profile marked as "Incomplete" until employee finishes setup.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> photo provided in HR tool <span class="then">→ auto-populate</span><br>
+            <span class="if">IF</span> not <span class="else">→ ask during guided setup (optional, no reminder)</span>
+          </div>
+          <div class="notify">
+            <div class="notify-label">On success</div>
+            Profile visible to team with "New hire" badge. This step always succeeds (internal system).
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 9: PROFILE SETUP -->
+      <div class="step">
+        <div class="step-dot conversation">9</div>
+        <div class="step-card conversation-card">
+          <div class="step-header">
+            <div class="step-title">Guided Profile Completion</div>
+            <div class="step-badge badge-conversation">CONVERSATION</div>
+          </div>
+          <div class="step-body">
+            Kuri guides the new hire through completing their profile, step by step in conversation.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">9a: Profile Photo</div>
+              <div class="substep-body">
+                "First, let's add a profile photo so the team knows who you are."<br>
+                <span style="color:#34d399;">IF uploads →</span> store, propagate to directory and all views<br>
+                <span style="color:#888;">IF skips →</span> no reminder, completely optional. Proceed to next.
+              </div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">9b: Birthday</div>
+              <div class="substep-body">
+                "When's your birthday? This is for HR records and team celebrations."<br>
+                <span style="color:#34d399;">IF provides date →</span> validate format, store<br>
+                <span style="color:#f59e0b;">IF invalid format →</span> "I didn't catch that. Can you try again? (e.g. April 15)"<br>
+                <span style="color:#888;">IF skips →</span> store as "not provided", optional field
+              </div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">9c: Emergency Contact ⚠️ Required</div>
+              <div class="substep-body">
+                "Important one. We need an emergency contact for safety. Name, phone number, and relationship."<br>
+                <span style="color:#34d399;">IF provides all three →</span> validate phone, store (marked confidential)<br>
+                <span style="color:#f59e0b;">IF partial →</span> "I got [name]. Can you also share their phone number and relationship?"<br>
+                <span style="color:#ef4444;">IF tries to skip →</span> "This one is required for safety. I can't skip it."<br>
+                <span style="color:#888;">Company policy configurable:</span> IF mandatory → remind daily. IF optional → remind in 48 hrs.
+              </div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">9d: Fun Facts</div>
+              <div class="substep-body">
+                "Last one! What's your superpower? Favorite snack? Hidden talent?"<br>
+                <span style="color:#34d399;">IF answers →</span> store, display on profile<br>
+                <span style="color:#888;">IF skips →</span> optional, no reminder. Profile still marked complete.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 10: PAYMENT DETAILS -->
+      <div class="step">
+        <div class="step-dot conversation">10</div>
+        <div class="step-card conversation-card">
+          <div class="step-header">
+            <div class="step-title">Payment Details Setup</div>
+            <div class="step-badge badge-conversation">CONVERSATION</div>
+          </div>
+          <div class="step-body">
+            Agent guides new hire to set up bank details for payroll. Without this, they won't get paid.
+          </div>
+          <div class="condition">
+            Agent: "Let's set up your payment details so you get paid on time. I'll need your bank name, account number, and routing number."<br><br>
+            <span class="if">IF</span> employee provides all details <span class="then">→ validate, store (encrypted, confidential)</span><br>
+            <span class="if">IF</span> employee skips <span class="else">→ "I'll remind you before your first pay period. You won't receive payment without this."</span><br>
+            <span class="if">IF</span> first pay period approaching and still missing <span class="fail">→ daily reminder: "Your pay period ends Friday. I still need your bank details to process payment."</span>
+          </div>
+          <div class="notify">
+            <div class="notify-label">Security</div>
+            Bank details encrypted and stored securely. Only the employee and payroll admin can view them.
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 11: IT SECURITY SETUP -->
+      <div class="step">
+        <div class="step-dot auto">11</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">IT Security Setup</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent guides the new hire through setting up two-factor authentication and any security requirements.
+          </div>
+          <div class="condition">
+            Agent: "One important step: let's set up two-factor authentication on your accounts. This keeps everything secure."<br><br>
+            <span class="if">IF</span> 2FA required by company policy <span class="then">→ guide through setup, verify completion</span><br>
+            <span class="if">IF</span> VPN access needed (remote/hybrid) <span class="then">→ provision VPN credentials and send setup guide</span><br>
+            <span class="if">IF</span> security key needed (admin roles) <span class="else">→ add to equipment request</span><br>
+            <span class="if">IF</span> 2FA not set up within 24 hrs <span class="fail">→ reminder: "Your accounts won't be fully active until 2FA is enabled."</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 12: TRAINING ASSIGNMENTS -->
+      <div class="step">
+        <div class="step-dot auto">12</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Training Assignments</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent assigns required trainings based on role. These are assigned on Day 1.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Trainings assigned based on role:</div>
+              <div class="substep-body">
+                Security awareness (all employees), compliance training (all), tool-specific training (role-based), role-specific certifications (if any). List configurable by admin.
+              </div>
+            </div>
+          </div>
+          <div class="condition">
+            Agent: "I've assigned a few trainings for your first week: security awareness and [role-specific]. You can complete them at your own pace."<br><br>
+            <span class="if">IF</span> completed <span class="then">→ logged</span><br>
+            <span class="if">IF</span> not completed within 7 days <span class="else">→ reminder to employee</span><br>
+            <span class="if">IF</span> overdue by 14 days <span class="fail">→ escalate to manager</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 13: TEAM INTRODUCTION -->
+      <div class="step">
+        <div class="step-dot auto">13</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Team Introduction</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent posts a welcome message to the team so everyone knows who the new person is.
+          </div>
+          <div class="notify">
+            <div class="notify-label">Team notification (Discord/Slack)</div>
+            "Welcome Alex Chen! 🎉 Alex is joining as an intern starting today. He'll be working with the engineering team, reporting to Kunal. Fun fact: his superpower is [whatever they said]. Say hi!"
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> new hire completed fun facts <span class="then">→ include in introduction</span><br>
+            <span class="if">IF</span> not completed yet <span class="then">→ keep introduction simple (name, role, team)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 14: BUDDY/MENTOR ASSIGNMENT -->
+      <div class="step">
+        <div class="step-dot auto">14</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Buddy/Mentor Assignment</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent assigns a buddy from the same team to help the new hire settle in during the first week.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> buddy program configured by admin <span class="then">→ assign buddy from same team, notify both</span><br>
+            <span class="if">IF</span> no buddy program <span class="then">→ skip this step</span>
+          </div>
+          <div class="notify">
+            <div class="notify-label">Notifications</div>
+            To buddy: "You've been paired with Alex Chen (new intern) for their first week. A quick intro and showing them around would be great."<br>
+            To new hire: "I've paired you with [buddy name] for your first week. They'll help you get settled. Feel free to ask them anything."
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 15: FIRST WEEK AGENDA -->
+      <div class="step">
+        <div class="step-dot auto">15</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">First Week Agenda</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent shares a personalized first week plan so the new hire knows exactly what to expect.
+          </div>
+          <div class="notify">
+            <div class="notify-label">Shared with new hire</div>
+            "Here's your first week at AIntropy:<br><br>
+            Day 1: Check-in with [manager] (already scheduled). Set up 2FA. Complete your profile.<br>
+            Day 2: Team standup. Meet your buddy [name]. Start security training.<br>
+            Day 3: 1-on-1 with [buddy]. Explore the codebase/docs.<br>
+            Day 4: Continue trainings. Ask me anything you need.<br>
+            Day 5: End-of-week check-in with [manager].<br><br>
+            This is flexible. Just ask me if you want to adjust anything."
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> manager has shared specific first-week tasks <span class="then">→ include them</span><br>
+            <span class="if">IF</span> not <span class="then">→ use default agenda based on role</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 16: EQUIPMENT -->
+      <div class="step">
+        <div class="step-dot approval">16</div>
+        <div class="step-card approval-card">
+          <div class="step-header">
+            <div class="step-title">Equipment Assignment</div>
+            <div class="step-badge badge-approval">NEEDS APPROVAL</div>
+          </div>
+          <div class="step-body">
+            Agent creates equipment request automatically based on role and work type.
+          </div>
+          <div class="condition">
+            <strong>Work type:</strong><br>
+            <span class="if">IF</span> in-office <span class="then">→ standard package (Engineer: MacBook Pro + monitor. Intern: MacBook Air. HR: MacBook Air)</span><br>
+            <span class="if">IF</span> remote <span class="then">→ remote setup allowance ($1,500 full-time, $500 intern, customizable)</span><br>
+            <span class="if">IF</span> hybrid <span class="then">→ in-office package + remote setup if needed</span><br><br>
+            <strong>Budget threshold:</strong><br>
+            <span class="if">IF</span> cost &lt; $1,000 <span class="then">→ send to manager for approval</span><br>
+            <span class="if">IF</span> cost ≥ $1,000 <span class="else">→ send to manager AND finance for approval</span><br>
+            <span class="if">IF</span> non-standard item requested <span class="else">→ flag: "Alex requested [item] instead of standard package. Approve?"</span>
+          </div>
+          <div class="notify">
+            <div class="notify-label">Admin sees in Kuri</div>
+            "Alex Chen (intern, in-office) needs standard intern equipment package: MacBook Air ($999), basic peripherals ($200). Total: $1,199. Approve?"<br>
+            [Approve] [Modify] [Reject]
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> approved <span class="then">→ procurement processes order, log</span><br>
+            <span class="if">IF</span> modified <span class="else">→ agent updates request, re-confirm with admin</span><br>
+            <span class="if">IF</span> rejected <span class="fail">→ notify employee with reason</span><br>
+            <span class="if">IF</span> no response in 48 hrs <span class="else">→ reminder to admin</span><br>
+            <span class="if">IF</span> no response in 72 hrs <span class="fail">→ escalate to super admin</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 17: MANAGER CHECK-IN -->
+      <div class="step">
+        <div class="step-dot auto">17</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Schedule Manager Check-in (Day 1)</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Agent checks both the manager's and the new hire's calendar and schedules a 30-minute check-in on Day 1 itself.
+          </div>
+          <div class="notify">
+            <div class="notify-label">Calendar invite</div>
+            To: New hire + Reporting manager<br>
+            Subject: "Welcome check-in: [Manager] + [New hire]"<br>
+            Duration: 30 minutes<br>
+            Note: "Quick hello and see if you need anything."
+          </div>
+          <div class="condition" style="border-color: rgba(239,68,68,0.15);">
+            <span class="fail">IF</span> no common availability on Day 1 <span class="fail">→ suggest 3 nearest alternative slots and ask both to confirm</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 18: MONITORING -->
+      <div class="step">
+        <div class="step-dot proactive">18</div>
+        <div class="step-card proactive-card">
+          <div class="step-header">
+            <div class="step-title">Monitor Completion</div>
+            <div class="step-badge badge-proactive">PROACTIVE</div>
+          </div>
+          <div class="step-body">
+            Agent checks progress every 4 hours and nudges the right person when something is stuck.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Checklist tracked:</div>
+              <div class="substep-body">
+                □ Company email created<br>
+                □ Policies acknowledged<br>
+                □ GitHub access granted (if applicable)<br>
+                □ Discord joined<br>
+                □ All other registered tools provisioned<br>
+                □ Profile created<br>
+                □ Profile photo uploaded<br>
+                □ Birthday added<br>
+                □ Emergency contact added<br>
+                □ Equipment assigned<br>
+                □ Manager check-in scheduled
+              </div>
+            </div>
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> all items done <span class="then">→ proceed to completion (Step 19)</span><br><br>
+            <span class="if">IF</span> stuck on same item for 24 hours <span class="else">→ nudge the right person:</span><br>
+            &nbsp;&nbsp;Policy acknowledgement stuck → nudge employee<br>
+            &nbsp;&nbsp;Tool provisioning stuck → nudge admin/IT<br>
+            &nbsp;&nbsp;Profile incomplete → nudge employee<br>
+            &nbsp;&nbsp;Equipment not approved → nudge admin<br>
+            &nbsp;&nbsp;Manager check-in not scheduled → nudge manager<br><br>
+            <span class="if">IF</span> stuck for 48 hours <span class="fail">→ escalate to admin: "Alex Chen's onboarding is stuck. [Item] pending for 48 hours. Please intervene."</span><br><br>
+            <span class="if">IF</span> stuck for 72 hours <span class="fail">→ alert super admin</span><br><br>
+            <span class="if">IF</span> start date is tomorrow and not complete <span class="fail">→ URGENT alert: "Alex Chen starts tomorrow. Onboarding is [X]% complete. Blocking items: [list]. Please resolve today."</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 19: COMPLETE -->
+      <div class="step">
+        <div class="step-dot complete">✓</div>
+        <div class="step-card complete-card">
+          <div class="step-header">
+            <div class="step-title">Onboarding Complete</div>
+            <div class="step-badge badge-complete">COMPLETE</div>
+          </div>
+          <div class="step-body">
+            Agent verifies all success criteria are met, then notifies everyone.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> all required items done <span class="then">→ mark COMPLETE</span><br>
+            <span class="if">IF</span> some optional items pending (photo, fun facts) <span class="then">→ mark "Complete, optional items pending"</span>
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Notifications sent:</div>
+              <div class="substep-body">
+                <strong>To hiring manager:</strong> "Alex Chen's onboarding is complete. All tools provisioned, profile set up, equipment assigned. Your check-in is scheduled for [date]."<br><br>
+                <strong>To admin:</strong> "Onboarding for Alex Chen completed in [X hours]. [X] items handled automatically. [X] needed your input. Cost: $[X]."<br><br>
+                <strong>To employee:</strong> "You're all set, Alex! Everything is ready. Your manager check-in is on [date]. If you need anything, just ask me."
+              </div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Agent logs:</div>
+              <div class="substep-body">
+                Total time from trigger to completion<br>
+                Items handled automatically vs items needing human input<br>
+                Retries attempted<br>
+                Agent cost
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider">Error States</div>
+
+      <!-- ERROR STATES -->
+      <div class="step">
+        <div class="step-dot error">!</div>
+        <div class="step-card error-card">
+          <div class="step-header">
+            <div class="step-title">Error Handling</div>
+            <div class="step-badge badge-error">EDGE CASES</div>
+          </div>
+          <div class="step-body">
+            What can go wrong, and what the agent does about it.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">HR tool webhook fails</div>
+              <div class="substep-body">Retry 3 times over 1 hour. If still fails, alert admin: "I detected a new contract on [tool] but couldn't pull the details. Please check."</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Employee email already exists (possible rehire)</div>
+              <div class="substep-body">Agent checks: was this person previously offboarded? If yes, ask admin: "This appears to be a rehire. Reactivate existing accounts or create new ones?" If no, flag email conflict.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Employee doesn't log in within 3 days</div>
+              <div class="substep-body">Send reminder email. If no login in 5 days, alert manager: "Alex hasn't logged in since start date. Everything is set up on our end."</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Manager leaves during onboarding</div>
+              <div class="substep-body">Agent detects manager is being offboarded. Alert admin: "Alex's reporting manager is leaving. Please assign a new manager before onboarding can complete."</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Tool removed from registry during onboarding</div>
+              <div class="substep-body">Agent skips that tool and logs: "[Tool] was removed from registry. Skipping for Alex."</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Multiple people onboarding at same time</div>
+              <div class="substep-body">Agent handles each independently. If same tool has rate limits, queue and process sequentially. Log any delays caused by rate limiting.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SUCCESS CRITERIA -->
+    <div style="background:#111;border:1px solid #1e1e1e;border-radius:14px;padding:24px;margin-top:32px;">
+      <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:16px;">Success Criteria</div>
+      <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;font-size:11px;">
+        <div style="color:#555;font-weight:600;">Criteria</div>
+        <div style="color:#555;font-weight:600;">Required</div>
+        <div style="color:#555;font-weight:600;">Verified by</div>
+
+        <div style="color:#a0a0a0;">All policies acknowledged</div>
+        <div style="color:#34d399;">Yes (GATE)</div>
+        <div style="color:#666;">Acknowledgement records for NDA, handbook, code of conduct</div>
+
+        <div style="color:#a0a0a0;">All registered tool access provisioned</div>
+        <div style="color:#34d399;">Yes</div>
+        <div style="color:#666;">Agent checks each tool API (only after policies acknowledged)</div>
+
+        <div style="color:#a0a0a0;">Company email active</div>
+        <div style="color:#34d399;">Yes</div>
+        <div style="color:#666;">Email delivery test</div>
+
+        <div style="color:#a0a0a0;">Profile created in directory</div>
+        <div style="color:#34d399;">Yes</div>
+        <div style="color:#666;">Profile exists with required fields</div>
+
+        <div style="color:#a0a0a0;">Emergency contact provided</div>
+        <div style="color:#34d399;">Yes (configurable)</div>
+        <div style="color:#666;">Field is not empty</div>
+
+        <div style="color:#a0a0a0;">Equipment assigned or N/A</div>
+        <div style="color:#34d399;">Yes</div>
+        <div style="color:#666;">Approval record exists</div>
+
+        <div style="color:#a0a0a0;">Manager check-in scheduled</div>
+        <div style="color:#34d399;">Yes</div>
+        <div style="color:#666;">Calendar event exists</div>
+
+        <div style="color:#a0a0a0;">Profile photo uploaded</div>
+        <div style="color:#888;">Optional</div>
+        <div style="color:#666;">No action if missing</div>
+
+        <div style="color:#a0a0a0;">Fun facts completed</div>
+        <div style="color:#888;">Optional</div>
+        <div style="color:#666;">No action if missing</div>
+
+        <div style="color:#a0a0a0;">Employee has logged in</div>
+        <div style="color:#888;">Tracked</div>
+        <div style="color:#666;">Login record exists</div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="footer-stats">
+        <div class="footer-stat">
+          <div class="footer-num">19</div>
+          <div class="footer-label">Steps</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-num">13</div>
+          <div class="footer-label">Automatic</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-num">1</div>
+          <div class="footer-label">Approval needed</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-num">2</div>
+          <div class="footer-label">Conversations</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-num">6</div>
+          <div class="footer-label">Error cases handled</div>
+        </div>
+      </div>
+      <p>Contract signed at <span class="highlight">5:58 AM</span>. Everything ready by <span class="highlight">6:06 AM</span>. Admin approved 1 item. Agent handled the rest.</p>
+    </div>
+  </div>
+</body>
+</html>

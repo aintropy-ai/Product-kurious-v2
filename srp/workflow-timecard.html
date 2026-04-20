@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Card Curator — Full Spec (14 Steps)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #fff; padding: 40px; min-height: 100vh; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 48px; }
+    .header .tag { display: inline-block; font-size: 10px; font-weight: 700; background: rgba(0,212,255,0.08); color: #00d4ff; padding: 4px 14px; border-radius: 20px; border: 1px solid rgba(0,212,255,0.2); margin-bottom: 16px; letter-spacing: 0.5px; text-transform: uppercase; }
+    .header h1 { font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+    .header h1 span { color: #00d4ff; }
+    .header p { font-size: 13px; color: #666; }
+    .timeline { position: relative; padding-left: 56px; }
+    .timeline::before { content: ''; position: absolute; left: 19px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #00d4ff, rgba(0,212,255,0.05)); }
+    .step { position: relative; margin-bottom: 24px; }
+    .step-dot { position: absolute; left: -56px; width: 38px; height: 38px; border-radius: 50%; background: #111; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; z-index: 1; }
+    .step-dot.trigger { border: 2px solid #eab308; color: #eab308; }
+    .step-dot.auto { border: 2px solid #34d399; color: #34d399; }
+    .step-dot.approval { border: 2px solid #f59e0b; color: #f59e0b; }
+    .step-dot.proactive { border: 2px solid #f472b6; color: #f472b6; }
+    .step-dot.complete { border: 2px solid #34d399; color: #34d399; background: rgba(52,211,153,0.1); }
+    .step-dot.error { border: 2px solid #ef4444; color: #ef4444; }
+    .step-card { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 18px 22px; }
+    .step-card.trigger-card { border-color: rgba(234,179,8,0.3); }
+    .step-card.auto-card { border-color: rgba(52,211,153,0.15); }
+    .step-card.approval-card { border-color: rgba(245,158,11,0.25); }
+    .step-card.proactive-card { border-color: rgba(244,114,182,0.25); }
+    .step-card.complete-card { border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.02); }
+    .step-card.error-card { border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.02); }
+    .step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .step-title { font-size: 15px; font-weight: 700; color: #fff; }
+    .step-badge { font-size: 9px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+    .badge-trigger { background: rgba(234,179,8,0.12); color: #eab308; border: 1px solid rgba(234,179,8,0.2); }
+    .badge-auto { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+    .badge-approval { background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+    .badge-proactive { background: rgba(244,114,182,0.12); color: #f472b6; border: 1px solid rgba(244,114,182,0.2); }
+    .badge-complete { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.2); }
+    .badge-error { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+    .step-body { font-size: 12px; color: #888; line-height: 1.7; }
+    .step-body strong { color: #e5e5e5; }
+    .condition { background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 8px; padding: 12px 16px; margin-top: 10px; font-size: 11px; color: #a0a0a0; line-height: 1.8; }
+    .condition .if { color: #00d4ff; font-weight: 600; }
+    .condition .then { color: #34d399; }
+    .condition .else { color: #f59e0b; }
+    .condition .fail { color: #ef4444; }
+    .notify { background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.1); border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 11px; color: #888; line-height: 1.7; }
+    .notify-label { font-size: 9px; font-weight: 600; color: #00d4ff; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .substeps { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .substep { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 8px; padding: 10px 14px; }
+    .substep-title { font-size: 11px; font-weight: 600; color: #e5e5e5; margin-bottom: 4px; }
+    .substep-body { font-size: 11px; color: #777; line-height: 1.6; }
+    .matrix { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 10px; }
+    .matrix th { background: #0d0d0d; color: #00d4ff; padding: 8px 6px; text-align: left; border: 1px solid #1a1a1a; font-weight: 600; }
+    .matrix td { background: #0a0a0a; color: #888; padding: 6px; border: 1px solid #1a1a1a; }
+    .matrix td.yes { color: #34d399; }
+    .matrix td.no { color: #ef4444; }
+    .section-divider { text-align: center; padding: 16px 0; font-size: 10px; font-weight: 600; color: #333; text-transform: uppercase; letter-spacing: 1px; }
+    .footer { text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid #1e1e1e; }
+    .footer-stats { display: flex; justify-content: center; gap: 32px; margin-bottom: 16px; flex-wrap: wrap; }
+    .footer-stat { text-align: center; }
+    .footer-num { font-size: 20px; font-weight: 800; color: #34d399; }
+    .footer-label { font-size: 10px; color: #555; }
+    .footer p { font-size: 12px; color: #555; }
+    .footer .highlight { color: #00d4ff; font-weight: 600; }
+    .legend { display: flex; gap: 16px; justify-content: center; margin-bottom: 32px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #666; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .legend-dot.t { background: #eab308; }
+    .legend-dot.a { background: #34d399; }
+    .legend-dot.ap { background: #f59e0b; }
+    .legend-dot.p { background: #f472b6; }
+    .legend-dot.e { background: #ef4444; }
+    .diff-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 11px; }
+    .diff-table th { background: #0d0d0d; padding: 10px; text-align: left; border: 1px solid #1a1a1a; }
+    .diff-table th:first-child { color: #ef4444; }
+    .diff-table th:last-child { color: #34d399; }
+    .diff-table td { padding: 8px 10px; border: 1px solid #1a1a1a; color: #888; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="tag">Full detailed spec — 14 steps</div>
+      <h1><span>Time Card Curator</span> Workflow</h1>
+      <p>Auto-fill first, ask second. No clock-in, no clock-out. The agent handles everything.</p>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot t"></div> Trigger</div>
+      <div class="legend-item"><div class="legend-dot a"></div> Automatic</div>
+      <div class="legend-item"><div class="legend-dot ap"></div> Needs Approval</div>
+      <div class="legend-item"><div class="legend-dot p"></div> Proactive</div>
+      <div class="legend-item"><div class="legend-dot e"></div> Error Handling</div>
+    </div>
+
+    <!-- CORE PRINCIPLE -->
+    <div style="background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.15); border-radius: 12px; padding: 20px; margin-bottom: 32px;">
+      <div style="font-size: 13px; font-weight: 700; color: #00d4ff; margin-bottom: 8px;">Core Principle</div>
+      <div style="font-size: 12px; color: #a0a0a0; line-height: 1.8;">
+        <strong style="color: #fff;">1. Contract terms = baseline.</strong> Offer says 9-6 M-F? Timesheet is pre-filled from day 1.<br>
+        <strong style="color: #fff;">2. Any tool activity = validation.</strong> Discord, Docs, GitHub, Calendar — any signal from any tool confirms the work day.<br>
+        <strong style="color: #fff;">3. No signal = question.</strong> Only when zero activity across all tools does the agent ask.<br>
+        <strong style="color: #fff;">4. Exceptions get flagged.</strong> Overtime, missing days, unusual hours go to manager. Everything else is auto-approved.
+      </div>
+    </div>
+
+    <!-- EMPLOYMENT TYPE BEHAVIOR -->
+    <div style="background: #111; border: 1px solid #1e1e1e; border-radius: 12px; padding: 20px; margin-bottom: 32px;">
+      <div style="font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 12px;">Behavior by Employment Type</div>
+      <table class="matrix">
+        <tr>
+          <th>Type</th>
+          <th>Baseline</th>
+          <th>Tracking</th>
+          <th>Approval</th>
+        </tr>
+        <tr>
+          <td><strong>Full-time</strong></td>
+          <td>Contract hours (e.g., 9-6 M-F)</td>
+          <td class="yes">Validate with signals, pre-fill auto</td>
+          <td class="yes">Auto-approve normal, flag exceptions</td>
+        </tr>
+        <tr>
+          <td><strong>Contractor</strong></td>
+          <td>No baseline — tracked by active hours</td>
+          <td>Draft from tool activity signals</td>
+          <td>Employee confirms, then manager approves</td>
+        </tr>
+        <tr>
+          <td><strong>Intern</strong></td>
+          <td>Contract hours</td>
+          <td class="yes">Same as full-time</td>
+          <td class="yes">Auto-approve normal, flag exceptions</td>
+        </tr>
+        <tr>
+          <td><strong>Founder</strong></td>
+          <td>Fixed salary, standard hours</td>
+          <td class="no">Skip tracking (opt-in only)</td>
+          <td class="no">Self-approved</td>
+        </tr>
+        <tr>
+          <td><strong>Part-time</strong></td>
+          <td>Contract hours (e.g., M-W-F 9-1)</td>
+          <td class="yes">Validate on scheduled days only</td>
+          <td class="yes">Auto-approve normal, flag exceptions</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="timeline">
+
+      <!-- STEP 1 -->
+      <div class="step">
+        <div class="step-dot trigger">1</div>
+        <div class="step-card trigger-card">
+          <div class="step-header">
+            <div class="step-title">Initialize from Onboarding Data</div>
+            <div class="step-badge badge-trigger">TRIGGER — DAY 1</div>
+          </div>
+          <div class="step-body">
+            When a new employee is onboarded, agent auto-creates their timesheet profile by pulling data from the onboarding agent.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Data pulled automatically:</div>
+              <div class="substep-body">Employment type, working hours from contract, work days, time zone, start date, pay type (salaried/hourly), hourly rate (if applicable), manager, PTO allocation</div>
+            </div>
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> all data present <span class="then">&#8594; profile created, baseline set from day 1. Zero employee effort.</span><br>
+            <span class="if">IF</span> contract says "flexible" <span class="else">&#8594; monitor signals for 2 weeks to find pattern, then set as baseline</span><br>
+            <span class="if">IF</span> contractor with no fixed hours <span class="else">&#8594; no baseline, track from tool activity</span><br>
+            <span class="if">IF</span> data missing <span class="fail">&#8594; ask admin: "What are [name]'s working hours?"</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step">
+        <div class="step-dot auto">2</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Daily Activity Signal Collection</div>
+            <div class="step-badge badge-auto">AUTOMATIC — DAILY</div>
+          </div>
+          <div class="step-body">
+            Agent passively collects activity signals from <strong>all</strong> connected tools. Not surveillance — no screenshots, no keystroke logging, no content reading. Only checks: <strong>was there activity or not?</strong>
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Any signal from any tool = work day confirmed</div>
+              <div class="substep-body">
+                Discord/Slack (message, reaction, voice channel) &#8226;
+                Google Calendar (meeting attended) &#8226;
+                GitHub (commit, PR, review, comment) &#8226;
+                Google Docs/Notion (edit, comment) &#8226;
+                Email (sent an email) &#8226;
+                Jira/Trello/Linear (task update) &#8226;
+                SSO login to any tool &#8226;
+                Any other registered tool
+              </div>
+            </div>
+          </div>
+          <div class="notify">
+            <div class="notify-label">Important rules</div>
+            <strong>A Discord message is as valid as a Git commit.</strong> Not everyone uses every tool. A marketing person on Discord + Docs is treated the same as an engineer on GitHub.<br><br>
+            Agent does NOT read content. Does NOT rank tools. Does NOT track exact hours for salaried employees — just confirms "worked today."<br><br>
+            <strong>For contractors (hourly):</strong> Agent tracks active time window (first signal to last signal) as an estimate for timesheet drafting.
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step">
+        <div class="step-dot auto">3</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Daily Timesheet Entry</div>
+            <div class="step-badge badge-auto">AUTOMATIC — DAILY</div>
+          </div>
+          <div class="step-body">
+            At end of each day, agent creates or confirms the timesheet entry. <strong>No employee action required for salaried workers.</strong>
+          </div>
+          <div class="condition">
+            <strong>Salaried employees:</strong><br>
+            <span class="if">IF</span> activity detected on any tool <span class="then">&#8594; auto-fill baseline hours (e.g., 8 hrs). No question. No notification.</span><br>
+            <span class="if">IF</span> no activity on a scheduled work day <span class="fail">&#8594; flag for Missing Day Detection (Step 4)</span><br>
+            <span class="if">IF</span> activity on a non-scheduled day <span class="else">&#8594; flag for Overtime Detection (Step 5)</span><br><br>
+            <strong>Contractors (hourly):</strong><br>
+            <span class="if">IF</span> activity detected <span class="then">&#8594; draft entry with estimated hours (first signal to last signal)</span><br>
+            <span class="if">IF</span> no activity <span class="then">&#8594; no entry (contractors only paid for tracked hours)</span><br><br>
+            <strong>Founders:</strong><br>
+            <span class="then">&#8594; auto-fill standard hours every work day. No signals checked.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step">
+        <div class="step-dot auto">4</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Missing Day Detection</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Triggered when: scheduled work day, but zero activity detected across ALL tools.
+          </div>
+          <div class="notify">
+            <div class="notify-label">Agent asks employee in Kuri</div>
+            "Hey [name], I didn't see any activity on [day]. No worries — just checking. Was that PTO, sick day, or were you working offline?"<br><br>
+            Options: PTO &#8226; Sick day &#8226; Working offline &#8226; Public holiday &#8226; Personal day (unpaid)
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> employee responds <span class="then">&#8594; log accordingly, update timesheet</span><br>
+            <span class="if">IF</span> "working offline" <span class="then">&#8594; mark as work day. Agent learns this person works offline sometimes.</span><br>
+            <span class="if">IF</span> no response 24hrs <span class="else">&#8594; gentle reminder</span><br>
+            <span class="if">IF</span> no response 48hrs <span class="fail">&#8594; notify manager: "[Name] has an unaccounted day."</span><br>
+            <span class="if">IF</span> 3+ offline days/month <span class="then">&#8594; agent adapts: "You often work offline on [day]. Auto-mark as work day going forward?"</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step">
+        <div class="step-dot proactive">5</div>
+        <div class="step-card proactive-card">
+          <div class="step-header">
+            <div class="step-title">Overtime Detection</div>
+            <div class="step-badge badge-proactive">PROACTIVE</div>
+          </div>
+          <div class="step-body">
+            Triggered when activity is detected outside baseline schedule: after hours, weekends, or weekly total exceeds contract hours.
+          </div>
+          <div class="condition">
+            <strong>Agent asks employee first:</strong><br>
+            "I noticed you were active on [Saturday / until 11pm]. Want me to log this as overtime?"<br><br>
+            <span class="if">IF</span> employee says yes <span class="then">&#8594; log as overtime, auto-calculate rate (1.5x or 2x per jurisdiction), flag to manager</span><br>
+            <span class="if">IF</span> employee says "no, just checking something" <span class="then">&#8594; don't log. No further action.</span><br><br>
+            <strong>Compliance auto-checks:</strong><br>
+            <span class="if">IF</span> weekly hours exceed state maximum <span class="fail">&#8594; ALERT to manager</span><br>
+            <span class="if">IF</span> 7+ consecutive work days <span class="fail">&#8594; flag rest day requirement</span><br>
+            <span class="if">IF</span> overtime 3+ consecutive weeks <span class="else">&#8594; flag: "Possible workload issue"</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="step">
+        <div class="step-dot auto">6</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">PTO Integration</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            PTO balance tracked alongside timesheets. Employees request PTO through Kuri.
+          </div>
+          <div class="notify">
+            <div class="notify-label">PTO request flow</div>
+            Employee: "I want to take Friday off"<br>
+            Agent checks balance &#8594; sends to manager &#8594; manager approves &#8594; timesheet updated &#8594; balance deducted
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> enough PTO balance <span class="then">&#8594; send approval to manager</span><br>
+            <span class="if">IF</span> no balance <span class="else">&#8594; "You don't have enough PTO. Want to request an unpaid day instead?"</span><br>
+            <span class="if">IF</span> public holiday <span class="then">&#8594; auto-marked, no PTO deduction, everyone notified</span><br>
+            <span class="if">IF</span> employee works during approved PTO <span class="fail">&#8594; flag: "Activity detected on your PTO day. Was this intentional?"</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 7 -->
+      <div class="step">
+        <div class="step-dot auto">7</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Weekly Timesheet Summary</div>
+            <div class="step-badge badge-auto">EVERY FRIDAY</div>
+          </div>
+          <div class="step-body">
+            Every Friday, agent sends each employee their weekly summary via Kuri.
+          </div>
+          <div class="notify">
+            <div class="notify-label">Employee sees</div>
+            "Here's your week:<br>
+            Mon: 8 hrs &#10003; &#8226; Tue: 8 hrs &#10003; &#8226; Wed: PTO (approved) &#8226; Thu: 8 hrs + 2 OT (pending) &#8226; Fri: 8 hrs &#10003;<br>
+            Total: 34 regular + 2 overtime. Looks right?"
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> employee confirms <span class="then">&#8594; finalized</span><br>
+            <span class="if">IF</span> employee corrects <span class="else">&#8594; adjust and re-confirm</span><br>
+            <span class="if">IF</span> no response by Sunday EOD (salaried) <span class="then">&#8594; auto-finalize based on signals</span><br>
+            <span class="if">IF</span> no response by Sunday EOD (contractor) <span class="fail">&#8594; urgent reminder Monday morning</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 8 -->
+      <div class="step">
+        <div class="step-dot approval">8</div>
+        <div class="step-card approval-card">
+          <div class="step-header">
+            <div class="step-title">Manager Approval</div>
+            <div class="step-badge badge-approval">AUTO-APPROVE / EXCEPTIONS ONLY</div>
+          </div>
+          <div class="step-body">
+            Normal weeks are <strong>auto-approved</strong>. Manager only sees exceptions.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Auto-approved (no manager action):</div>
+              <div class="substep-body">Regular work weeks matching baseline. No overtime. No missing days. PTO already approved earlier.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Flagged for manager:</div>
+              <div class="substep-body">Overtime hours (with calculated cost). Unaccounted missing days. All contractor timesheets. Employee corrections. First week of new employee.</div>
+            </div>
+          </div>
+          <div class="notify">
+            <div class="notify-label">Manager sees on Friday/Monday</div>
+            "Weekly review: 5 employees, 4 auto-approved. 1 needs attention: Alex — 6 hrs overtime ($[cost]). [Approve] [Reject] [Adjust]"
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> no response Monday EOD <span class="else">&#8594; reminder</span><br>
+            <span class="if">IF</span> no response Tuesday EOD <span class="fail">&#8594; escalate to admin</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 9 -->
+      <div class="step">
+        <div class="step-dot auto">9</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Payroll Handoff</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Approved timesheets flow directly to the Auto Payroll Processor agent. No export, no manual entry.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Data passed:</div>
+              <div class="substep-body">Regular hours, overtime hours (with rate), PTO days, sick days, unpaid days, contractor hours, adjustments</div>
+            </div>
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> all timesheets approved <span class="then">&#8594; handoff to payroll: "All timesheets ready."</span><br>
+            <span class="if">IF</span> some pending <span class="else">&#8594; "Payroll waiting on approval for: [list]"</span><br>
+            <span class="if">IF</span> disputed <span class="fail">&#8594; hold that employee, process everyone else</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 10 -->
+      <div class="step">
+        <div class="step-dot proactive">10</div>
+        <div class="step-card proactive-card">
+          <div class="step-header">
+            <div class="step-title">Compliance Monitoring</div>
+            <div class="step-badge badge-proactive">PROACTIVE — CONTINUOUS</div>
+          </div>
+          <div class="step-body">
+            Agent continuously monitors for labor law compliance. Knows state-specific rules so the founder doesn't have to.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-body">
+                <strong>Weekly overtime:</strong> Auto-calculate after 40hrs/week (or state threshold). Alert when approaching.<br>
+                <strong>Daily overtime:</strong> California = after 8hrs/day. Agent tracks per state.<br>
+                <strong>Rest days:</strong> Flag 7+ consecutive work days.<br>
+                <strong>Meal breaks:</strong> California = 30min after 5hrs. Agent flags when not taken.<br>
+                <strong>PTO payout laws:</strong> Some states require payout on termination. Agent tracks accrued balance.<br>
+                <strong>Minimum wage:</strong> Verify hourly rate meets federal + state minimum.<br>
+                <strong>Record keeping:</strong> Maintain records for 3+ years (or per jurisdiction).
+              </div>
+            </div>
+          </div>
+          <div class="notify">
+            <div class="notify-label">Proactive alerts</div>
+            "[Name] is at 38 hours. Overtime kicks in after 40."<br>
+            "[Name] has worked 6 consecutive days. Rest day required."<br>
+            "[Name] hasn't taken a meal break in 5.5 hours."
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 11 -->
+      <div class="step">
+        <div class="step-dot auto">11</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Schedule Adaptation</div>
+            <div class="step-badge badge-auto">LEARNS OVER TIME</div>
+          </div>
+          <div class="step-body">
+            After 4 weeks, agent compares actual patterns to contract baseline and suggests adjustments.
+          </div>
+          <div class="condition">
+            <span class="if">IF</span> pattern consistently differs (e.g., works 10-7 not 9-6) <span class="then">&#8594; "I've noticed you usually work 10am-7pm. Want me to update your schedule?"</span><br>
+            <span class="if">IF</span> employee says yes <span class="then">&#8594; baseline updated for future</span><br>
+            <span class="if">IF</span> employee says no <span class="then">&#8594; keep original</span><br>
+            <span class="if">IF</span> employee frequently works offline <span class="then">&#8594; "Auto-mark [day] as work day going forward?"</span><br>
+            <span class="if">IF</span> flexible schedule <span class="else">&#8594; no forced baseline, use signals + weekly confirmation</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 12 -->
+      <div class="step">
+        <div class="step-dot auto">12</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Timesheet History & Audit Trail</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="step-body">
+            Every action logged and searchable. Every entry, how it was created, who approved it, all corrections.
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">Accessible to:</div>
+              <div class="substep-body">
+                <strong>Employee:</strong> own timesheets, PTO balance, history<br>
+                <strong>Manager:</strong> team timesheets, approvals, overtime trends<br>
+                <strong>Admin:</strong> everyone's timesheets, compliance records, full audit trail
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 13 -->
+      <div class="step">
+        <div class="step-dot auto">13</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Notifications & Reminders</div>
+            <div class="step-badge badge-auto">AUTOMATIC</div>
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-body">
+                <strong>Missing day:</strong> employee, same day or next morning<br>
+                <strong>Overtime detected:</strong> employee then manager<br>
+                <strong>Weekly summary:</strong> employee, Friday EOD<br>
+                <strong>Approval needed:</strong> manager, Friday/Monday<br>
+                <strong>PTO request:</strong> manager, immediately<br>
+                <strong>PTO decision:</strong> employee, immediately<br>
+                <strong>Approaching overtime:</strong> manager, at 90% threshold<br>
+                <strong>Compliance violation:</strong> manager + admin, immediately<br>
+                <strong>Payroll waiting:</strong> manager, before deadline<br>
+                <strong>PTO balance low:</strong> employee, below 2 days
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 14 -->
+      <div class="step">
+        <div class="step-dot auto">14</div>
+        <div class="step-card auto-card">
+          <div class="step-header">
+            <div class="step-title">Timesheet Corrections</div>
+            <div class="step-badge badge-auto">EMPLOYEE / MANAGER</div>
+          </div>
+          <div class="step-body">
+            Both employees and managers can correct timesheets at any time. All changes logged.
+          </div>
+          <div class="condition">
+            <strong>Employee correction:</strong><br>
+            <span class="if">IF</span> week already approved <span class="else">&#8594; flag to manager for re-approval</span><br>
+            <span class="if">IF</span> correction affects processed payroll <span class="fail">&#8594; "Adjustment will apply in next payroll run"</span><br>
+            <span class="if">IF</span> correction older than 30 days <span class="fail">&#8594; requires admin approval</span><br><br>
+            <strong>Manager correction:</strong><br>
+            <span class="then">&#8594; update entry, notify employee of change, log in audit trail</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider">Error States</div>
+
+      <!-- ERROR STATES -->
+      <div class="step">
+        <div class="step-dot error">!</div>
+        <div class="step-card error-card">
+          <div class="step-header">
+            <div class="step-title">Error Handling</div>
+            <div class="step-badge badge-error">EDGE CASES</div>
+          </div>
+          <div class="substeps">
+            <div class="substep">
+              <div class="substep-title">No tools connected</div>
+              <div class="substep-body">Alert admin: "No tools connected for [name]. Can't verify activity. Connect at least one tool or switch to manual entry."</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Tool API goes down</div>
+              <div class="substep-body">Don't mark as missing day. Use other sources. If all down, assume work day and note the outage.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Employee disputes entry</div>
+              <div class="substep-body">Allow correction, log it, re-route for approval if already approved.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Contractor doesn't confirm timesheet</div>
+              <div class="substep-body">Block their payroll entry. Remind daily. After 3 days, notify manager.</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">PTO request on a day with hours logged</div>
+              <div class="substep-body">"You already have hours for [date]. Replace with PTO?"</div>
+            </div>
+            <div class="substep">
+              <div class="substep-title">Retroactive change after payroll</div>
+              <div class="substep-body">Queue adjustment for next payroll cycle. Don't reprocess current cycle.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- WHAT MAKES THIS DIFFERENT -->
+    <div style="background:#111;border:1px solid #1e1e1e;border-radius:14px;padding:24px;margin-top:32px;">
+      <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:16px;">What Makes This Different</div>
+      <table class="diff-table">
+        <tr>
+          <th>Traditional Time Tracking</th>
+          <th>Time Card Curator</th>
+        </tr>
+        <tr>
+          <td>Employee clocks in and out manually</td>
+          <td>Agent pre-fills from contract, validates with tool signals</td>
+        </tr>
+        <tr>
+          <td>Forgot to clock in? Fix it yourself</td>
+          <td>Agent detects and asks — no manual entry</td>
+        </tr>
+        <tr>
+          <td>Manager reviews every timesheet</td>
+          <td>Manager only sees exceptions</td>
+        </tr>
+        <tr>
+          <td>Separate app to install</td>
+          <td>Lives in Kuri — no separate tool</td>
+        </tr>
+        <tr>
+          <td>Screenshots and keystroke surveillance</td>
+          <td>Activity signals only (binary: active/not)</td>
+        </tr>
+        <tr>
+          <td>Overtime calculated manually</td>
+          <td>Auto-calculated per jurisdiction</td>
+        </tr>
+        <tr>
+          <td>PTO tracked in a spreadsheet</td>
+          <td>Integrated — request in Kuri, auto-deduct</td>
+        </tr>
+        <tr>
+          <td>Export CSV for payroll</td>
+          <td>Flows directly to payroll agent</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="footer-stats">
+        <div class="footer-stat">
+          <div class="footer-num">14</div>
+          <div class="footer-label">Steps</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-num">10</div>
+          <div class="footer-label">Automatic</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-num">1</div>
+          <div class="footer-label">Approval</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-num">0</div>
+          <div class="footer-label">Clock-ins required</div>
+        </div>
+        <div class="footer-stat">
+          <div class="footer-num">6</div>
+          <div class="footer-label">Error cases</div>
+        </div>
+      </div>
+      <p>Employee joins. Timesheet fills itself from <span class="highlight">day 1</span>. Manager approves <span class="highlight">exceptions only</span>. Payroll gets the data <span class="highlight">automatically</span>.</p>
+    </div>
+  </div>
+</body>
+</html>
