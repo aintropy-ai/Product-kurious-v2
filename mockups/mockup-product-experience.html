@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Experience Mockup - AIntropy Kurious</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #050505; color: #E0E0E0; }
+
+        .screen-section {
+            max-width: 1100px; margin: 0 auto; padding: 80px 32px;
+            border-bottom: 1px solid #1C1C1C;
+        }
+        .screen-label {
+            font-size: 11px; font-weight: 700; color: #00D4FF; text-transform: uppercase;
+            letter-spacing: 2px; margin-bottom: 8px;
+        }
+        .screen-title {
+            font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 12px; letter-spacing: -1px;
+        }
+        .screen-desc {
+            font-size: 15px; color: #888; margin-bottom: 32px; max-width: 600px; line-height: 1.6;
+        }
+
+        /* Annotation bar */
+        .annotation {
+            margin-top: 20px; padding: 14px 20px; border-radius: 10px;
+            background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.1);
+            display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
+        }
+        .annotation-pain {
+            font-size: 12px; color: #ff6b6b; font-weight: 500;
+        }
+        .annotation-pain span { font-weight: 700; }
+        .annotation-metric {
+            font-size: 12px; color: #00D4FF; font-weight: 500;
+        }
+        .annotation-metric span { font-weight: 700; }
+
+        /* Mockup frame */
+        .mockup-frame {
+            background: #0A0A0A; border: 1px solid #1C1C1C; border-radius: 12px;
+            overflow: hidden;
+        }
+        .mockup-topbar {
+            background: #0E0E0E; border-bottom: 1px solid #1C1C1C; padding: 10px 16px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .topbar-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .topbar-dot.r { background: #ef4444; }
+        .topbar-dot.y { background: #f59e0b; }
+        .topbar-dot.g { background: #22c55e; }
+        .topbar-url {
+            flex: 1; background: #1C1C1C; border-radius: 6px; padding: 6px 12px;
+            font-size: 12px; color: #aaa; margin-left: 8px;
+        }
+        .mockup-body { padding: 24px; }
+
+        /* UI Components */
+        .sidebar {
+            width: 220px; background: #0E0E0E; border-right: 1px solid #1C1C1C;
+            padding: 16px; flex-shrink: 0;
+        }
+        .sidebar-item {
+            padding: 8px 12px; border-radius: 6px; font-size: 13px; color: #888;
+            margin-bottom: 4px; cursor: pointer;
+        }
+        .sidebar-item.active { background: rgba(0,212,255,0.08); color: #00D4FF; }
+        .sidebar-label {
+            font-size: 10px; font-weight: 700; color: #999; text-transform: uppercase;
+            letter-spacing: 1px; margin: 16px 0 8px; padding: 0 12px;
+        }
+
+        .card {
+            background: #0E0E0E; border: 1px solid #1C1C1C; border-radius: 10px;
+            padding: 20px;
+        }
+        .card-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+        .card-text { font-size: 13px; color: #888; line-height: 1.6; }
+
+        .btn-primary {
+            background: #00D4FF; color: #050505; padding: 10px 24px; border-radius: 8px;
+            font-size: 13px; font-weight: 700; border: none; display: inline-block;
+        }
+        .btn-outline {
+            border: 1px solid rgba(0,212,255,0.3); color: #00D4FF; padding: 10px 24px;
+            border-radius: 8px; font-size: 13px; font-weight: 600; background: none;
+            display: inline-block;
+        }
+
+        .tag {
+            display: inline-block; font-size: 10px; font-weight: 600; padding: 3px 10px;
+            border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .tag-live { color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+        .tag-running { color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+        .tag-complete { color: #00D4FF; border: 1px solid rgba(0,212,255,0.3); }
+
+        .metric-box {
+            background: #111; border: 1px solid #1C1C1C; border-radius: 8px;
+            padding: 16px; text-align: center;
+        }
+        .metric-value { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+        .metric-label { font-size: 11px; color: #aaa; }
+
+        .code-block {
+            background: #0A0A0A; border: 1px solid #1C1C1C; border-radius: 8px;
+            padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+            color: #ccc; line-height: 1.8;
+        }
+        .code-comment { color: #999; }
+        .code-keyword { color: #00D4FF; }
+        .code-string { color: #34d399; }
+        .code-func { color: #f59e0b; }
+
+        .search-bar-mock {
+            background: #0E0E0E; border: 1px solid rgba(0,212,255,0.15); border-radius: 12px;
+            padding: 14px 20px; display: flex; align-items: center; gap: 12px;
+        }
+        .search-dot-mock { width: 10px; height: 10px; border-radius: 50%; background: #00D4FF; box-shadow: 0 0 8px rgba(0,212,255,0.5); }
+
+        .progress-bar { height: 6px; background: #1C1C1C; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 3px; }
+
+        /* Header */
+        .page-header {
+            text-align: center; padding: 80px 32px 40px;
+            border-bottom: 1px solid #1C1C1C;
+        }
+        .page-header h1 { font-size: 40px; font-weight: 900; letter-spacing: -2px; margin-bottom: 12px; }
+        .page-header h1 .a { color: #00D4FF; }
+        .page-header p { font-size: 16px; color: #888; }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="page-header">
+    <h1><span class="a">A</span>Intropy Product Experience</h1>
+    <p>What the user sees at every step. From connecting data to production monitoring.</p>
+    <p style="font-size: 12px; color: #999; margin-top: 8px;">Each screen annotated with the user pain point it solves and the success metric.</p>
+</div>
+
+<!-- SCREEN 1: LOGIN / LANDING -->
+<div class="screen-section">
+    <div class="screen-label">Screen 1 of 8</div>
+    <div class="screen-title">Welcome / Dashboard</div>
+    <div class="screen-desc">First thing the user sees after login. Their solutions, recent activity, and quick actions.</div>
+
+    <div class="mockup-frame">
+        <div class="mockup-topbar">
+            <div class="topbar-dot r"></div><div class="topbar-dot y"></div><div class="topbar-dot g"></div>
+            <div class="topbar-url">app.aintropy.ai/dashboard</div>
+        </div>
+        <div class="mockup-body" style="display: flex; min-height: 400px;">
+            <div class="sidebar">
+                <div style="font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 20px;"><span style="color: #00D4FF;">A</span>Intropy</div>
+                <div class="sidebar-item active">Dashboard</div>
+                <div class="sidebar-item">Solutions</div>
+                <div class="sidebar-item">Vibe-Discover</div>
+                <div class="sidebar-item">Search</div>
+                <div class="sidebar-label">Manage</div>
+                <div class="sidebar-item">Eval Dashboard</div>
+                <div class="sidebar-item">Monitoring</div>
+                <div class="sidebar-item">Settings</div>
+            </div>
+            <div style="flex: 1; padding: 24px;">
+                <div style="font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 24px;">Welcome back, Sarah</div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px;">
+                    <div class="metric-box"><div class="metric-value" style="color: #00D4FF;">3</div><div class="metric-label">Active Solutions</div></div>
+                    <div class="metric-box"><div class="metric-value" style="color: #34d399;">94.2%</div><div class="metric-label">Avg Accuracy</div></div>
+                    <div class="metric-box"><div class="metric-value" style="color: #f59e0b;">23ms</div><div class="metric-label">Avg Latency</div></div>
+                    <div class="metric-box"><div class="metric-value" style="color: #a78bfa;">12.4K</div><div class="metric-label">Queries This Week</div></div>
+                </div>
+                <div style="font-size: 13px; font-weight: 700; color: #888; margin-bottom: 12px;">Your Solutions</div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span class="tag tag-live">Live</span><span style="font-size: 11px; color: #999;">85M docs</span></div>
+                        <div class="card-title">NJ Open Data</div>
+                        <div class="card-text">23 agencies, 8 formats</div>
+                    </div>
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span class="tag tag-live">Live</span><span style="font-size: 11px; color: #999;">4,000 hrs</span></div>
+                        <div class="card-title">Legal Video</div>
+                        <div class="card-text">Council meetings, depositions</div>
+                    </div>
+                    <div class="card" style="border-style: dashed;">
+                        <div style="text-align: center; padding: 20px 0;">
+                            <div style="font-size: 24px; color: #777; margin-bottom: 8px;">+</div>
+                            <div style="font-size: 13px; color: #999;">New Solution</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="annotation">
+        <div class="annotation-pain"><span>Pain point:</span> "I have 100s of databases and no way to see them in one place" (AI+Data Engineer empathy map)</div>
+        <div class="annotation-metric"><span>Success:</span> User sees all solutions, accuracy, and activity in one dashboard within 3 seconds of login</div>
+    </div>
+</div>
+
+<!-- SCREEN 2: CONNECT DATA -->
+<div class="screen-section">
+    <div class="screen-label">Screen 2 of 8</div>
+    <div class="screen-title">Connect Your Data</div>
+    <div class="screen-desc">User selects data sources, uploads files, or connects APIs. No coding required.</div>
+
+    <div class="mockup-frame">
+        <div class="mockup-topbar">
+            <div class="topbar-dot r"></div><div class="topbar-dot y"></div><div class="topbar-dot g"></div>
+            <div class="topbar-url">app.aintropy.ai/solutions/new/connect</div>
+        </div>
+        <div class="mockup-body">
+            <div style="text-align: center; margin-bottom: 32px;">
+                <div style="font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px;">What data do you want to make searchable?</div>
+                <div style="font-size: 14px; color: #888;">Select your data sources. We handle the rest.</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; max-width: 800px; margin: 0 auto 32px;">
+                <div class="card" style="text-align: center; cursor: pointer; border-color: rgba(0,212,255,0.3);">
+                    <div style="font-size: 28px; margin-bottom: 8px;">📄</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #fff;">Documents</div>
+                    <div style="font-size: 11px; color: #999; margin-top: 4px;">PDF, DOCX, PPTX</div>
+                </div>
+                <div class="card" style="text-align: center; cursor: pointer;">
+                    <div style="font-size: 28px; margin-bottom: 8px;">🎥</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #fff;">Video</div>
+                    <div style="font-size: 11px; color: #999; margin-top: 4px;">MP4, AVI, MOV</div>
+                </div>
+                <div class="card" style="text-align: center; cursor: pointer;">
+                    <div style="font-size: 28px; margin-bottom: 8px;">📊</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #fff;">Structured Data</div>
+                    <div style="font-size: 11px; color: #999; margin-top: 4px;">CSV, XLSX, SQL</div>
+                </div>
+                <div class="card" style="text-align: center; cursor: pointer;">
+                    <div style="font-size: 28px; margin-bottom: 8px;">🔗</div>
+                    <div style="font-size: 13px; font-weight: 600; color: #fff;">API / Database</div>
+                    <div style="font-size: 11px; color: #999; margin-top: 4px;">REST, S3, GCS</div>
+                </div>
+            </div>
+
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="card" style="border-style: dashed; text-align: center; padding: 40px;">
+                    <div style="font-size: 16px; color: #888; margin-bottom: 8px;">Drag and drop files here</div>
+                    <div style="font-size: 13px; color: #999;">or click to browse. Any format, any size.</div>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <span class="btn-primary">Connect and Start Discovery</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="annotation">
+        <div class="annotation-pain"><span>Pain point:</span> "Simplicity to try in zero touch manner is a must. I will invest time only when I am sure it works for me" (AI+Data Engineer)</div>
+        <div class="annotation-metric"><span>Success:</span> User connects data in under 3 clicks. No configuration, no schema definition, no coding.</div>
+    </div>
+</div>
+
+<!-- SCREEN 3: VIBE-DISCOVER RUNNING -->
+<div class="screen-section">
+    <div class="screen-label">Screen 3 of 8</div>
+    <div class="screen-title">Vibe-Discover: AI Finds Your Optimal Pipeline</div>
+    <div class="screen-desc">AI automatically tests chunking strategies, embedding models, and rankers on the user's data. No manual configuration.</div>
+
+    <div class="mockup-frame">
+        <div class="mockup-topbar">
+            <div class="topbar-dot r"></div><div class="topbar-dot y"></div><div class="topbar-dot g"></div>
+            <div class="topbar-url">app.aintropy.ai/solutions/legal-video/discover</div>
+        </div>
+        <div class="mockup-body" style="display: flex; gap: 20px;">
+            <!-- Left: Code/Log panel -->
+            <div style="flex: 1;">
+                <div style="font-size: 11px; font-weight: 600; color: #00D4FF; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">AI Reasoning</div>
+                <div class="code-block" style="height: 320px; overflow-y: auto;">
+                    <div><span class="code-comment"># Vibe Discovery v1.0</span></div>
+                    <div><span class="code-comment"># AI plans the optimal retrieval combination</span></div>
+                    <div>&nbsp;</div>
+                    <div><span class="code-keyword">from</span> vibe <span class="code-keyword">import</span> <span class="code-func">DiscoveryEngine</span>, <span class="code-func">PlannerAI</span></div>
+                    <div><span class="code-keyword">from</span> algorithms <span class="code-keyword">import</span> <span class="code-func">RankingPool</span>, <span class="code-func">ChunkingPool</span></div>
+                    <div>&nbsp;</div>
+                    <div>domain = <span class="code-string">"enterprise_legal"</span></div>
+                    <div>scale = <span class="code-string">"4000hrs_video"</span></div>
+                    <div>&nbsp;</div>
+                    <div><span class="code-comment"># Testing combinations...</span></div>
+                    <div>BM25 + dense: <span style="color: #f59e0b;">0.71</span></div>
+                    <div>Hybrid RRF: <span style="color: #34d399;">0.89</span> <span class="code-comment">&#10003;</span></div>
+                    <div>chunk=512, overlap=64</div>
+                    <div>converging on optimal</div>
+                    <div>score = <span style="color: #00D4FF;">94.2%</span> <span class="code-comment">&#10003;</span></div>
+                </div>
+            </div>
+            <!-- Right: Metrics panel -->
+            <div style="width: 300px;">
+                <div style="font-size: 11px; font-weight: 600; color: #00D4FF; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Discovery Pipeline</div>
+                <div style="margin-bottom: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><div style="width: 20px; height: 20px; border-radius: 50%; background: #34d399; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #050505; font-weight: 700;">1</div><span style="font-size: 12px; color: #34d399;">PLAN</span><div style="flex: 1; height: 2px; background: #34d399;"></div></div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><div style="width: 20px; height: 20px; border-radius: 50%; background: #34d399; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #050505; font-weight: 700;">2</div><span style="font-size: 12px; color: #34d399;">DEFINE</span><div style="flex: 1; height: 2px; background: #34d399;"></div></div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><div style="width: 20px; height: 20px; border-radius: 50%; background: #34d399; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #050505; font-weight: 700;">3</div><span style="font-size: 12px; color: #34d399;">REASON</span><div style="flex: 1; height: 2px; background: #34d399;"></div></div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><div style="width: 20px; height: 20px; border-radius: 50%; background: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #050505; font-weight: 700;">4</div><span style="font-size: 12px; color: #f59e0b;">BUILD</span><div style="flex: 1; height: 2px; background: #f59e0b; animation: pulse 1s infinite;"></div></div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;"><div style="width: 20px; height: 20px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #aaa; font-weight: 700;">5</div><span style="font-size: 12px; color: #999;">VALIDATE</span><div style="flex: 1; height: 2px; background: #1C1C1C;"></div></div>
+                    <div style="display: flex; align-items: center; gap: 8px;"><div style="width: 20px; height: 20px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #aaa; font-weight: 700;">6</div><span style="font-size: 12px; color: #999;">OPTIMIZE</span><div style="flex: 1; height: 2px; background: #1C1C1C;"></div></div>
+                </div>
+
+                <div style="font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Algorithm Discovery</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;">
+                    <div style="background: #111; border: 1px solid #1C1C1C; border-radius: 6px; padding: 10px;"><div style="font-size: 11px; font-weight: 600; color: #888;">BM25 Sparse</div><div style="font-size: 10px; color: #999;">score: 0.71</div></div>
+                    <div style="background: #111; border: 1px solid #1C1C1C; border-radius: 6px; padding: 10px;"><div style="font-size: 11px; font-weight: 600; color: #888;">Dense FAISS</div><div style="font-size: 10px; color: #999;">score: 0.76</div></div>
+                    <div style="background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.3); border-radius: 6px; padding: 10px;"><div style="font-size: 11px; font-weight: 600; color: #00D4FF;">Hybrid RRF</div><div style="font-size: 10px; color: #00D4FF;">score: 0.89</div></div>
+                    <div style="background: #111; border: 1px solid #1C1C1C; border-radius: 6px; padding: 10px;"><div style="font-size: 11px; font-weight: 600; color: #888;">ColBERT Late</div><div style="font-size: 10px; color: #999;">score: 0.82</div></div>
+                </div>
+
+                <div style="font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Live Metrics</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div class="metric-box" style="padding: 12px;"><div class="metric-value" style="font-size: 22px; color: #00D4FF;">94.2%</div><div class="metric-label">Accuracy</div></div>
+                    <div class="metric-box" style="padding: 12px;"><div class="metric-value" style="font-size: 22px; color: #34d399;">23ms</div><div class="metric-label">Latency</div></div>
+                    <div class="metric-box" style="padding: 12px;"><div class="metric-value" style="font-size: 22px; color: #f59e0b;">512</div><div class="metric-label">Chunk Size</div></div>
+                    <div class="metric-box" style="padding: 12px;"><div class="metric-value" style="font-size: 22px; color: #a78bfa;">96.1%</div><div class="metric-label">Recall@10</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="annotation">
+        <div class="annotation-pain"><span>Pain point:</span> "There are hundreds of vector stores and approaches. I don't have time to learn and try them all" (AI+Data Engineer)</div>
+        <div class="annotation-metric"><span>Success:</span> AI auto-discovers optimal pipeline in under 10 minutes. User configures nothing. Zero touch.</div>
+    </div>
+</div>
+
+<!-- SCREEN 4: DISCOVERY COMPLETE -->
+<div class="screen-section">
+    <div class="screen-label">Screen 4 of 8</div>
+    <div class="screen-title">Discovery Complete: Your Pipeline is Ready</div>
+    <div class="screen-desc">AI has found the optimal configuration. User sees the results and can start searching immediately.</div>
+
+    <div class="mockup-frame">
+        <div class="mockup-topbar">
+            <div class="topbar-dot r"></div><div class="topbar-dot y"></div><div class="topbar-dot g"></div>
+            <div class="topbar-url">app.aintropy.ai/solutions/legal-video/results</div>
+        </div>
+        <div class="mockup-body">
+            <div style="text-align: center; margin-bottom: 32px;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(0,212,255,0.1); border: 2px solid #00D4FF; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 24px; font-weight: 900; color: #00D4FF;">94</div>
+                <div style="font-size: 10px; font-weight: 700; color: #00D4FF; text-transform: uppercase; letter-spacing: 1px;">Vibe Discovery Score</div>
+                <div style="font-size: 20px; font-weight: 700; color: #fff; margin-top: 8px;">Discovery Complete</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; max-width: 700px; margin: 0 auto 24px;">
+                <div class="card">
+                    <div style="font-size: 11px; color: #999; margin-bottom: 4px;">Ranking</div>
+                    <div style="font-size: 14px; font-weight: 700; color: #00D4FF;">Hybrid RRF (BM25 a=0.3 + Dense a=0.7)</div>
+                </div>
+                <div class="card">
+                    <div style="font-size: 11px; color: #999; margin-bottom: 4px;">Chunking</div>
+                    <div style="font-size: 14px; font-weight: 700; color: #fff;">Semantic, 512 tokens, 64 overlap</div>
+                </div>
+                <div class="card">
+                    <div style="font-size: 11px; color: #999; margin-bottom: 4px;">Embedding</div>
+                    <div style="font-size: 14px; font-weight: 700; color: #fff;">BGE-large joint space</div>
+                </div>
+                <div class="card">
+                    <div style="font-size: 11px; color: #999; margin-bottom: 4px;">Performance</div>
+                    <div style="font-size: 14px; font-weight: 700; color: #34d399;">94.2% accuracy, 23ms latency, zero fine-tuning</div>
+                </div>
+            </div>
+
+            <div style="text-align: center;">
+                <span class="btn-primary" style="margin-right: 12px;">Start Searching</span>
+                <span class="btn-outline">View Full Report</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="annotation">
+        <div class="annotation-pain"><span>Pain point:</span> "I need to prove results to leadership with accuracy, index creation time, and show it's ready to deploy" (AI+Data Engineer)</div>
+        <div class="annotation-metric"><span>Success:</span> Shareable results page with accuracy, latency, and config details. One click to start using it.</div>
+    </div>
+</div>
+
+<!-- SCREEN 5: SEARCH -->
+<div class="screen-section">
+    <div class="screen-label">Screen 5 of 8</div>
+    <div class="screen-title">Search: Ask Anything Across Your Data</div>
+    <div class="screen-desc">User types a natural language question. Kurious searches across all formats: video, documents, structured data.</div>
+
+    <div class="mockup-frame">
+        <div class="mockup-topbar">
+            <div class="topbar-dot r"></div><div class="topbar-dot y"></div><div class="topbar-dot g"></div>
+            <div class="topbar-url">app.aintropy.ai/solutions/legal-video/search</div>
+        </div>
+        <div class="mockup-body" style="display: flex; min-height: 400px;">
+            <div class="sidebar">
+                <div style="font-size: 11px; font-weight: 600; color: #00D4FF; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Legal Video</div>
+                <div class="sidebar-label">Recent</div>
+                <div class="sidebar-item" style="font-size: 12px;">Route 21 decision?</div>
+                <div class="sidebar-item" style="font-size: 12px;">Zoning change concerns?</div>
+                <div class="sidebar-item" style="font-size: 12px;">Water rate increase?</div>
+                <div class="sidebar-label">Mode</div>
+                <div style="display: flex; gap: 6px; padding: 0 12px;">
+                    <span style="font-size: 11px; padding: 4px 12px; border-radius: 20px; background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3); color: #00D4FF; font-weight: 600;">Quick</span>
+                    <span style="font-size: 11px; padding: 4px 12px; border-radius: 20px; border: 1px solid #333; color: #888;">Deep Dive</span>
+                </div>
+            </div>
+            <div style="flex: 1; padding: 24px;">
+                <div class="search-bar-mock" style="margin-bottom: 24px;">
+                    <div class="search-dot-mock"></div>
+                    <span style="font-size: 14px; color: #fff;">When did the witness change their testimony?</span>
+                </div>
+
+                <div style="font-size: 10px; color: #999; margin-bottom: 16px;">Searching 4,000+ hours of video and documents...</div>
+
+                <div style="display: flex; gap: 16px;">
+                    <!-- Video result -->
+                    <div style="flex: 1.4;">
+                        <div class="card" style="padding: 0; overflow: hidden;">
+                            <div style="height: 120px; background: linear-gradient(135deg, #0a0a14, #12121e); position: relative; display: flex; align-items: center; justify-content: center;">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(0,212,255,0.15); border: 2px solid #00D4FF; display: flex; align-items: center; justify-content: center;"><div style="width: 0; height: 0; border-left: 12px solid #00D4FF; border-top: 7px solid transparent; border-bottom: 7px solid transparent; margin-left: 3px;"></div></div>
+                                <span style="position: absolute; top: 8px; left: 10px; font-size: 9px; background: rgba(0,0,0,0.8); color: #fff; padding: 3px 8px; border-radius: 4px;">Witness: Michael Torres</span>
+                                <span style="position: absolute; top: 8px; right: 10px; font-size: 8px; background: rgba(0,0,0,0.8); color: #00D4FF; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px;">Exact 4s clip</span>
+                                <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.05);"><div style="width: 35%; height: 100%; background: #00D4FF;"></div></div>
+                            </div>
+                            <div style="padding: 12px;">
+                                <div style="font-size: 12px; color: #ddd; font-style: italic; line-height: 1.6;">"I need to correct that. I was not there at 9 PM. I arrived closer to 11."</div>
+                                <div style="font-size: 9px; color: #999; margin-top: 6px;">Case #2024-CV-4891 - Timestamp: 01:23:47</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Text result -->
+                    <div style="flex: 1;">
+                        <div class="card">
+                            <div style="font-size: 8px; font-weight: 700; color: #34d399; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px;">Contradiction Detected</div>
+                            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                                <div style="flex: 1; padding: 8px; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.1); border-radius: 6px; font-size: 10px; color: #ef4444; line-height: 1.5;"><div style="font-size: 7px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; opacity: 0.7;">March 3</div>"I arrived at approximately 9 PM"</div>
+                                <div style="flex: 1; padding: 8px; background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.1); border-radius: 6px; font-size: 10px; color: #00D4FF; line-height: 1.5;"><div style="font-size: 7px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; opacity: 0.7;">March 17</div>"I arrived closer to 11 PM"</div>
+                            </div>
+                            <div style="font-size: 9px; color: #999;">Deposition Transcripts</div>
+                            <div style="margin-top: 8px;"><span style="font-size: 8px; font-weight: 600; color: #00D4FF; background: rgba(0,212,255,0.06); padding: 2px 7px; border-radius: 4px; margin-right: 4px;">2hr gap</span><span style="font-size: 8px; font-weight: 600; color: #00D4FF; background: rgba(0,212,255,0.06); padding: 2px 7px; border-radius: 4px;">3 docs</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; font-size: 12px; color: #888;">Searched <span style="color: #00D4FF; font-weight: 600;">4,000 hrs of video</span> in <span style="color: #00D4FF; font-weight: 600;">0.2s</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="annotation">
+        <div class="annotation-pain"><span>Pain point:</span> "I spend days searching through video recordings to find one moment" (Legal Researcher / Decision Maker)</div>
+        <div class="annotation-metric"><span>Success:</span> Exact video clip with timestamp in under 5 seconds. Contradiction detected automatically.</div>
+    </div>
+</div>
+
+<!-- SCREEN 6: EVAL DASHBOARD -->
+<div class="screen-section">
+    <div class="screen-label">Screen 6 of 8</div>
+    <div class="screen-title">Eval Dashboard: Know Your Accuracy</div>
+    <div class="screen-desc">Automated evaluation runs on every data update. User sees accuracy trends, pass/fail per question, and comparison to baseline.</div>
+
+    <div class="mockup-frame">
+        <div class="mockup-topbar">
+            <div class="topbar-dot r"></div><div class="topbar-dot y"></div><div class="topbar-dot g"></div>
+            <div class="topbar-url">app.aintropy.ai/solutions/legal-video/eval</div>
+        </div>
+        <div class="mockup-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <div>
+                    <div style="font-size: 18px; font-weight: 700; color: #fff;">Evaluation Results</div>
+                    <div style="font-size: 12px; color: #999;">Last run: 2 hours ago. Auto-triggered by data update.</div>
+                </div>
+                <span class="tag tag-complete">All Thresholds Met</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px;">
+                <div class="metric-box"><div class="metric-value" style="color: #00D4FF;">94.2%</div><div class="metric-label">NDCG@10</div><div style="font-size: 10px; color: #34d399; margin-top: 4px;">+2.3% from last run</div></div>
+                <div class="metric-box"><div class="metric-value" style="color: #34d399;">96.1%</div><div class="metric-label">Recall@10</div><div style="font-size: 10px; color: #34d399; margin-top: 4px;">+1.1%</div></div>
+                <div class="metric-box"><div class="metric-value" style="color: #f59e0b;">23ms</div><div class="metric-label">Latency p80</div><div style="font-size: 10px; color: #34d399; margin-top: 4px;">-5ms</div></div>
+                <div class="metric-box"><div class="metric-value" style="color: #a78bfa;">48/50</div><div class="metric-label">Questions Passing</div><div style="font-size: 10px; color: #f59e0b; margin-top: 4px;">2 need review</div></div>
+            </div>
+
+            <div class="card" style="margin-bottom: 16px;">
+                <div style="font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 12px;">Question-Level Results</div>
+                <div style="display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center;">
+                    <span style="font-size: 10px; color: #34d399;">PASS</span><span style="font-size: 12px; color: #ccc;">What did the transportation chair decide about Route 21?</span><span style="font-size: 11px; color: #34d399; font-weight: 600;">0.97</span>
+                    <span style="font-size: 10px; color: #34d399;">PASS</span><span style="font-size: 12px; color: #ccc;">When did the witness change their testimony?</span><span style="font-size: 11px; color: #34d399; font-weight: 600;">0.94</span>
+                    <span style="font-size: 10px; color: #34d399;">PASS</span><span style="font-size: 12px; color: #ccc;">What were the zoning concerns at 1001 S Victory Road?</span><span style="font-size: 11px; color: #34d399; font-weight: 600;">0.91</span>
+                    <span style="font-size: 10px; color: #f59e0b;">REVIEW</span><span style="font-size: 12px; color: #ccc;">How did the water rate increase get justified?</span><span style="font-size: 11px; color: #f59e0b; font-weight: 600;">0.72</span>
+                    <span style="font-size: 10px; color: #f59e0b;">REVIEW</span><span style="font-size: 12px; color: #ccc;">What arguments were made for the rezoning?</span><span style="font-size: 11px; color: #f59e0b; font-weight: 600;">0.68</span>
+                </div>
+            </div>
+
+            <div style="font-size: 11px; color: #00D4FF; font-weight: 600;">Results auto-pushed to HuggingFace leaderboard. Transparent scoring.</div>
+        </div>
+    </div>
+
+    <div class="annotation">
+        <div class="annotation-pain"><span>Pain point:</span> "Creating consistent good quality eval sets and evaluation without manual human effort is a challenge" (AI+Data Engineer)</div>
+        <div class="annotation-metric"><span>Success:</span> Eval runs automatically on every data update. User sees pass/fail per question. No manual effort.</div>
+    </div>
+</div>
+
+<!-- SCREEN 7: MONITORING DASHBOARD -->
+<div class="screen-section">
+    <div class="screen-label">Screen 7 of 8</div>
+    <div class="screen-title">Production Monitoring</div>
+    <div class="screen-desc">DevOps/MLOps view. Real-time latency, accuracy, cost, and uptime in one dashboard.</div>
+
+    <div class="mockup-frame">
+        <div class="mockup-topbar">
+            <div class="topbar-dot r"></div><div class="topbar-dot y"></div><div class="topbar-dot g"></div>
+            <div class="topbar-url">app.aintropy.ai/monitoring</div>
+        </div>
+        <div class="mockup-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <div style="font-size: 18px; font-weight: 700; color: #fff;">System Health</div>
+                <div style="display: flex; gap: 8px;">
+                    <span class="tag tag-live">All Systems Operational</span>
+                    <span style="font-size: 11px; color: #999;">Last 24 hours</span>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 24px;">
+                <div class="metric-box"><div class="metric-value" style="font-size: 22px; color: #34d399;">99.97%</div><div class="metric-label">Uptime</div></div>
+                <div class="metric-box"><div class="metric-value" style="font-size: 22px; color: #00D4FF;">23ms</div><div class="metric-label">p50 Latency</div></div>
+                <div class="metric-box"><div class="metric-value" style="font-size: 22px; color: #f59e0b;">89ms</div><div class="metric-label">p95 Latency</div></div>
+                <div class="metric-box"><div class="metric-value" style="font-size: 22px; color: #a78bfa;">$0.03</div><div class="metric-label">Cost/Query</div></div>
+                <div class="metric-box"><div class="metric-value" style="font-size: 22px; color: #fff;">12.4K</div><div class="metric-label">Queries Today</div></div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="card">
+                    <div class="card-title">Latency Trend (24h)</div>
+                    <div style="display: flex; align-items: end; gap: 3px; height: 80px; margin-top: 12px;">
+                        <div style="flex: 1; background: #00D4FF; border-radius: 2px 2px 0 0; height: 40%;"></div>
+                        <div style="flex: 1; background: #00D4FF; border-radius: 2px 2px 0 0; height: 35%;"></div>
+                        <div style="flex: 1; background: #00D4FF; border-radius: 2px 2px 0 0; height: 45%;"></div>
+                        <div style="flex: 1; background: #00D4FF; border-radius: 2px 2px 0 0; height: 30%;"></div>
+                        <div style="flex: 1; background: #00D4FF; border-radius: 2px 2px 0 0; height: 38%;"></div>
+                        <div style="flex: 1; background: #00D4FF; border-radius: 2px 2px 0 0; height: 42%;"></div>
+                        <div style="flex: 1; background: #00D4FF; border-radius: 2px 2px 0 0; height: 28%;"></div>
+                        <div style="flex: 1; background: #00D4FF; border-radius: 2px 2px 0 0; height: 33%;"></div>
+                        <div style="flex: 1; background: #00D4FF; border-radius: 2px 2px 0 0; height: 25%;"></div>
+                        <div style="flex: 1; background: #00D4FF; border-radius: 2px 2px 0 0; height: 22%;"></div>
+                        <div style="flex: 1; background: #34d399; border-radius: 2px 2px 0 0; height: 20%;"></div>
+                        <div style="flex: 1; background: #34d399; border-radius: 2px 2px 0 0; height: 18%;"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Cost Attribution</div>
+                    <div style="margin-top: 12px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px;"><span style="color: #ccc;">NJ Open Data</span><span style="color: #00D4FF;">$42.30/day</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 60%; background: #00D4FF;"></div></div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin: 12px 0 8px;"><span style="color: #ccc;">Legal Video</span><span style="color: #a78bfa;">$28.10/day</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 40%; background: #a78bfa;"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 16px;">
+                <div class="card-title">Deployment Status</div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 12px;">
+                    <div style="text-align: center;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #34d399; margin: 0 auto 6px;"></div><div style="font-size: 11px; color: #ccc;">Retrieval</div></div>
+                    <div style="text-align: center;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #34d399; margin: 0 auto 6px;"></div><div style="font-size: 11px; color: #ccc;">Embedding</div></div>
+                    <div style="text-align: center;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #34d399; margin: 0 auto 6px;"></div><div style="font-size: 11px; color: #ccc;">KG Service</div></div>
+                    <div style="text-align: center;"><div style="width: 12px; height: 12px; border-radius: 50%; background: #34d399; margin: 0 auto 6px;"></div><div style="font-size: 11px; color: #ccc;">Video Index</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="annotation">
+        <div class="annotation-pain"><span>Pain point:</span> "I need a clean view of cost, latency, and post-prod accuracy. Comply with CISO needs and present to leadership." (DevOps Engineer)</div>
+        <div class="annotation-metric"><span>Success:</span> One dashboard shows everything ops needs. No switching between 5 tools. CISO-ready metrics.</div>
+    </div>
+</div>
+
+<!-- SCREEN 8: SCALE & EXPAND -->
+<div class="screen-section">
+    <div class="screen-label">Screen 8 of 8</div>
+    <div class="screen-title">Scale: Add New Data, New Solutions</div>
+    <div class="screen-desc">The platform grows with the customer. Add new datasets, new use cases, new users without starting over.</div>
+
+    <div class="mockup-frame">
+        <div class="mockup-topbar">
+            <div class="topbar-dot r"></div><div class="topbar-dot y"></div><div class="topbar-dot g"></div>
+            <div class="topbar-url">app.aintropy.ai/solutions</div>
+        </div>
+        <div class="mockup-body">
+            <div style="font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 24px;">Your Solutions</div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span class="tag tag-live">Live</span><span style="font-size: 20px; font-weight: 800; color: #00D4FF;">85M</span></div>
+                    <div class="card-title">NJ Open Data</div>
+                    <div class="card-text">23 agencies, 8 formats. 94.2% accuracy.</div>
+                    <div style="margin-top: 12px; font-size: 11px; color: #00D4FF; font-weight: 600;">Search this solution</div>
+                </div>
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span class="tag tag-live">Live</span><span style="font-size: 20px; font-weight: 800; color: #a78bfa;">4K hrs</span></div>
+                    <div class="card-title">Legal Video</div>
+                    <div class="card-text">Council meetings, depositions. 94% deep accuracy.</div>
+                    <div style="margin-top: 12px; font-size: 11px; color: #a78bfa; font-weight: 600;">Search this solution</div>
+                </div>
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span class="tag tag-running">Building</span><span style="font-size: 20px; font-weight: 800; color: #f59e0b;">2K hrs</span></div>
+                    <div class="card-title">Bodycam Footage</div>
+                    <div class="card-text">Ingesting... 68% complete. ETA: 4 hours.</div>
+                    <div style="margin-top: 8px;"><div class="progress-bar"><div class="progress-fill" style="width: 68%; background: #f59e0b;"></div></div></div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                <div class="card" style="border-style: dashed; text-align: center; padding: 32px;">
+                    <div style="font-size: 28px; color: #777; margin-bottom: 8px;">+</div>
+                    <div style="font-size: 14px; color: #888; font-weight: 600;">Add New Solution</div>
+                    <div style="font-size: 12px; color: #999; margin-top: 4px;">Connect data, run discovery, start searching</div>
+                </div>
+                <div class="card" style="border-style: dashed; text-align: center; padding: 32px;">
+                    <div style="font-size: 28px; color: #777; margin-bottom: 8px;">&#x1F517;</div>
+                    <div style="font-size: 14px; color: #888; font-weight: 600;">Cross-Solution Search</div>
+                    <div style="font-size: 12px; color: #999; margin-top: 4px;">One query across all your solutions</div>
+                </div>
+                <div class="card" style="border-style: dashed; text-align: center; padding: 32px;">
+                    <div style="font-size: 28px; color: #777; margin-bottom: 8px;">&#128274;</div>
+                    <div style="font-size: 14px; color: #888; font-weight: 600;">API Access</div>
+                    <div style="font-size: 12px; color: #999; margin-top: 4px;">Embed search into your own apps</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="annotation">
+        <div class="annotation-pain"><span>Pain point:</span> "The platform grows in the user's environment. They can add new datasets by themselves. It is self-sufficient." (GTM Deploy goal)</div>
+        <div class="annotation-metric"><span>Success:</span> Customer adds new solutions without calling us. Self-serve expansion. Platform becomes stickier with every dataset added.</div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div style="text-align: center; padding: 60px 32px; border-top: 1px solid #1C1C1C;">
+    <div style="font-size: 12px; color: #999;">AIntropy Product Experience Mockup. April 2026.</div>
+    <div style="font-size: 11px; color: #777; margin-top: 8px;">Screens connected to empathy map pain points from AI+Data Engineer and DevOps/MLOps Engineer personas.</div>
+</div>
+
+</body>
+</html>
