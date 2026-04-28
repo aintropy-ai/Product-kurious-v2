@@ -89,7 +89,7 @@ Sphere legend - Structured:
 > (Dynamic text set by JS after sphere scan completes)
 
 Bridge text:
-> Truly intelligent machines cannot be built by LLMs alone. They need a **semantic layer** for actions, trajectories, and sensory data.
+> Truly intelligent machines cannot be built by LLMs alone. They need a **semantic layer** for Physical AI to encapsulate actions, trajectories, and sensory data in world models.
 
 
 ---
