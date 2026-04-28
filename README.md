@@ -15,6 +15,7 @@
 | 🎨 **Product Experience Mockup** | [View mockup](https://aintropy-ai.github.io/Product-kurious-v2/mockups/mockup-product-experience.html) |
 | 🗺️ **GTM Journey Mockup** | [View mockup](https://aintropy-ai.github.io/Product-kurious-v2/mockups/mockup-gtm-journey.html) |
 | 🔧 **Website Redesign Preview** | [View preview](https://aintropy-ai.github.io/Product-kurious-v2/website-preview.html) |
+| 🆕 **Homepage V3 (Kunal feedback)** | [View v3](https://aintropy-ai.github.io/Product-kurious-v2/homepage-v3.html) |
 | 📐 **SRP Workflows** | [View prototypes](https://aintropy-ai.github.io/Product-kurious-v2/srp/prototype.html) |
 
 ---
