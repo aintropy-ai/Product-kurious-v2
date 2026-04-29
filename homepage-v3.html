@@ -617,7 +617,7 @@
   <!-- NAV -->
   <nav>
     <div class="nav-logo">
-      <img src="images/logo.png" alt="AIntropy" class="nav-logo-img">
+      <img src="/Users/shivangimishra/claude_code/Demo_walkthrough/public/logo.png" alt="AIntropy" class="nav-logo-img">
       <a href="#home" class="nav-logo-text"><span class="a">A</span>Intropy</a>
       <span class="nav-alpha">alpha</span>
     </div>
@@ -683,49 +683,41 @@
     @keyframes vortexBurst { 0% { width: 10px; height: 10px; opacity: 0.8; border-width: 2px; } 100% { width: 500px; height: 500px; opacity: 0; border-width: 0.5px; } }
     .vortex-burst { position: absolute; z-index: 12; pointer-events: none; border: 2px solid #00D4FF; border-radius: 50%; transform: translate(-50%,-50%); opacity: 0; }
     .vortex-burst.fire { animation: vortexBurst 0.6s ease-out forwards; }
-    .hero-result-area { position: relative; z-index: 15; display: flex; gap: 12px; margin-top: 12px; opacity: 0; transform: translateY(25px) scale(0.97); transition: all 0.6s cubic-bezier(0.23,1,0.32,1); width: 100%; max-width: 640px; }
+    .hero-result-area { position: relative; z-index: 15; margin-top: 12px; opacity: 0; transform: translateY(25px) scale(0.97); transition: all 0.6s cubic-bezier(0.23,1,0.32,1); width: 100%; max-width: 680px; }
     .hero-result-area.show { opacity: 1; transform: translateY(0) scale(1); }
-    .hero-vid-result { flex: 1.4; background: rgba(14,14,14,0.95); border: 1px solid rgba(0,212,255,0.2); border-radius: 12px; overflow: hidden; }
-    .hero-vid-preview { height: 105px; position: relative; background: #080810; overflow: hidden; }
-    .hero-vid-preview video { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8); }
-    .hero-vid-preview::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 50px; background: linear-gradient(transparent, rgba(14,14,14,0.95)); z-index: 1; }
-    .hero-vid-speaker { position: absolute; top: 8px; left: 10px; font-size: 9px; font-weight: 600; color: #fff; background: rgba(0,0,0,0.85); padding: 4px 10px; border-radius: 5px; z-index: 2; }
-    .hero-vid-speaker .rdot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #ef4444; margin-right: 5px; animation: rdotBlink 1.5s ease-in-out infinite; }
-    @keyframes rdotBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-    .hero-vid-clip { position: absolute; top: 8px; right: 10px; font-size: 8px; font-weight: 700; color: var(--cyan); background: rgba(0,0,0,0.85); padding: 4px 10px; border-radius: 5px; z-index: 2; text-transform: uppercase; letter-spacing: 1px; }
-    .hero-vid-progress { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; z-index: 3; background: rgba(255,255,255,0.08); }
-    .hero-vid-fill { height: 100%; background: var(--cyan); width: 0; box-shadow: 0 0 6px rgba(0,212,255,0.4); }
-    .hero-vid-wave { position: absolute; bottom: 10px; left: 10px; right: 10px; height: 16px; display: flex; align-items: end; gap: 1.5px; z-index: 2; }
-    .hero-wave-bar { flex: 1; background: rgba(0,212,255,0.3); border-radius: 1px; animation: heroWave 1.5s ease-in-out infinite; }
-    @keyframes heroWave { 0%,100% { height: 25%; } 50% { height: 100%; } }
-    .hero-vid-info { padding: 10px 12px; }
-    .hero-vid-answer { font-size: 11px; color: #ddd; line-height: 1.6; font-weight: 500; font-style: italic; }
-    .hero-vid-source { font-size: 9px; color: var(--dim); margin-top: 6px; }
-    .hero-vid-source span { color: var(--cyan); }
-    .hero-txt-result { flex: 1; background: rgba(14,14,14,0.95); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; overflow: hidden; }
-    .hero-txt-type { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
-    .hero-txt-type.doc { color: var(--cyan); }
-    .hero-txt-type.data { color: #f59e0b; }
-    .hero-txt-visual { margin-bottom: 12px; }
-    .hero-mini-chart { display: flex; align-items: end; gap: 4px; height: 50px; }
-    .hero-mini-bar { flex: 1; border-radius: 2px 2px 0 0; }
-    .hero-mini-label { font-size: 7px; color: var(--dim); text-align: center; margin-top: 3px; }
-    .hero-compare { display: flex; gap: 8px; }
-    .hero-compare-side { flex: 1; padding: 8px; border-radius: 6px; font-size: 10px; line-height: 1.5; }
-    .hero-compare-before { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.1); color: #ef4444; }
-    .hero-compare-after { background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.1); color: var(--cyan); }
-    .hero-compare-label { font-size: 7px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; opacity: 0.7; }
-    .hero-highlight-quote { font-size: 13px; color: #ddd; line-height: 1.6; padding: 10px 12px; border-left: 2px solid var(--cyan); background: rgba(0,212,255,0.03); border-radius: 0 6px 6px 0; }
-    .hero-mini-table { width: 100%; border-collapse: collapse; font-size: 9px; }
-    .hero-mini-table th { text-align: left; color: var(--dim); font-weight: 600; padding: 3px 0; border-bottom: 1px solid #1a1a1a; }
-    .hero-mini-table td { padding: 4px 0; color: #999; border-bottom: 1px solid #0f0f0f; }
-    .hero-mini-table td.hl { color: var(--cyan); font-weight: 600; }
-    .hero-progress-stat { margin-bottom: 6px; }
-    .hero-progress-label { font-size: 9px; color: #777; margin-bottom: 3px; display: flex; justify-content: space-between; }
-    .hero-progress-bg { height: 6px; background: #1a1a1a; border-radius: 3px; overflow: hidden; }
-    .hero-progress-fill { height: 100%; border-radius: 3px; }
-    .hero-txt-cite { font-size: 9px; color: #444; margin-top: auto; padding-top: 8px; border-top: 1px solid #1a1a1a; }
-    .hero-txt-stat { display: inline-block; font-size: 8px; font-weight: 600; color: var(--cyan); background: rgba(0,212,255,0.06); padding: 2px 7px; border-radius: 4px; margin-top: 6px; margin-right: 4px; }
+    /* Kurious-style UI */
+    .k-ui { background: rgba(14,14,14,0.97); border: 1px solid rgba(0,212,255,0.15); border-radius: 14px; overflow: hidden; }
+    .k-searching { padding: 16px 20px; }
+    .k-search-step { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: #888; }
+    .k-search-step .k-check { color: var(--cyan); font-size: 14px; }
+    .k-search-step .k-spin { color: var(--cyan); font-size: 12px; animation: kSpin 1s linear infinite; }
+    @keyframes kSpin { to { transform: rotate(360deg); } }
+    .k-video-first { padding: 16px 20px 8px; }
+    .k-src-label { font-size: 9px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .k-clip-cards { display: flex; gap: 10px; margin-bottom: 10px; }
+    .k-clip-card { flex: 1; background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 10px; overflow: hidden; transition: border-color 0.3s; }
+    .k-clip-card:hover { border-color: rgba(0,212,255,0.25); }
+    .k-clip-card video { width: 100%; height: 80px; object-fit: cover; display: block; }
+    .k-clip-card .k-cc-bar { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; background: rgba(0,0,0,0.6); margin-top: -24px; position: relative; z-index: 1; }
+    .k-clip-card .k-cc-tag { font-size: 9px; font-weight: 700; color: var(--cyan); background: rgba(0,212,255,0.1); padding: 2px 6px; border-radius: 3px; }
+    .k-clip-card .k-cc-dur { font-size: 8px; color: #999; }
+    .k-clip-card .k-cc-info { padding: 8px 10px; }
+    .k-clip-card .k-cc-title { font-size: 11px; font-weight: 600; color: #ddd; margin-bottom: 2px; }
+    .k-clip-card .k-cc-quote { font-size: 9px; color: #666; font-style: italic; line-height: 1.4; }
+    .k-show-more { text-align: center; padding: 6px; font-size: 10px; color: #555; cursor: pointer; transition: color 0.2s; }
+    .k-show-more:hover { color: var(--cyan); }
+    .k-show-more span { font-size: 12px; }
+    .k-answer-area { padding: 0 20px 16px; }
+    .k-answer-text { font-size: 13px; color: #ddd; line-height: 1.7; margin-bottom: 14px; }
+    .k-cite { display: inline-block; font-size: 9px; font-weight: 700; color: var(--cyan); background: rgba(0,212,255,0.12); padding: 1px 5px; border-radius: 3px; margin: 0 1px; vertical-align: super; cursor: default; }
+    .k-footer { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; border-top: 1px solid #1a1a1a; }
+    .k-sources { font-size: 10px; color: #888; }
+    .k-sources span { color: var(--cyan); font-weight: 600; }
+    .k-helpful { font-size: 10px; color: #666; }
+    .k-also { padding: 0 20px 14px; }
+    .k-also-title { font-size: 9px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .k-also-q { font-size: 11px; color: #888; padding: 5px 0; display: flex; align-items: center; gap: 6px; }
+    .k-also-q::before { content: '->'; color: var(--cyan); font-size: 10px; }
     .hero-counter { position: relative; z-index: 20; margin-top: 16px; font-size: 12px; color: #333; text-align: center; opacity: 0; transform: translateY(8px); transition: all 0.4s; }
     .hero-counter.show { opacity: 1; transform: translateY(0); color: var(--body); }
     .hero-counter span { color: var(--cyan); font-weight: 600; }
@@ -770,24 +762,31 @@
     </div>
 
     <div class="hero-result-area" id="heroResultArea">
-      <div class="hero-vid-result">
-        <div class="hero-vid-preview">
-          <video id="heroVideoEl" autoplay muted loop playsinline></video>
-          <div class="hero-vid-speaker"><span class="rdot"></span><span id="hvSpeaker">Speaker</span></div>
-          <div class="hero-vid-clip" id="hvClipTag">Exact 5s clip</div>
-          <div class="hero-vid-wave" id="heroWaveform"></div>
-          <div class="hero-vid-progress"><div class="hero-vid-fill" id="hvProgress"></div></div>
+      <div class="k-ui">
+        <!-- Searching phase (shown first, then hidden) -->
+        <div class="k-searching" id="kSearching">
+          <div class="k-search-step" id="kStep1"><span class="k-check">&#10003;</span> Searching knowledge graph</div>
+          <div class="k-search-step" id="kStep2"><span class="k-check">&#10003;</span> Searching documents - <span id="kDocCount">20</span> results</div>
+          <div class="k-search-step" id="kStep3"><span class="k-spin">&#9696;</span> <span style="color: var(--cyan);">Thinking...</span></div>
         </div>
-        <div class="hero-vid-info">
-          <div class="hero-vid-answer" id="hvAnswer">"Answer"</div>
-          <div class="hero-vid-source" id="hvSource">Source</div>
+        <!-- Video first (shown after searching) -->
+        <div class="k-video-first" id="kVideoFirst" style="display: none;">
+          <div class="k-src-label">PRIMARY SOURCES</div>
+          <div class="k-clip-cards" id="kClipCards"></div>
+          <div class="k-show-more">Show more sources <span>&#8595;</span></div>
         </div>
-      </div>
-      <div class="hero-txt-result">
-        <div class="hero-txt-type" id="htType">Document</div>
-        <div class="hero-txt-visual" id="htVisual"></div>
-        <div class="hero-txt-cite" id="htCite">Citation</div>
-        <div id="htStats"></div>
+        <!-- Then text answer -->
+        <div class="k-answer-area" id="kAnswer" style="display: none;">
+          <div class="k-answer-text" id="kAnswerText"></div>
+        </div>
+        <div class="k-footer" id="kFooter" style="display: none;">
+          <div class="k-sources"><span id="kSourceCount">3</span> SOURCES &middot; SEARCHED IN <span id="kSearchTime">8.31s</span></div>
+          <div class="k-helpful">Was this helpful? &#128077; &#128078;</div>
+        </div>
+        <div class="k-also" id="kAlso" style="display: none;">
+          <div class="k-also-title">You might also ask</div>
+          <div id="kAlsoQuestions"></div>
+        </div>
       </div>
     </div>
 
@@ -840,122 +839,6 @@
     </p>
   </div>
 
-  <div class="section-glow"></div>
-
-  <!-- SOLUTIONS (Option A - full-width rows with product UI) -->
-  <div class="section-glow"></div>
-  <div id="solutions" class="reveal" style="padding: 80px 48px;">
-    <div style="text-align: center; margin-bottom: 16px;">
-      <p style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px;">Solutions</p>
-      <p style="font-size: 28px; font-weight: 800; letter-spacing: -1px; color: var(--text); margin-bottom: 8px;">See what Kurious does today.</p>
-      <p style="font-size: 15px; color: var(--muted);">Live products. Real data. <span id="rotatingUseCase" style="color: var(--cyan); font-weight: 700; transition: opacity 0.3s ease;">See the platform applied.</span></p>
-    </div>
-
-    <div style="max-width: 1000px; margin: 48px auto 0;">
-
-      <!-- NJ Open Data - full width row -->
-      <div class="reveal" style="display: flex; gap: 40px; align-items: center; padding: 48px 0; border-bottom: 1px solid rgba(0,212,255,0.08);">
-        <div style="flex: 1;">
-          <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0,212,255,0.3); color: var(--cyan);">Live</span>
-            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0,212,255,0.3); color: #00d4ff;">Cross-Format</span>
-            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0,212,255,0.3); color: #00d4ff;">Cross-Domain</span>
-          </div>
-          <h2 style="font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Multi-Format Government Intelligence</h2>
-          <p style="font-size: 13px; color: var(--cyan); margin-bottom: 12px;">NJ Open Data</p>
-          <p style="font-size: 15px; color: var(--body); line-height: 1.7; margin-bottom: 20px;">85 million records across 23 agencies and 8+ formats. Structured tables, scanned PDFs, policy documents. One query spans them all.</p>
-          <div style="display: flex; gap: 24px; margin-bottom: 24px;">
-            <div><span style="font-size: 28px; font-weight: 800; color: #00d4ff;">85M+</span><p style="font-size: 11px; color: var(--muted); margin-top: 2px;">records indexed</p></div>
-            <div><span style="font-size: 28px; font-weight: 800; color: #00d4ff;">&lt;5s</span><p style="font-size: 11px; color: var(--muted); margin-top: 2px;">response time</p></div>
-          </div>
-          <a href="https://njopendata.aintropy.ai/chat" target="_blank" style="display: inline-block; background: #00d4ff; color: #0a0a0a; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none;">See Platform in Action &rarr;</a>
-        </div>
-        <!-- Animated product UI (NJ) -->
-        <div id="njDemo" style="flex: 1; background: #0E0E0E; border: 1px solid var(--border); border-radius: 14px; overflow: hidden;">
-          <div style="background: rgba(0,212,255,0.04); padding: 10px 16px; border-bottom: 1px solid rgba(0,212,255,0.08); display: flex; align-items: center; gap: 8px;">
-            <div style="width: 8px; height: 8px; border-radius: 50%; background: #00d4ff;"></div>
-            <span style="font-size: 12px; color: var(--muted);">njopendata.aintropy.ai</span>
-          </div>
-          <div style="padding: 20px;">
-            <div style="background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.1); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-              <div style="width: 6px; height: 6px; border-radius: 50%; background: #00d4ff;"></div>
-              <span id="njQueryText" style="font-size: 12px; color: var(--body);"></span><span id="njCursor" style="display: inline-block; width: 1px; height: 14px; background: #00d4ff; vertical-align: middle; animation: solBlink 1s step-end infinite;"></span>
-            </div>
-            <div id="njLoading" style="display: none; padding: 12px; border-radius: 8px;">
-              <div style="height: 10px; width: 70%; background: linear-gradient(90deg, rgba(0,212,255,0.05), rgba(0,212,255,0.12), rgba(0,212,255,0.05)); background-size: 200% 100%; animation: solShimmer 1.2s ease-in-out infinite; border-radius: 4px; margin-bottom: 8px;"></div>
-              <div style="height: 10px; width: 90%; background: linear-gradient(90deg, rgba(0,212,255,0.05), rgba(0,212,255,0.12), rgba(0,212,255,0.05)); background-size: 200% 100%; animation: solShimmer 1.2s ease-in-out infinite 0.1s; border-radius: 4px; margin-bottom: 8px;"></div>
-              <div style="height: 10px; width: 50%; background: linear-gradient(90deg, rgba(0,212,255,0.05), rgba(0,212,255,0.12), rgba(0,212,255,0.05)); background-size: 200% 100%; animation: solShimmer 1.2s ease-in-out infinite 0.2s; border-radius: 4px;"></div>
-            </div>
-            <div id="njAnswer" style="display: none; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 2px solid #00d4ff; opacity: 0; transform: translateY(8px); transition: opacity 0.5s, transform 0.5s;">
-              <p style="font-size: 12px; color: var(--body); line-height: 1.7;">"The NJ DOT allocated <span style="color: #00d4ff; font-weight: 600;">$48 million</span> for Route 21 interchange expansion, approved unanimously by the Transportation Authority in June 2024."</p>
-              <div style="margin-top: 8px; display: flex; gap: 6px;">
-                <span style="font-size: 9px; padding: 2px 8px; border-radius: 4px; background: rgba(0,212,255,0.08); color: #00d4ff;">DOT Budget FY24.pdf</span>
-                <span style="font-size: 9px; padding: 2px 8px; border-radius: 4px; background: rgba(0,212,255,0.08); color: #00d4ff;">Board Resolution</span>
-              </div>
-            </div>
-            <div id="njMeta" style="display: none; margin-top: 10px; font-size: 9px; color: var(--muted); opacity: 0; transition: opacity 0.4s;">Searched 85M records in 0.2s</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Legal Video - full width row (reversed) -->
-      <div class="reveal" style="display: flex; gap: 40px; align-items: center; padding: 48px 0; border-bottom: 1px solid rgba(0,212,255,0.08); flex-direction: row-reverse;">
-        <div style="flex: 1;">
-          <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0,212,255,0.3); color: var(--cyan);">Live</span>
-            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(167,139,250,0.3); color: #a78bfa;">Cross-Model</span>
-            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(167,139,250,0.3); color: #a78bfa;">Cross-Sensory</span>
-          </div>
-          <h2 style="font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Video Moment Retrieval at Scale</h2>
-          <p style="font-size: 13px; color: #a78bfa; margin-bottom: 12px;">Legal Video Archives</p>
-          <p style="font-size: 15px; color: var(--body); line-height: 1.7; margin-bottom: 20px;">4,000+ hours of city council meetings, planning hearings, and legislative sessions. Ask a question, get the exact video clip with timestamp.</p>
-          <div style="display: flex; gap: 24px; margin-bottom: 24px;">
-            <div><span id="solHoursCounter" style="font-size: 28px; font-weight: 800; color: #a78bfa;">4,000+</span><p style="font-size: 11px; color: var(--muted); margin-top: 2px;">hours of video</p></div>
-            <div><span style="font-size: 28px; font-weight: 800; color: #a78bfa;">94%</span><p style="font-size: 11px; color: var(--muted); margin-top: 2px;">accuracy</p></div>
-          </div>
-          <a href="http://kurious-dev.centralus.cloudapp.azure.com/signup" target="_blank" style="display: inline-block; background: #a78bfa; color: #0a0a0a; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none;">See Video Retrieval &rarr;</a>
-        </div>
-        <!-- Animated video UI (Legal) -->
-        <div id="legalDemo" style="flex: 1; background: #0E0E0E; border: 1px solid var(--border); border-radius: 14px; overflow: hidden;">
-          <div style="background: rgba(167,139,250,0.04); padding: 10px 16px; border-bottom: 1px solid rgba(167,139,250,0.08); display: flex; align-items: center; gap: 8px;">
-            <div style="width: 8px; height: 8px; border-radius: 50%; background: #a78bfa;"></div>
-            <span style="font-size: 12px; color: var(--muted);">kurious / legal video</span>
-          </div>
-          <div style="padding: 20px;">
-            <div style="background: rgba(167,139,250,0.04); border: 1px solid rgba(167,139,250,0.1); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-              <div style="width: 6px; height: 6px; border-radius: 50%; background: #a78bfa;"></div>
-              <span id="legalQueryText" style="font-size: 12px; color: var(--body);"></span><span id="legalCursor" style="display: inline-block; width: 1px; height: 14px; background: #a78bfa; vertical-align: middle; animation: solBlink 1s step-end infinite;"></span>
-            </div>
-            <div id="legalLoading" style="display: none; padding: 12px; border-radius: 8px;">
-              <div style="height: 60px; width: 100%; background: linear-gradient(90deg, rgba(167,139,250,0.05), rgba(167,139,250,0.12), rgba(167,139,250,0.05)); background-size: 200% 100%; animation: solShimmer 1.2s ease-in-out infinite; border-radius: 6px; margin-bottom: 8px;"></div>
-              <div style="height: 10px; width: 70%; background: linear-gradient(90deg, rgba(167,139,250,0.05), rgba(167,139,250,0.12), rgba(167,139,250,0.05)); background-size: 200% 100%; animation: solShimmer 1.2s ease-in-out infinite 0.15s; border-radius: 4px;"></div>
-            </div>
-            <div id="legalAnswer" style="display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.5s, transform 0.5s;">
-              <div style="background: #080808; border-radius: 8px; overflow: hidden; margin-bottom: 12px;">
-                <div style="height: 100px; background: linear-gradient(135deg, #0a0a14, #12121e); display: flex; align-items: center; justify-content: center; position: relative;">
-                  <div id="legalWave" style="position: absolute; bottom: 16px; left: 14px; right: 14px; height: 24px; display: flex; align-items: end; gap: 2px;"></div>
-                  <span style="position: absolute; top: 8px; left: 10px; font-size: 9px; background: rgba(0,0,0,0.7); color: #fff; padding: 3px 8px; border-radius: 4px;"><span style="display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #ef4444; margin-right: 4px; animation: solBlink 1.5s ease-in-out infinite;"></span>Witness: Michael Torres</span>
-                  <span style="position: absolute; top: 8px; right: 10px; font-size: 8px; background: rgba(0,0,0,0.7); color: #a78bfa; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px;">Exact 4s clip</span>
-                  <div id="legalProgress" style="position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.05);"><div id="legalProgressFill" style="width: 0%; height: 100%; background: #a78bfa; transition: width 0.1s linear;"></div></div>
-                </div>
-              </div>
-              <p style="font-size: 11px; color: var(--body); font-style: italic; line-height: 1.5;">"I need to correct that. I was not there at 9 PM. I arrived closer to 11."</p>
-              <span style="font-size: 9px; color: var(--muted); display: block; margin-top: 6px;">Case #2024-CV-4891 - Timestamp: 01:23:47</span>
-            </div>
-            <div id="legalMeta" style="display: none; margin-top: 10px; font-size: 9px; color: var(--muted); opacity: 0; transition: opacity 0.4s;">Found in 4,000+ hours in 0.2s</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Your Data - subtle CTA -->
-      <div style="text-align: center; padding: 48px 0;">
-        <p style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Your data. Your questions. Answers in seconds.</p>
-        <p style="font-size: 14px; color: var(--muted); margin-bottom: 20px;">No fine-tuning, no training, no waiting.</p>
-        <a href="mailto:know@aintropy.ai?subject=I%20want%20to%20scale%20AI%20on%20my%20messy%20multimodal%20data" style="display: inline-block; color: #00d4ff; border: 1px solid rgba(0,212,255,0.25); padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none;">Connect Your Data &rarr;</a>
-      </div>
-
-    </div>
-  </div>
 
   <div class="section-glow"></div>
 
@@ -984,67 +867,92 @@
         </g>
 
         <!-- Row 1: 4 domains -->
-        <!-- World Models -->
+        <!-- World Models - Globe with nodes -->
         <g transform="translate(112, 220)">
           <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#00D4FF" stroke-width="1.5" filter="url(#fGlow)"/>
-          <circle cx="0" cy="0" r="16" fill="none" stroke="#00D4FF" stroke-width="0.8"/>
-          <circle cx="0" cy="0" r="6" fill="none" stroke="#00D4FF" stroke-width="0.8"/>
-          <line x1="-16" y1="0" x2="16" y2="0" stroke="#00D4FF" stroke-width="0.6"/>
-          <line x1="0" y1="-16" x2="0" y2="16" stroke="#00D4FF" stroke-width="0.6"/>
+          <circle cx="0" cy="0" r="12" fill="none" stroke="#00D4FF" stroke-width="1.2"/>
+          <ellipse cx="0" cy="0" rx="12" ry="5" fill="none" stroke="#00D4FF" stroke-width="0.8"/>
+          <ellipse cx="0" cy="0" rx="5" ry="12" fill="none" stroke="#00D4FF" stroke-width="0.8"/>
+          <line x1="-12" y1="0" x2="12" y2="0" stroke="#00D4FF" stroke-width="0.6"/>
           <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">World Models</text>
         </g>
 
-        <!-- Healthcare -->
+        <!-- Healthcare - Heart with pulse -->
         <g transform="translate(337, 220)">
-          <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#44ee77" stroke-width="1.5" filter="url(#fGlow)"/>
-          <path d="M-8,-6 C-8,-12 8,-12 8,-6 C8,0 2,5 0,8 C-2,5 -8,0 -8,-6Z" fill="none" stroke="#44ee77" stroke-width="1.5"/>
+          <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#34d399" stroke-width="1.5" filter="url(#fGlow)"/>
+          <path d="M0,8 C-2,5 -10,-2 -10,-6 C-10,-10 -6,-12 -3,-12 C-1,-12 0,-11 0,-9 C0,-11 1,-12 3,-12 C6,-12 10,-10 10,-6 C10,-2 2,5 0,8Z" fill="none" stroke="#34d399" stroke-width="1.3"/>
+          <polyline points="-8,0 -4,0 -2,-5 0,4 2,-3 4,0 8,0" fill="none" stroke="#34d399" stroke-width="1" opacity="0.6"/>
           <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">Healthcare</text>
         </g>
 
-        <!-- Robotics -->
+        <!-- Robotics - CPU/Circuit chip -->
         <g transform="translate(562, 220)">
           <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#ff9933" stroke-width="1.5" filter="url(#fGlow)"/>
-          <circle cx="0" cy="0" r="10" fill="none" stroke="#ff9933" stroke-width="1.2"/>
-          <circle cx="0" cy="0" r="3" fill="#ff9933"/>
-          <line x1="-12" y1="0" x2="-18" y2="0" stroke="#ff9933" stroke-width="1.2"/>
-          <line x1="12" y1="0" x2="18" y2="0" stroke="#ff9933" stroke-width="1.2"/>
-          <line x1="0" y1="-12" x2="0" y2="-18" stroke="#ff9933" stroke-width="1.2"/>
+          <rect x="-9" y="-9" width="18" height="18" rx="2" fill="none" stroke="#ff9933" stroke-width="1.3"/>
+          <rect x="-5" y="-5" width="10" height="10" rx="1" fill="none" stroke="#ff9933" stroke-width="0.8"/>
+          <line x1="-4" y1="-9" x2="-4" y2="-13" stroke="#ff9933" stroke-width="1"/>
+          <line x1="0" y1="-9" x2="0" y2="-13" stroke="#ff9933" stroke-width="1"/>
+          <line x1="4" y1="-9" x2="4" y2="-13" stroke="#ff9933" stroke-width="1"/>
+          <line x1="-4" y1="9" x2="-4" y2="13" stroke="#ff9933" stroke-width="1"/>
+          <line x1="0" y1="9" x2="0" y2="13" stroke="#ff9933" stroke-width="1"/>
+          <line x1="4" y1="9" x2="4" y2="13" stroke="#ff9933" stroke-width="1"/>
+          <line x1="-9" y1="-4" x2="-13" y2="-4" stroke="#ff9933" stroke-width="1"/>
+          <line x1="-9" y1="4" x2="-13" y2="4" stroke="#ff9933" stroke-width="1"/>
+          <line x1="9" y1="-4" x2="13" y2="-4" stroke="#ff9933" stroke-width="1"/>
+          <line x1="9" y1="4" x2="13" y2="4" stroke="#ff9933" stroke-width="1"/>
           <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">Robotics</text>
         </g>
 
-        <!-- Manufacturing -->
+        <!-- Manufacturing - Gear/Cog -->
         <g transform="translate(787, 220)">
           <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#dd55dd" stroke-width="1.5" filter="url(#fGlow)"/>
-          <rect x="-10" y="-4" width="8" height="12" fill="none" stroke="#dd55dd" stroke-width="1"/>
-          <rect x="2" y="-8" width="8" height="16" fill="none" stroke="#dd55dd" stroke-width="1"/>
-          <line x1="-14" y1="8" x2="14" y2="8" stroke="#dd55dd" stroke-width="1"/>
+          <circle cx="0" cy="0" r="5" fill="none" stroke="#dd55dd" stroke-width="1.2"/>
+          <circle cx="0" cy="0" r="10" fill="none" stroke="#dd55dd" stroke-width="1"/>
+          <line x1="0" y1="-10" x2="0" y2="-14" stroke="#dd55dd" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="0" y1="10" x2="0" y2="14" stroke="#dd55dd" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="-10" y1="0" x2="-14" y2="0" stroke="#dd55dd" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="10" y1="0" x2="14" y2="0" stroke="#dd55dd" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="-7" y1="-7" x2="-10" y2="-10" stroke="#dd55dd" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="7" y1="-7" x2="10" y2="-10" stroke="#dd55dd" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="-7" y1="7" x2="-10" y2="10" stroke="#dd55dd" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="7" y1="7" x2="10" y2="10" stroke="#dd55dd" stroke-width="2.5" stroke-linecap="round"/>
           <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">Manufacturing</text>
         </g>
 
         <!-- Row 2: 4 more domains -->
-        <!-- BCI -->
+        <!-- BCI - Brain -->
         <g transform="translate(112, 390)">
           <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#44dddd" stroke-width="1.5" filter="url(#fGlow)"/>
-          <ellipse cx="0" cy="-2" rx="12" ry="8" fill="none" stroke="#44dddd" stroke-width="1"/>
-          <line x1="-8" y1="6" x2="8" y2="6" stroke="#44dddd" stroke-width="1"/>
+          <path d="M-2,-12 C-8,-12 -12,-8 -12,-2 C-12,2 -10,5 -7,7 C-7,10 -5,12 -2,12 C0,12 2,11 2,9" fill="none" stroke="#44dddd" stroke-width="1.2"/>
+          <path d="M2,-12 C8,-12 12,-8 12,-2 C12,2 10,5 7,7 C7,10 5,12 2,12" fill="none" stroke="#44dddd" stroke-width="1.2"/>
+          <path d="M-2,-5 C-2,-2 2,-2 2,-5" fill="none" stroke="#44dddd" stroke-width="0.8"/>
+          <path d="M-4,0 C-4,3 4,3 4,0" fill="none" stroke="#44dddd" stroke-width="0.8"/>
+          <line x1="0" y1="-12" x2="0" y2="12" stroke="#44dddd" stroke-width="0.6"/>
           <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">BCI</text>
         </g>
 
-        <!-- Autonomous Systems -->
+        <!-- Autonomous - Car -->
         <g transform="translate(337, 390)">
           <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#f97316" stroke-width="1.5" filter="url(#fGlow)"/>
-          <circle cx="0" cy="0" r="8" fill="none" stroke="#f97316" stroke-width="1"/>
-          <circle cx="0" cy="-14" r="3" fill="#f97316"/>
-          <line x1="0" y1="-11" x2="0" y2="-8" stroke="#f97316" stroke-width="1"/>
+          <path d="M-12,2 L-10,-4 L-6,-8 L6,-8 L10,-4 L12,2 L12,6 L-12,6 Z" fill="none" stroke="#f97316" stroke-width="1.2"/>
+          <line x1="-6" y1="-8" x2="-4" y2="2" stroke="#f97316" stroke-width="0.8"/>
+          <line x1="6" y1="-8" x2="4" y2="2" stroke="#f97316" stroke-width="0.8"/>
+          <circle cx="-7" cy="6" r="3" fill="none" stroke="#f97316" stroke-width="1.2"/>
+          <circle cx="7" cy="6" r="3" fill="none" stroke="#f97316" stroke-width="1.2"/>
           <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">Autonomous</text>
         </g>
 
-        <!-- Government -->
+        <!-- Government - Building with columns -->
         <g transform="translate(562, 390)">
           <circle cx="0" cy="0" r="30" fill="#0E0E0E" stroke="#8b8bfa" stroke-width="1.5" filter="url(#fGlow)"/>
-          <rect x="-10" y="-6" width="20" height="14" fill="none" stroke="#8b8bfa" stroke-width="1"/>
-          <line x1="-10" y1="-6" x2="0" y2="-14" stroke="#8b8bfa" stroke-width="1"/>
-          <line x1="10" y1="-6" x2="0" y2="-14" stroke="#8b8bfa" stroke-width="1"/>
+          <line x1="-12" y1="10" x2="12" y2="10" stroke="#8b8bfa" stroke-width="1.3"/>
+          <line x1="0" y1="-12" x2="-12" y2="-4" stroke="#8b8bfa" stroke-width="1.2"/>
+          <line x1="0" y1="-12" x2="12" y2="-4" stroke="#8b8bfa" stroke-width="1.2"/>
+          <line x1="-12" y1="-4" x2="12" y2="-4" stroke="#8b8bfa" stroke-width="1"/>
+          <line x1="-8" y1="-4" x2="-8" y2="10" stroke="#8b8bfa" stroke-width="1.2"/>
+          <line x1="-3" y1="-4" x2="-3" y2="10" stroke="#8b8bfa" stroke-width="1.2"/>
+          <line x1="3" y1="-4" x2="3" y2="10" stroke="#8b8bfa" stroke-width="1.2"/>
+          <line x1="8" y1="-4" x2="8" y2="10" stroke="#8b8bfa" stroke-width="1.2"/>
           <text x="0" y="46" text-anchor="middle" fill="#bbb" font-family="Inter, sans-serif" font-size="14" font-weight="700">Government</text>
         </g>
 
@@ -1125,6 +1033,149 @@
     </div>
 
   </div>
+
+<div class="section-glow"></div>
+
+  <!-- SOLUTIONS (Option A - full-width rows with product UI) -->
+  <div class="section-glow"></div>
+  <div id="solutions" class="reveal" style="padding: 80px 48px;">
+    <div style="text-align: center; margin-bottom: 16px;">
+      <p style="font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px;">Solutions</p>
+      <p style="font-size: 28px; font-weight: 800; letter-spacing: -1px; color: var(--text); margin-bottom: 8px;">See what Kurious does today.</p>
+      <p style="font-size: 15px; color: var(--muted);">Live products. Real data. <span id="rotatingUseCase" style="color: var(--cyan); font-weight: 700; transition: opacity 0.3s ease;">See the platform applied.</span></p>
+    </div>
+
+    <div style="max-width: 1000px; margin: 48px auto 0;">
+
+      <!-- NJ Open Data - full width row -->
+      <div class="reveal" style="display: flex; gap: 40px; align-items: center; padding: 48px 0; border-bottom: 1px solid rgba(0,212,255,0.08);">
+        <div style="flex: 1;">
+          <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0,212,255,0.3); color: var(--cyan);">Live</span>
+            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0,212,255,0.3); color: #00d4ff;">Cross-Format</span>
+            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0,212,255,0.3); color: #00d4ff;">Cross-Domain</span>
+          </div>
+          <h2 style="font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Multi-Format Government Intelligence</h2>
+          <p style="font-size: 13px; color: var(--cyan); margin-bottom: 12px;">NJ Open Data</p>
+          <p style="font-size: 15px; color: var(--body); line-height: 1.7; margin-bottom: 20px;">85 million records across 23 agencies and 8+ formats. Structured tables, scanned PDFs, policy documents. One query spans them all.</p>
+          <div style="display: flex; gap: 24px; margin-bottom: 24px;">
+            <div><span style="font-size: 28px; font-weight: 800; color: #00d4ff;">85M+</span><p style="font-size: 11px; color: var(--muted); margin-top: 2px;">records indexed</p></div>
+            <div><span style="font-size: 28px; font-weight: 800; color: #00d4ff;">&lt;5s</span><p style="font-size: 11px; color: var(--muted); margin-top: 2px;">response time</p></div>
+          </div>
+          <a href="https://njopendata.aintropy.ai/chat" target="_blank" style="display: inline-block; background: #00d4ff; color: #0a0a0a; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none;">See Platform in Action &rarr;</a>
+        </div>
+        <!-- Animated product UI (NJ) -->
+        <div id="njDemo" style="flex: 1; background: #0E0E0E; border: 1px solid var(--border); border-radius: 14px; overflow: hidden;">
+          <div style="background: rgba(0,212,255,0.04); padding: 10px 16px; border-bottom: 1px solid rgba(0,212,255,0.08); display: flex; align-items: center; gap: 8px;">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #00d4ff;"></div>
+            <span style="font-size: 12px; color: var(--muted);">njopendata.aintropy.ai</span>
+          </div>
+          <div style="padding: 20px;">
+            <div style="background: rgba(0,212,255,0.04); border: 1px solid rgba(0,212,255,0.1); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+              <div style="width: 6px; height: 6px; border-radius: 50%; background: #00d4ff;"></div>
+              <span id="njQueryText" style="font-size: 12px; color: var(--body);"></span><span id="njCursor" style="display: inline-block; width: 1px; height: 14px; background: #00d4ff; vertical-align: middle; animation: solBlink 1s step-end infinite;"></span>
+            </div>
+            <div id="njLoading" style="display: none; padding: 12px; border-radius: 8px;">
+              <div style="height: 10px; width: 70%; background: linear-gradient(90deg, rgba(0,212,255,0.05), rgba(0,212,255,0.12), rgba(0,212,255,0.05)); background-size: 200% 100%; animation: solShimmer 1.2s ease-in-out infinite; border-radius: 4px; margin-bottom: 8px;"></div>
+              <div style="height: 10px; width: 90%; background: linear-gradient(90deg, rgba(0,212,255,0.05), rgba(0,212,255,0.12), rgba(0,212,255,0.05)); background-size: 200% 100%; animation: solShimmer 1.2s ease-in-out infinite 0.1s; border-radius: 4px; margin-bottom: 8px;"></div>
+              <div style="height: 10px; width: 50%; background: linear-gradient(90deg, rgba(0,212,255,0.05), rgba(0,212,255,0.12), rgba(0,212,255,0.05)); background-size: 200% 100%; animation: solShimmer 1.2s ease-in-out infinite 0.2s; border-radius: 4px;"></div>
+            </div>
+            <div id="njAnswer" style="display: none; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; border-left: 2px solid #00d4ff; opacity: 0; transform: translateY(8px); transition: opacity 0.5s, transform 0.5s;">
+              <p style="font-size: 12px; color: var(--body); line-height: 1.7;">"The NJ DOT allocated <span style="color: #00d4ff; font-weight: 600;">$48 million</span> for Route 21 interchange expansion, approved unanimously by the Transportation Authority in June 2024."</p>
+              <div style="margin-top: 8px; display: flex; gap: 6px;">
+                <span style="font-size: 9px; padding: 2px 8px; border-radius: 4px; background: rgba(0,212,255,0.08); color: #00d4ff;">DOT Budget FY24.pdf</span>
+                <span style="font-size: 9px; padding: 2px 8px; border-radius: 4px; background: rgba(0,212,255,0.08); color: #00d4ff;">Board Resolution</span>
+              </div>
+            </div>
+            <div id="njMeta" style="display: none; margin-top: 10px; font-size: 9px; color: var(--muted); opacity: 0; transition: opacity 0.4s;">Searched 85M records in 0.2s</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legal Video - full width row (reversed) -->
+      <div class="reveal" style="display: flex; gap: 40px; align-items: center; padding: 48px 0; border-bottom: 1px solid rgba(0,212,255,0.08); flex-direction: row-reverse;">
+        <div style="flex: 1;">
+          <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(0,212,255,0.3); color: var(--cyan);">Live</span>
+            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(167,139,250,0.3); color: #a78bfa;">Cross-Model</span>
+            <span style="font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(167,139,250,0.3); color: #a78bfa;">Cross-Sensory</span>
+          </div>
+          <h2 style="font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 4px;">Video Moment Retrieval at Scale</h2>
+          <p style="font-size: 13px; color: #a78bfa; margin-bottom: 12px;">Legal Video Archives</p>
+          <p style="font-size: 15px; color: var(--body); line-height: 1.7; margin-bottom: 20px;">4,000+ hours of city council meetings, planning hearings, and legislative sessions. Ask a question, get the exact video clip with timestamp.</p>
+          <div style="display: flex; gap: 24px; margin-bottom: 24px;">
+            <div><span id="solHoursCounter" style="font-size: 28px; font-weight: 800; color: #a78bfa;">4,000+</span><p style="font-size: 11px; color: var(--muted); margin-top: 2px;">hours of video</p></div>
+            <div><span style="font-size: 28px; font-weight: 800; color: #a78bfa;">94%</span><p style="font-size: 11px; color: var(--muted); margin-top: 2px;">accuracy</p></div>
+          </div>
+          <a href="http://kurious-dev.centralus.cloudapp.azure.com/signup" target="_blank" style="display: inline-block; background: #a78bfa; color: #0a0a0a; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 700; text-decoration: none;">See Video Retrieval &rarr;</a>
+        </div>
+        <!-- Kurious-style Legal Video UI -->
+        <div id="legalDemo" style="flex: 1; background: #0E0E0E; border: 1px solid rgba(167,139,250,0.2); border-radius: 14px; overflow: hidden;">
+          <div style="background: rgba(167,139,250,0.04); padding: 10px 16px; border-bottom: 1px solid rgba(167,139,250,0.08); display: flex; align-items: center; gap: 8px;">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: #a78bfa;"></div>
+            <span style="font-size: 12px; color: var(--muted);">kurious / legal video</span>
+            <span style="margin-left: auto; font-size: 10px; padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(167,139,250,0.3); color: #a78bfa;">Deep Dive</span>
+          </div>
+          <div style="padding: 16px;">
+            <!-- Search bar -->
+            <div style="background: rgba(167,139,250,0.04); border: 1px solid rgba(167,139,250,0.1); border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+              <div style="width: 6px; height: 6px; border-radius: 50%; background: #a78bfa;"></div>
+              <span id="legalQueryText" style="font-size: 12px; color: var(--body);"></span><span id="legalCursor" style="display: inline-block; width: 1px; height: 14px; background: #a78bfa; vertical-align: middle; animation: solBlink 1s step-end infinite;"></span>
+            </div>
+            <!-- Loading -->
+            <div id="legalLoading" style="display: none; padding: 8px 0;">
+              <div style="font-size: 11px; color: #888; margin-bottom: 6px;">&#10003; Searching knowledge graph</div>
+              <div style="font-size: 11px; color: #888; margin-bottom: 6px;">&#10003; Searching documents - 4,008 results</div>
+              <div style="font-size: 11px; color: #a78bfa;">&#9696; Thinking...</div>
+            </div>
+            <!-- Answer -->
+            <div id="legalAnswer" style="display: none; opacity: 0; transform: translateY(8px); transition: opacity 0.5s, transform 0.5s;">
+              <!-- Video clips FIRST -->
+              <div style="font-size: 8px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">PRIMARY SOURCES</div>
+              <div style="display: flex; gap: 6px; margin-bottom: 12px;">
+                <div style="flex: 1; background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 8px; overflow: hidden;">
+                  <div style="position: relative;"><video autoplay muted loop playsinline style="width: 100%; height: 55px; object-fit: cover; display: block;"><source src="final-legal-1.mp4" type="video/mp4"></video><span style="position: absolute; top: 3px; left: 4px; font-size: 7px; background: rgba(0,0,0,0.8); color: #a78bfa; padding: 1px 4px; border-radius: 2px; font-weight: 700;">S1</span><span style="position: absolute; top: 3px; right: 4px; font-size: 7px; background: rgba(0,0,0,0.8); color: #ccc; padding: 1px 4px; border-radius: 2px;">4s</span></div>
+                  <div style="padding: 5px 6px;"><div style="font-size: 9px; font-weight: 600; color: #ccc;">Council Hearing</div><div style="font-size: 8px; color: #555; font-style: italic;">"I was not there at 9 PM"</div></div>
+                </div>
+                <div style="flex: 1; background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 8px; overflow: hidden;">
+                  <div style="position: relative;"><video autoplay muted loop playsinline style="width: 100%; height: 55px; object-fit: cover; display: block;"><source src="final-legal-2.mp4" type="video/mp4"></video><span style="position: absolute; top: 3px; left: 4px; font-size: 7px; background: rgba(0,0,0,0.8); color: #a78bfa; padding: 1px 4px; border-radius: 2px; font-weight: 700;">S2</span><span style="position: absolute; top: 3px; right: 4px; font-size: 7px; background: rgba(0,0,0,0.8); color: #ccc; padding: 1px 4px; border-radius: 2px;">6s</span></div>
+                  <div style="padding: 5px 6px;"><div style="font-size: 9px; font-weight: 600; color: #ccc;">Deposition</div><div style="font-size: 8px; color: #555; font-style: italic;">"Arrived closer to 11"</div></div>
+                </div>
+                <div style="flex: 1; background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 8px; overflow: hidden;">
+                  <div style="position: relative;"><video autoplay muted loop playsinline style="width: 100%; height: 55px; object-fit: cover; display: block;"><source src="final-legal-3.mp4" type="video/mp4"></video><span style="position: absolute; top: 3px; left: 4px; font-size: 7px; background: rgba(0,0,0,0.8); color: #a78bfa; padding: 1px 4px; border-radius: 2px; font-weight: 700;">S3</span><span style="position: absolute; top: 3px; right: 4px; font-size: 7px; background: rgba(0,0,0,0.8); color: #ccc; padding: 1px 4px; border-radius: 2px;">doc</span></div>
+                  <div style="padding: 5px 6px;"><div style="font-size: 9px; font-weight: 600; color: #ccc;">Case Filing</div><div style="font-size: 8px; color: #555; font-style: italic;">"2hr gap in timeline"</div></div>
+                </div>
+              </div>
+              <!-- Text answer below -->
+              <p style="font-size: 11px; color: var(--body); line-height: 1.6; margin-bottom: 8px;">According to <span style="font-size: 8px; font-weight: 700; color: #a78bfa; background: rgba(167,139,250,0.12); padding: 1px 4px; border-radius: 2px;">S1</span>, <span style="font-size: 8px; font-weight: 700; color: #a78bfa; background: rgba(167,139,250,0.12); padding: 1px 4px; border-radius: 2px;">S2</span>, and <span style="font-size: 8px; font-weight: 700; color: #a78bfa; background: rgba(167,139,250,0.12); padding: 1px 4px; border-radius: 2px;">S3</span>, the witness changed testimony at 01:23:47. Original statement: "I arrived at approximately 9 PM." Revised: "I arrived closer to 11."</p>
+              <!-- Footer -->
+              <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid #1a1a1a; margin-top: 8px;">
+                <span style="font-size: 9px; color: #888;"><span style="color: #a78bfa; font-weight: 600;">3</span> SOURCES &middot; SEARCHED IN <span style="color: #a78bfa; font-weight: 600;">0.2s</span></span>
+                <span style="font-size: 9px; color: #555;">Was this helpful? &#128077; &#128078;</span>
+              </div>
+              <!-- You might also ask -->
+              <div style="margin-top: 10px;">
+                <div style="font-size: 8px; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">You might also ask</div>
+                <div style="font-size: 10px; color: #777; padding: 3px 0;">&#8594; Were there concerns raised by the dissenting vote?</div>
+                <div style="font-size: 10px; color: #777; padding: 3px 0;">&#8594; How did the planning board address traffic impacts?</div>
+              </div>
+            </div>
+            <div id="legalMeta" style="display: none; margin-top: 10px; font-size: 9px; color: var(--muted); opacity: 0; transition: opacity 0.4s;">Found in 4,000+ hours in 0.2s</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Your Data - subtle CTA -->
+      <div style="text-align: center; padding: 48px 0;">
+        <p style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Your data. Your questions. Answers in seconds.</p>
+        <p style="font-size: 14px; color: var(--muted); margin-bottom: 20px;">No fine-tuning, no training, no waiting.</p>
+        <a href="mailto:know@aintropy.ai?subject=I%20want%20to%20scale%20AI%20on%20my%20messy%20multimodal%20data" style="display: inline-block; color: #00d4ff; border: 1px solid rgba(0,212,255,0.25); padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none;">Connect Your Data &rarr;</a>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section-glow"></div>
 
   <!-- HOW WE DO IT -->
   <div class="section-glow"></div>
@@ -1211,6 +1262,7 @@
       <div style="text-align: center; margin-bottom: 28px;">
         <p style="font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px;">Live Benchmarks</p>
         <p style="font-size: 16px; color: #bbb;">Open results. Verify it yourself.</p>
+        <p style="font-size: 14px; color: #999; margin-top: 8px;">94.89% on SQuAD Top-5 with no fine-tuning. No GPT-4. No frontier model. <span style="color: var(--cyan); font-weight: 700;">Just a better retrieval algorithm.</span></p>
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
@@ -1254,148 +1306,279 @@
         <p style="font-size: 16px; color: #999;">53+ patents. 90+ papers. 2,800+ citations. Products reaching millions.</p>
     </div>
 
-    <!-- Team Section (GI-style: unified grid) -->
+    <!-- Team: GI-style table - names individually + background logos -->
     <style>
-      @keyframes giFadeIn { to { opacity: 1; } }
-      .gi-table { width: 100%; margin-top: 48px; margin-bottom: 48px; border-collapse: collapse; border-top: 1px solid rgba(0,212,255,0.12); }
-      .gi-table td, .gi-table th { border-bottom: 1px solid rgba(0,212,255,0.08); border-right: 1px solid rgba(0,212,255,0.08); vertical-align: middle; }
-      .gi-table td:last-child, .gi-table th:last-child { border-right: none; }
-      .gi-table th {
-        padding: 18px 24px; font-size: 13px; color: var(--cyan); font-weight: 600;
-        letter-spacing: 0.5px; text-align: left; font-family: inherit;
-        background: rgba(0,212,255,0.03);
+      @keyframes giFade { to { opacity: 1; } }
+      .gi-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 48px; margin-bottom: 48px; border-top: 1px solid rgba(0,212,255,0.12); }
+      .gi-left { border-right: 1px solid rgba(0,212,255,0.08); }
+      .gi-left-head { padding: 18px 28px; font-size: 13px; color: var(--cyan); font-weight: 600; letter-spacing: 0.5px; border-bottom: 1px solid rgba(0,212,255,0.08); background: rgba(0,212,255,0.03); }
+      .gi-person {
+        padding: 18px 28px; border-bottom: 1px solid rgba(0,212,255,0.06);
+        opacity: 0; animation: giFade 0.5s ease forwards; transition: background 0.3s;
       }
-      .gi-table th.gi-bg-head { text-align: center; }
-
-      /* Name cells */
-      .gi-table .gi-nm {
-        padding: 22px 24px; font-size: 16px; color: #fff; font-weight: 600;
-        width: 25%; transition: all 0.3s; opacity: 0; animation: giFadeIn 0.5s ease forwards;
-        background: rgba(0,212,255,0.02);
+      .gi-person:hover { background: rgba(0,212,255,0.03); }
+      .gi-person:nth-child(2) { animation-delay: 0.1s; }
+      .gi-person:nth-child(3) { animation-delay: 0.2s; }
+      .gi-person:nth-child(4) { animation-delay: 0.3s; }
+      .gi-person:nth-child(5) { animation-delay: 0.4s; }
+      .gi-person:nth-child(6) { animation-delay: 0.5s; }
+      .gi-person:nth-child(7) { animation-delay: 0.6s; }
+      .gi-person .gi-pname { font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+      .gi-person .gi-prole { font-size: 12px; color: var(--cyan); opacity: 0.7; margin-bottom: 4px; }
+      .gi-person .gi-pcred { font-size: 12px; color: #888; line-height: 1.5; }
+      .gi-right { display: flex; flex-direction: column; }
+      .gi-right-head { padding: 18px 28px; font-size: 13px; color: var(--cyan); font-weight: 600; letter-spacing: 0.5px; border-bottom: 1px solid rgba(0,212,255,0.08); background: rgba(0,212,255,0.03); text-align: center; }
+      .gi-logos { display: grid; grid-template-columns: repeat(3, 1fr); flex: 1; align-content: stretch; }
+      .gi-logo { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .gi-logo {
+        padding: 20px 16px; text-align: center; border-bottom: 1px solid rgba(0,212,255,0.06); border-right: 1px solid rgba(0,212,255,0.06);
+        font-size: 14px; font-weight: 800; color: #bbb; letter-spacing: 0.8px; text-transform: uppercase;
+        opacity: 0; animation: giFade 0.4s ease forwards; transition: color 0.3s;
       }
-      .gi-table .gi-nm:hover { color: var(--cyan); background: rgba(0,212,255,0.05); }
-      .gi-table .gi-nm span { display: block; font-size: 12px; color: var(--cyan); font-weight: 400; margin-top: 4px; opacity: 0.5; }
-      .gi-table tr:nth-child(2) .gi-nm { animation-delay: 0.05s; }
-      .gi-table tr:nth-child(3) .gi-nm { animation-delay: 0.15s; }
-      .gi-table tr:nth-child(4) .gi-nm { animation-delay: 0.25s; }
-
-      /* Logo cells */
-      .gi-table .gi-lg {
-        padding: 22px 12px; text-align: center; width: 12.5%;
-        font-size: 14px; font-weight: 800; color: #ddd; letter-spacing: 0.8px; text-transform: uppercase;
-        opacity: 0; animation: giFadeIn 0.4s ease forwards; transition: all 0.3s;
+      .gi-logo:nth-child(3n) { border-right: none; }
+      .gi-logo:hover { color: var(--cyan); }
+      .gi-logo sub { font-size: 10px; font-weight: 400; color: #555; display: block; margin-top: 3px; text-transform: none; letter-spacing: 0; vertical-align: baseline; }
+      .gi-logo:nth-child(1) { animation-delay: 0.1s; }
+      .gi-logo:nth-child(2) { animation-delay: 0.15s; }
+      .gi-logo:nth-child(3) { animation-delay: 0.2s; }
+      .gi-logo:nth-child(4) { animation-delay: 0.25s; }
+      .gi-logo:nth-child(5) { animation-delay: 0.3s; }
+      .gi-logo:nth-child(6) { animation-delay: 0.35s; }
+      .gi-logo:nth-child(7) { animation-delay: 0.4s; }
+      .gi-logo:nth-child(8) { animation-delay: 0.45s; }
+      .gi-logo:nth-child(9) { animation-delay: 0.5s; }
+      .gi-prior-head { padding: 14px 28px; font-size: 12px; color: var(--cyan); font-weight: 600; letter-spacing: 0.5px; border-bottom: 1px solid rgba(0,212,255,0.08); background: rgba(0,212,255,0.02); font-family: 'Courier New', monospace; }
+      .gi-prior { display: grid; grid-template-columns: repeat(4, 1fr); }
+      .gi-prior a {
+        padding: 14px 20px; text-decoration: none; border-bottom: 1px solid rgba(0,212,255,0.06); border-right: 1px solid rgba(0,212,255,0.06);
+        display: flex; justify-content: space-between; align-items: center; transition: background 0.3s;
+        opacity: 0; animation: giFade 0.4s ease forwards;
       }
-      .gi-table .gi-lg:hover { color: var(--cyan); background: rgba(0,212,255,0.04); }
-      .gi-table .gi-lg sub { font-size: 10px; font-weight: 400; color: #666; display: block; margin-top: 4px; text-transform: none; letter-spacing: 0; vertical-align: baseline; }
-      .gi-table tr:nth-child(2) .gi-lg:nth-of-type(1) { animation-delay: 0.1s; }
-      .gi-table tr:nth-child(2) .gi-lg:nth-of-type(2) { animation-delay: 0.15s; }
-      .gi-table tr:nth-child(2) .gi-lg:nth-of-type(3) { animation-delay: 0.2s; }
-      .gi-table tr:nth-child(2) .gi-lg:nth-of-type(4) { animation-delay: 0.25s; }
-      .gi-table tr:nth-child(3) .gi-lg:nth-of-type(1) { animation-delay: 0.3s; }
-      .gi-table tr:nth-child(3) .gi-lg:nth-of-type(2) { animation-delay: 0.35s; }
-      .gi-table tr:nth-child(3) .gi-lg:nth-of-type(3) { animation-delay: 0.4s; }
-      .gi-table tr:nth-child(3) .gi-lg:nth-of-type(4) { animation-delay: 0.45s; }
-      .gi-table tr:nth-child(4) .gi-lg:nth-of-type(1) { animation-delay: 0.5s; }
-      .gi-table tr:nth-child(4) .gi-lg:nth-of-type(2) { animation-delay: 0.55s; }
-      .gi-table tr:nth-child(4) .gi-lg:nth-of-type(3) { animation-delay: 0.6s; }
-      .gi-table tr:nth-child(4) .gi-lg:nth-of-type(4) { animation-delay: 0.65s; }
+      .gi-prior a:nth-child(4n) { border-right: none; }
+      .gi-prior a:nth-child(1) { animation-delay: 0.55s; }
+      .gi-prior a:nth-child(2) { animation-delay: 0.6s; }
+      .gi-prior a:nth-child(3) { animation-delay: 0.65s; }
+      .gi-prior a:nth-child(4) { animation-delay: 0.7s; }
+      .gi-prior a:hover { background: rgba(0,212,255,0.03); }
+      .gi-prior a .gi-ptitle { font-size: 13px; font-weight: 700; color: #fff; }
+      .gi-prior a .gi-psub { font-size: 11px; color: #666; margin-top: 1px; }
+      .gi-prior a .gi-parrow { font-size: 12px; color: #444; transition: color 0.2s; }
+      .gi-prior a:hover .gi-parrow { color: var(--cyan); }
     </style>
 
-    <table class="gi-table" id="giTeamTable">
-      <tr>
-        <th colspan="2">Team</th>
-        <th colspan="4" class="gi-bg-head">Background</th>
-      </tr>
-      <tr>
-        <td class="gi-nm">Kunal Sawarkar<span>Co-Founder, CEO</span></td>
-        <td class="gi-nm">Nirmit Desai<span>Co-Founder, CTO</span></td>
-        <td class="gi-lg">IBM<sub>Research</sub></td>
-        <td class="gi-lg">Harvard<sub>University</sub></td>
-        <td class="gi-lg">Princeton<sub>University</sub></td>
-        <td class="gi-lg">Yale<sub>University</sub></td>
-      </tr>
-      <tr>
-        <td class="gi-nm">Kevin Park<span>AI Research Scientist</span></td>
-        <td class="gi-nm">Dongkon Lee<span>AI Research Scientist</span></td>
-        <td class="gi-lg">NC State<sub>PhD, CS</sub></td>
-        <td class="gi-lg">MIT<sub>Tech Review</sub></td>
-        <td class="gi-lg">IEEE<sub>EDGE Chair</sub></td>
-        <td class="gi-lg">AAAI<sub>Conference</sub></td>
-      </tr>
-      <tr>
-        <td class="gi-nm">Eric Song<span>AI Research Scientist</span></td>
-        <td class="gi-nm">Shivangi Mishra<span>Lead Product Manager</span></td>
-        <td class="gi-lg">Watson<sub>NLP & Speech</sub></td>
-        <td class="gi-lg">Granite<sub>LLMs</sub></td>
-        <td class="gi-lg">Forbes<sub>Featured</sub></td>
-        <td class="gi-lg">USF<sub>University</sub></td>
-      </tr>
-    </table>
-
-    <!-- Prior Research -->
+    <!-- Team section -->
     <style>
-      .gi-research { margin-bottom: 48px; border-top: 1px solid rgba(0,212,255,0.12); }
-      .gi-research-head {
-        padding: 18px 24px; font-size: 13px; color: var(--cyan); font-weight: 600;
-        letter-spacing: 0.5px; background: rgba(0,212,255,0.03); border-bottom: 1px solid rgba(0,212,255,0.08);
-        font-family: 'Courier New', monospace;
-      }
-      .gi-research-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
-      .gi-research-card {
-        padding: 18px 24px; border-right: 1px solid rgba(0,212,255,0.08);
-        transition: all 0.3s; text-decoration: none; display: flex; align-items: center; justify-content: space-between;
-        opacity: 0; animation: giFadeIn 0.5s ease forwards;
-      }
-      .gi-research-card:nth-child(4n) { border-right: none; }
-      .gi-research-card:nth-child(1) { animation-delay: 0.1s; }
-      .gi-research-card:nth-child(2) { animation-delay: 0.2s; }
-      .gi-research-card:nth-child(3) { animation-delay: 0.3s; }
-      .gi-research-card:nth-child(4) { animation-delay: 0.4s; }
-      .gi-research-card:hover { background: rgba(0,212,255,0.04); }
-      .gi-research-card .gi-r-title { font-size: 14px; font-weight: 700; color: #fff; }
-      .gi-research-card .gi-r-sub { font-size: 11px; color: #666; margin-top: 2px; }
-      .gi-research-card .gi-r-link { font-size: 12px; color: #444; transition: color 0.2s; flex-shrink: 0; margin-left: 12px; }
-      .gi-research-card:hover .gi-r-link { color: var(--cyan); }
-    </style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #050505; color: #E0E0E0; }
+:root { --cyan: #00D4FF; }
 
-    <div class="gi-research" id="giResearch">
-      <div class="gi-research-head">Prior research</div>
-      <div class="gi-research-grid">
-        <a href="https://arxiv.org/abs/2404.07220" target="_blank" class="gi-research-card">
-          <div><div class="gi-r-title">Blended RAG</div><div class="gi-r-sub">94.89% on SQuAD, no fine-tuning (arxiv)</div></div>
-          <span class="gi-r-link">&#x2197;</span>
-        </a>
-        <a href="https://research.ibm.com/topics/granite" target="_blank" class="gi-research-card">
-          <div><div class="gi-r-title">IBM Granite LLMs</div><div class="gi-r-sub">Built the global data pipeline</div></div>
-          <span class="gi-r-link">&#x2197;</span>
-        </a>
-        <a href="https://www.packtpub.com/en-us/product/deep-learning-with-pytorch-lightning-9781800561618" target="_blank" class="gi-research-card">
-          <div><div class="gi-r-title">PyTorch Lightning</div><div class="gi-r-sub">Published textbook (Packt, 2022)</div></div>
-          <span class="gi-r-link">&#x2197;</span>
-        </a>
-        <a href="https://www.technologyreview.com/" target="_blank" class="gi-research-card">
-          <div><div class="gi-r-title">Mesh Network Alerts</div><div class="gi-r-sub">Millions of users, MIT Tech Review</div></div>
-          <span class="gi-r-link">&#x2197;</span>
-        </a>
+.team-section { max-width: 1100px; margin: 0 auto; padding: 80px 32px; }
+.team-heading { text-align: center; margin-bottom: 48px; }
+.team-heading .label { font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px; }
+.team-heading h2 { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.team-heading p { font-size: 16px; color: #999; }
+
+/* Team rows */
+.team-list { border-top: 1px solid #1a1a1a; }
+
+.t-row {
+  display: flex; align-items: center; padding: 0 24px; height: 72px;
+  border-bottom: 1px solid #111; position: relative;
+  opacity: 0; transform: translateY(10px);
+  transition: all 0.5s ease;
+}
+.t-row.visible { opacity: 1; transform: translateY(0); }
+.t-row::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,212,255,0.2), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.t-row:hover::after { opacity: 1; }
+.t-row:hover { background: rgba(0,212,255,0.03); }
+
+/* Name + role */
+.t-info { width: 200px; flex-shrink: 0; }
+.t-name { font-size: 16px; color: #fff; font-weight: 600; transition: color 0.3s; }
+.t-row:hover .t-name { color: var(--cyan); }
+.t-role { font-size: 11px; color: var(--cyan); opacity: 0.7; margin-top: 2px; }
+
+/* Connecting line */
+.t-line { flex: 1; height: 1px; background: #222; position: relative; margin: 0 20px; }
+.t-line::after {
+  content: ''; position: absolute; left: 0; top: -0.5px; height: 2px; width: 0;
+  background: linear-gradient(90deg, var(--cyan), transparent);
+  transition: width 0.6s ease;
+}
+.t-row:hover .t-line::after { width: 100%; }
+
+/* Logo pills */
+.t-logos { display: flex; gap: 10px; flex-shrink: 0; }
+.t-pill {
+  height: 30px; padding: 5px 12px; background: rgba(255,255,255,0.93); border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0.9; transition: all 0.3s; transform: scale(0.97);
+}
+.t-row:hover .t-pill { opacity: 1; transform: scale(1.03); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.t-pill img { height: 18px; width: auto; max-width: 80px; object-fit: contain; }
+
+/* Credential reveal on hover */
+.t-cred {
+  position: absolute; bottom: 6px; left: 224px; font-size: 10px; color: #888;
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+.t-row:hover .t-cred { opacity: 1; }
+
+/* Prior research */
+.prior { border-top: 1px solid #1a1a1a; margin-top: 32px; }
+.prior-head { padding: 14px 24px; font-size: 12px; color: #555; border-bottom: 1px solid #1a1a1a; font-family: 'Courier New', monospace; }
+.prior-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+.prior-item {
+  padding: 20px; border-right: 1px solid #111; text-decoration: none; display: block;
+  transition: background 0.2s;
+}
+.prior-item:last-child { border-right: none; }
+.prior-item:hover { background: rgba(0,212,255,0.02); }
+.pi-rank { font-size: 28px; font-weight: 900; color: var(--cyan); margin-bottom: 4px; }
+.pi-name { font-size: 14px; font-weight: 600; color: #ccc; margin-bottom: 2px; }
+.pi-desc { font-size: 11px; color: #555; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<div class="team-section">
+  <div class="team-heading">
+    <div class="label">The Team</div>
+    <h2>We built AI that shipped. Now we are building AI that perceives.</h2>
+    <p>53+ patents. 90+ papers. 2,800+ citations. Products reaching millions.</p>
+  </div>
+
+  <div class="team-list" id="teamList">
+    <div class="t-row">
+      <div class="t-info">
+        <div class="t-name">Kunal Sawarkar</div>
+        <div class="t-role">Co-Founder, CEO</div>
       </div>
+      <div class="t-line"></div>
+      <div class="t-logos">
+        <div class="t-pill"><img src="logo-ibm.png" alt="IBM"></div>
+        <div class="t-pill"><img src="logo-harvard.png" alt="Harvard"></div>
+        <div class="t-pill"><img src="logo-forbes.png" alt="Forbes"></div>
+        <div class="t-pill"><img src="logo-ieee.png" alt="IEEE"></div>
+      </div>
+      <div class="t-cred">23+ patents - IBM Distinguished Engineer - $300M revenue - Book author</div>
     </div>
 
-    <script>
-      const giObs = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-          if (e.isIntersecting) {
-            e.target.querySelectorAll('.gi-nm, .gi-lg, .gi-research-card').forEach(t => { t.style.animationPlayState = 'running'; });
-            giObs.unobserve(e.target);
-          }
-        });
-      }, { threshold: 0.05 });
-      document.querySelectorAll('#giTeamTable, #giResearch').forEach(el => {
-        el.querySelectorAll('.gi-nm, .gi-lg, .gi-research-card').forEach(t => { t.style.animationPlayState = 'paused'; });
-        giObs.observe(el);
-      });
-    </script>
+    <div class="t-row">
+      <div class="t-info">
+        <div class="t-name">Nirmit Desai</div>
+        <div class="t-role">Co-Founder, CTO</div>
+      </div>
+      <div class="t-line"></div>
+      <div class="t-logos">
+        <div class="t-pill"><img src="logo-ibm.png" alt="IBM"></div>
+        <div class="t-pill"><img src="logo-ncstate.png" alt="NC State"></div>
+        <div class="t-pill"><img src="logo-mit.png" alt="MIT"></div>
+        <div class="t-pill"><img src="logo-ieee.png" alt="IEEE"></div>
+      </div>
+      <div class="t-cred">30+ patents - 90+ papers - 2,669 citations - Granite LLMs - MIT Tech Review</div>
+    </div>
 
-    <!-- Join CTA with dropdown -->
+    <div class="t-row">
+      <div class="t-info">
+        <div class="t-name">Kevin Park</div>
+        <div class="t-role">AI Research Scientist</div>
+      </div>
+      <div class="t-line"></div>
+      <div class="t-logos">
+        <div class="t-pill"><img src="logo-princeton.png" alt="Princeton"></div>
+      </div>
+      <div class="t-cred">Document layout understanding - Multi-modal retrieval research</div>
+    </div>
+
+    <div class="t-row">
+      <div class="t-info">
+        <div class="t-name">Dongkon Lee</div>
+        <div class="t-role">AI Research Scientist</div>
+      </div>
+      <div class="t-line"></div>
+      <div class="t-logos">
+        <div class="t-pill"><img src="logo-princeton.png" alt="Princeton"></div>
+      </div>
+      <div class="t-cred">Chemical domain AI - ChemRAG benchmark architect</div>
+    </div>
+
+    <div class="t-row">
+      <div class="t-info">
+        <div class="t-name">Eric Song</div>
+        <div class="t-role">AI Research Scientist</div>
+      </div>
+      <div class="t-line"></div>
+      <div class="t-logos">
+        <div class="t-pill"><img src="logo-yale.png" alt="Yale"></div>
+      </div>
+      <div class="t-cred">Video understanding - Temporal perception - Embedding models</div>
+    </div>
+
+    <div class="t-row">
+      <div class="t-info">
+        <div class="t-name">Shivangi Mishra</div>
+        <div class="t-role">Lead Product Manager</div>
+      </div>
+      <div class="t-line"></div>
+      <div class="t-logos">
+        <div class="t-pill"><img src="logo-usf.png" alt="USF"></div>
+        <div class="t-pill"><img src="logo-ottonomy.png" alt="Ottonomy"></div>
+        <div class="t-pill"><img src="logo-greatlearning.png" alt="Great Learning"></div>
+      </div>
+      <div class="t-cred">$300K revenue launched - AI Founders Dinner Club - Women in AI, CA - Autonomous robotics</div>
+    </div>
+  </div>
+
+  <!-- Prior research -->
+  <div class="prior">
+    <div class="prior-head">Prior research</div>
+    <div class="prior-grid">
+      <a href="https://arxiv.org/abs/2404.07220" target="_blank" class="prior-item">
+        <div class="pi-rank">#1</div>
+        <div class="pi-name">Blended RAG</div>
+        <div class="pi-desc">94.89% on SQuAD Top-5. No fine-tuning. No frontier model.</div>
+      </a>
+      <a href="https://huggingface.co/spaces/aintropy-ai/NJ-open-data-leaderboard-v1" target="_blank" class="prior-item">
+        <div class="pi-rank">#1</div>
+        <div class="pi-name">NJ Open Data</div>
+        <div class="pi-desc">85M records, 23 agencies. Multi-format government benchmark.</div>
+      </a>
+      <a href="https://huggingface.co/spaces/aintropy-ai/chemRAG-leaderboard-v1" target="_blank" class="prior-item">
+        <div class="pi-rank">#1</div>
+        <div class="pi-name">ChemRAG</div>
+        <div class="pi-desc">Chemical domain retrieval. Published on HuggingFace.</div>
+      </a>
+      <div class="prior-item">
+        <div class="pi-rank">94%</div>
+        <div class="pi-name">Legal Video</div>
+        <div class="pi-desc">4,000+ hours. Deep mode. Video moment retrieval.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Staggered fade-in
+const rows = document.querySelectorAll('.t-row');
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      rows.forEach((r, i) => {
+        setTimeout(() => r.classList.add('visible'), i * 120);
+      });
+      obs.disconnect();
+    }
+  });
+}, { threshold: 0.1 });
+obs.observe(document.getElementById('teamList'));
+</script>
+
+        <!-- Join CTA with dropdown -->
     <div style="text-align: center; background: rgba(0,212,255,0.03); border: 1px solid rgba(0,212,255,0.1); border-radius: 14px; padding: 48px 32px;">
         <p style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 12px;">Build with us.</p>
         <p style="font-size: 16px; color: #bbb; margin-bottom: 28px; max-width: 450px; margin-left: auto; margin-right: auto;">We are looking for researchers and engineers who want to teach AI to perceive the world.</p>
@@ -1441,7 +1624,7 @@
   <footer>
     <div>
       <div class="f-logo">
-        <img src="images/logo.png" alt="AIntropy" class="f-logo-img">
+        <img src="/Users/shivangimishra/claude_code/Demo_walkthrough/public/logo.png" alt="AIntropy" class="f-logo-img">
         <div class="f-logo-text"><span>A</span>Intropy</div>
         <span class="nav-alpha">alpha</span>
       </div>
@@ -1850,18 +2033,29 @@
 
   <!-- Hero Animation Script -->
   <script>
-    const videoSources=['https://assets.mixkit.co/videos/1222/1222-720.mp4','https://assets.mixkit.co/videos/4883/4883-720.mp4','https://assets.mixkit.co/videos/3997/3997-720.mp4','https://assets.mixkit.co/videos/4812/4812-720.mp4','https://assets.mixkit.co/videos/4881/4881-720.mp4'];
-    const wf=document.getElementById('heroWaveform');
-    for(let i=0;i<35;i++){const b=document.createElement('div');b.className='hero-wave-bar';b.style.animationDelay=(i*0.04)+'s';b.style.height=(20+Math.random()*80)+'%';wf.appendChild(b);}
+    // Kurious-style hero UI - no video elements needed
     const hScenarios=[
-      {domain:'Government',query:'What did the transportation chair decide about Route 21?',chaos:['council_meeting.mp4','budget_fy24.pdf','route21_plan.xlsx','DOT_memo.txt','hearing_notes.pdf','site_inspection.jpg','zoning_map.tiff','vote_record.csv','handwritten_notes.jpg','board_res.pdf','press_conference.mp4','traffic_photos.zip','voicemail.wav','whiteboard.png','scanned_letter.pdf','meeting.mp4','sticky_notes.jpg','fax.tiff','surveillance.avi','microfiche.png','audio_testimony.m4a','napkin_sketch.jpg','pptx_FINAL.pptx','email_47msgs.mbox','slack.json','recording.mov','transcript.wav','blueprint.dwg','database.sql','satellite.geotiff'],video:{speaker:'Chair Gutierrez-Scaccetti',clipTag:'Exact 7s clip',answer:'"The Route 21 interchange expansion is approved. $48 million. Construction begins Q3."',source:'NJ Transportation Authority, June 2024',duration:7},visual:'chart',chartData:[{label:'Route 21',value:48,color:'#00D4FF'},{label:'Bridge',value:31,color:'#34d399'},{label:'Rail',value:22,color:'#a855f7'},{label:'Roads',value:15,color:'#f59e0b'}],text:{type:'doc',typeLabel:'Budget Allocation ($M)',cite:'NJ DOT Board Resolution Archives',stats:['Unanimous','$48M']},counter:{num:'85M government records',time:'0.2s'}},
-      {domain:'Healthcare',query:'What did the chief physician say about the new treatment protocol?',chaos:['patient.hl7','trial.pdf','lab_results.csv','mri.dcm','board_mtg.mp4','approval.pdf','handwritten_rx.jpg','research.xlsx','doctor_notes.png','xray.zip','pharmacy.csv','voicemail.wav','whiteboard.jpg','consent.pdf','surgery.mp4','post_it.jpg','fax.tiff','ecg.png','pathology.svs','audio.m4a','CT_scan.nii','ultrasound.avi','chart_notes.jpg','insurance.tiff','device_log.csv','paper_1998.pdf','dictated.mp3','EMR.png','referral.jpg','zoom.mp4'],video:{speaker:'Dr. Sarah Chen',clipTag:'Exact 5s clip',answer:'"73% response rate in Phase II. Moving to full deployment across oncology."',source:'Medical Board Review, Jan 2025',duration:5},visual:'quote',quoteText:'73% response rate across 240 patients. Median survival: 4.2 → 11.8 months.',text:{type:'data',typeLabel:'Clinical Evidence',cite:'Study #AIN-2024-087',stats:['240 patients','FDA fast-track']},counter:{num:'12,000 clinical records',time:'0.3s'}},
-      {domain:'Legal',query:'Show me exactly when the witness changed their testimony',chaos:['deposition.mp4','filing.pdf','evidence.xlsx','exhibit.jpg','handwritten.jpg','witness.docx','motion.pdf','sketch.png','ruling.pdf','surveillance.mp4','police.pdf','financials.xlsx','wiretap.wav','timeline.jpg','contract_1992.tiff','photo.jpg','sticky.jpg','fax.pdf','bodycam.mp4','plea_notes.jpg','discovery.mbox','phone.csv','crime_scene.zip','newspaper.png','testimony.mp4','dictaphone.mp3','steno.srt','notarized.tiff','jailhouse.wav','evidence.raw'],video:{speaker:'Witness: Michael Torres',clipTag:'Exact 4s clip',answer:'"I need to correct that. I was not there at 9 PM. I arrived closer to 11."',source:'Case #2024-CV-4891',duration:4},visual:'compare',compareData:{before:{label:'March 3 Testimony',text:'"I arrived at approximately 9 PM"'},after:{label:'March 17 Revised',text:'"I arrived closer to 11 PM"'}},text:{type:'doc',typeLabel:'Contradiction Detected',cite:'Deposition Transcripts',stats:['2hr gap','3 docs']},counter:{num:'4,000 hrs depositions',time:'0.2s'}},
-      {domain:'Finance',query:'What did the CFO announce about Q3 restructuring?',chaos:['earnings.mp4','10K.pdf','balance.xlsx','deck.pptx','audit.pdf','revenue.csv','board.mp4','handwritten.jpg','analyst.png','receipts.zip','forecast.xlsm','compliance.pdf','voicemail.wav','whiteboard.jpg','invoice.tiff','trading.jpg','targets.jpg','fax.pdf','bloomberg.png','deal_notes.jpg','call.m4a','annual_2018.pdf','slack.json','zoom.mp4','napkin.jpg','wire.tiff','macro.xlsb','memo.mp3','tax.pdf','bank.jpg'],video:{speaker:'CFO Maria Rodriguez',clipTag:'Exact 6s clip',answer:'"$340 million restructuring. 12 facilities, approximately 2,400 positions."',source:'Q3 Earnings Call, Oct 2024',duration:6},visual:'table',tableData:[['Item','Amount'],['Facilities','$210M'],['Severance','$95M'],['IT Migration','$35M'],['Annual Savings','$180M']],text:{type:'data',typeLabel:'Financial Impact',cite:'10-Q, SEC EDGAR',stats:['$340M','$180M/yr']},counter:{num:'8 yrs of SEC filings',time:'0.1s'}},
-      {domain:'Education',query:'Why did the school board change the curriculum?',chaos:['board.mp4','curriculum.pdf','scores.xlsx','feedback.csv','survey.docx','budget.pdf','yearbook.zip','lesson_plan.jpg','minutes.png','research.pdf','enrollment.csv','slides.pptx','classroom.mp4','whiteboard.jpg','report_card.tiff','field_trip.jpg','ideas.jpg','voicemail.wav','IEP.mp4','attendance.jpg','export.zip','pta.mp4','drawing.png','textbook.pdf','lecture.m4a','slack.json','library.csv','nutrition.xlsx','bus.geojson','disciplinary.tiff'],video:{speaker:'Supt. James Park',clipTag:'Exact 8s clip',answer:'"34% improvement in critical thinking. We owe it to every student to expand this."',source:'Board Meeting, Sep 2024',duration:8},visual:'progress',progressData:[{label:'Critical Thinking',value:34,color:'#00D4FF'},{label:'Problem Solving',value:28,color:'#34d399'},{label:'Teacher Approval',value:92,color:'#a855f7'}],text:{type:'data',typeLabel:'Pilot Results (8 Schools)',cite:'District Report, AY 2023-24',stats:['34% gain','92% approval']},counter:{num:'340 districts',time:'0.2s'}},
+      {domain:'Robotics',query:'What trajectory did the robotic arm follow during the failed assembly?',chaos:['arm_trajectory.ros','assembly_log.csv','gripper_force.bin','camera_feed.mp4','joint_angles.hdf5','error_report.pdf','sensor_dump.bag','calibration.yaml','end_effector.csv','collision_map.pcd','torque_readings.bin','workcell_scan.ply','maintenance.pdf','plc_log.txt','vibration.wav','thermal_cam.tiff','cycle_time.xlsx','robot_config.urdf','depth_frame.png','imu_data.csv','conveyor_speed.log','safety_gate.json','weld_params.xml','production.xlsx','defect_photos.zip','force_torque.bag','vision_model.onnx','workspace.stl','alarm_history.csv','operator_notes.jpg'],
+        kAnswer:'According to <cite>S1</cite>, <cite>S2</cite>, and <cite>S3</cite>, Joint 3 deviated 12 degrees from the planned path at T+4.2s during assembly cycle #847. Gripper force exceeded the 45N threshold, triggering an automatic emergency stop. Root cause: calibration drift in the shoulder actuator detected over the previous 200 cycles.',
+        kClips:[{tag:'S1',title:'Station 4 Camera',dur:'6 sec',quote:'"Joint 3 deviation at T+4.2s..."',vid:'final-robot-1.mp4'},{tag:'S2',title:'Robot Arm Close-up',dur:'4 sec',quote:'"45N threshold exceeded..."',vid:'final-robot-2.mp4'},{tag:'S3',title:'Car Assembly Line',dur:'3 sec',quote:'"Drift detected over 200 cycles"',vid:'final-robot-3.mp4'}],
+        kSources:3,kTime:'4.2s',kDocCount:'847',
+        kAlso:['What was the calibration schedule for Joint 3 in the past month?','How many emergency stops were triggered on Assembly Line 7 this quarter?','Show me similar trajectory deviations across all stations'],
+        counter:{num:'2.4M trajectories indexed',time:'0.1s'}},
+      {domain:'IoT & Sensors',query:'Which sensor readings spiked 30 minutes before the equipment failure?',chaos:['vibration_sensor.csv','temp_log.bin','pressure_readings.hdf5','maintenance.pdf','scada_export.json','alarm_history.csv','thermal_scan.tiff','motor_current.wav','plc_dump.log','oil_analysis.pdf','bearing_freq.csv','camera_feed.mp4','shift_report.docx','calibration.yaml','humidity.csv','power_draw.xlsx','ultrasonic.wav','flow_rate.bin','corrosion_scan.png','operator_log.jpg','warranty.pdf','spec_sheet.pdf','downtime.xlsx','ir_image.tiff','rpm_data.csv','noise_profile.wav','torque.bin','coolant_temp.csv','error_codes.json','blueprint.dwg'],
+        kAnswer:'According to <cite>S1</cite> and <cite>S2</cite>, bearing temperature on Turbine Unit 3 rose from 68C to 94C over 28 minutes before failure. Vibration amplitude doubled at T-12min. Motor current spiked 340% at T-2min before the automated shutdown triggered. <cite>S3</cite> confirms no prior maintenance alerts were issued.',
+        kClips:[{tag:'S1',title:'SCADA Dashboard',dur:'28 min',quote:'"68C to 94C bearing temp rise..."',vid:'final-sensor-1.mp4'},{tag:'S2',title:'Monitoring Room',dur:'12 min',quote:'"Vibration amplitude doubled at T-12min"',vid:'final-sensor-2.mp4'},{tag:'S3',title:'Gauge Readings',dur:'realtime',quote:'"Motor current spiked 340%"',vid:'final-sensor-3.mp4'}],
+        kSources:3,kTime:'0.08s',kDocCount:'18B',
+        kAlso:['Were there similar temperature spikes on other turbine units this month?','What is the average time between bearing temperature rise and failure?','Show me the maintenance history for Turbine Unit 3'],
+        counter:{num:'18B sensor readings',time:'0.08s'}},
+      {domain:'Autonomous',query:'Show me the exact frame where the autonomous vehicle detected the pedestrian',chaos:['lidar_scan.pcd','camera_front.mp4','radar_return.bin','imu_stream.csv','gps_trace.gpx','can_bus.dbc','brake_log.csv','steering_angle.bin','object_detect.json','lane_marking.png','traffic_sign.jpg','weather_data.csv','hd_map.osm','ultrasonic.wav','driver_monitor.mp4','event_log.json','calibration.yaml','point_cloud.las','semantic_seg.png','velocity.csv','yaw_rate.bin','throttle.csv','collision_risk.json','pedestrian_track.csv','depth_map.exr','thermal.tiff','v2x_message.pcap','decision_tree.json','path_plan.csv','safety_score.json'],
+        kAnswer:'According to <cite>S1</cite>, pedestrian was detected at 42m distance at frame 14,847. Classification confidence: 97.3%. <cite>S2</cite> shows brake initiation at T+180ms after detection. Vehicle stopped with 12m clearance. <cite>S3</cite> confirms all sensor fusion channels (LiDAR + camera + radar) agreed on the detection.',
+        kClips:[{tag:'S1',title:'Front Camera',dur:'Frame 14,847',quote:'"Pedestrian detected at 42m, 97.3%"',vid:'final-auto-1.mp4'},{tag:'S2',title:'Street Camera',dur:'180ms',quote:'"Pedestrian walking, tracking active"',vid:'final-auto-2.mp4'},{tag:'S3',title:'Side Camera',dur:'continuous',quote:'"Pedestrian crossing confirmed from angle 2"',vid:'final-auto-3.mp4'}],
+        kSources:3,kTime:'0.05s',kDocCount:'840K',
+        kAlso:['How many pedestrian detections occurred on Route 9 in the past 30 days?','What was the average reaction time across all test drives?','Show me cases where sensor fusion channels disagreed'],
+        counter:{num:'840K drive hours',time:'0.05s'}},
     ];
     function getHFileType(f){if(f.match(/\.mp4|\.avi|\.mov|video|surveillance|bodycam|zoom|surgery|conference/i))return'vid';if(f.match(/\.wav|\.m4a|\.mp3|voicemail|audio|dictat|phone|wiretap|jailhouse|lecture/i))return'audio';if(f.match(/handwritten|sticky|post_it|whiteboard|napkin|drawing|sketch/i))return'hand';if(f.match(/\.jpg|\.png|photo|image|screenshot|yearbook/i))return'photo';if(f.match(/scan|fax|\.tiff|microfiche|notarized/i))return'scan';if(f.match(/\.pdf|report|filing|resolution|manual|motion|ruling|compliance/i))return'pdf';if(f.match(/\.xlsx|\.csv|\.xlsm|\.xlsb|data|log|matrix|record|enrollment/i))return'xls';return'img';}
-    const he={searchText:document.getElementById('heroSearchText'),searchBar:document.getElementById('heroSearchBar'),domainLabel:document.getElementById('heroDomainLabel'),resultArea:document.getElementById('heroResultArea'),chaosLayer:document.getElementById('chaosLayer'),counter:document.getElementById('heroCounter'),cNum:document.getElementById('hcNum'),cTime:document.getElementById('hcTime'),vSpeaker:document.getElementById('hvSpeaker'),vClipTag:document.getElementById('hvClipTag'),vAnswer:document.getElementById('hvAnswer'),vSource:document.getElementById('hvSource'),vProgress:document.getElementById('hvProgress'),videoEl:document.getElementById('heroVideoEl'),tType:document.getElementById('htType'),tVisual:document.getElementById('htVisual'),tCite:document.getElementById('htCite'),tStats:document.getElementById('htStats'),pulses:[document.getElementById('hp1'),document.getElementById('hp2'),document.getElementById('hp3')]};
+    const he={searchText:document.getElementById('heroSearchText'),searchBar:document.getElementById('heroSearchBar'),domainLabel:document.getElementById('heroDomainLabel'),resultArea:document.getElementById('heroResultArea'),chaosLayer:document.getElementById('chaosLayer'),counter:document.getElementById('heroCounter'),cNum:document.getElementById('hcNum'),cTime:document.getElementById('hcTime'),pulses:[document.getElementById('hp1'),document.getElementById('hp2'),document.getElementById('hp3')],kSearching:document.getElementById('kSearching'),kStep1:document.getElementById('kStep1'),kStep2:document.getElementById('kStep2'),kStep3:document.getElementById('kStep3'),kDocCount:document.getElementById('kDocCount'),kAnswer:document.getElementById('kAnswer'),kAnswerText:document.getElementById('kAnswerText'),kClips:document.getElementById('kClips'),kFooter:document.getElementById('kFooter'),kSourceCount:document.getElementById('kSourceCount'),kSearchTime:document.getElementById('kSearchTime'),kAlso:document.getElementById('kAlso'),kAlsoQuestions:document.getElementById('kAlsoQuestions')};
     let hCurrent=0,hProgInt=null;
     let hPills=[],hAnimId=null,hAnswerShown=false;
     function hCreateChaos(files){
@@ -1921,18 +2115,64 @@
       setTimeout(()=>{vB2.classList.remove('fire');void vB2.offsetWidth;vB2.classList.add('fire');},100);
       vG.style.transition='all 0.3s';vG.style.width='600px';vG.style.height='600px';
       setTimeout(()=>{vG.classList.remove('active');vG.style.width='0';vG.style.height='0';vR1.classList.remove('active');vR2.classList.remove('active');vG.style.transition='width 1.5s,height 1.5s,opacity 0.3s';},400);
-      he.resultArea.classList.add('show');hAnimProg(s.video.duration);he.videoEl.play().catch(()=>{});
-      setTimeout(()=>{he.chaosLayer.innerHTML='';he.counter.classList.add('show');},300);
+
+      // Show searching phase first
+      he.kSearching.style.display='block';he.kAnswer.style.display='none';he.kFooter.style.display='none';he.kAlso.style.display='none';
+      he.kDocCount.textContent=s.kDocCount;
+      he.resultArea.classList.add('show');
+
+      // Animate search steps
+      he.kStep1.innerHTML='<span class="k-spin">&#9696;</span> Searching knowledge graph...';
+      he.kStep2.style.opacity='0.3';he.kStep3.style.opacity='0.3';
+
+      setTimeout(()=>{
+        he.kStep1.innerHTML='<span class="k-check">&#10003;</span> Searching knowledge graph';he.kStep1.style.color='#888';
+        he.kStep2.style.opacity='1';he.kStep2.innerHTML='<span class="k-spin">&#9696;</span> Searching documents...';
+      },600);
+
+      setTimeout(()=>{
+        he.kStep2.innerHTML='<span class="k-check">&#10003;</span> Searching documents - '+s.kDocCount+' results';he.kStep2.style.color='#888';
+        he.kStep3.style.opacity='1';he.kStep3.innerHTML='<span class="k-spin">&#9696;</span> <span style="color:var(--cyan)">Thinking...</span>';
+      },1200);
+
+      // Show video FIRST after thinking
+      setTimeout(()=>{
+        he.kSearching.style.display='none';
+        const vf=document.getElementById('kVideoFirst');
+        const mc=document.getElementById('kMainClip');
+        const morec=document.getElementById('kMoreClips');
+
+        // Build 3 clip cards - each with different video
+        const cards=document.getElementById('kClipCards');
+        let cardsHtml='';
+        s.kClips.forEach(c=>{
+          cardsHtml+='<div class="k-clip-card"><video autoplay muted loop playsinline><source src="'+c.vid+'" type="video/mp4"></video><div class="k-cc-bar"><span class="k-cc-tag">'+c.tag+'</span><span class="k-cc-dur">'+c.dur+'</span></div><div class="k-cc-info"><div class="k-cc-title">'+c.title+'</div><div class="k-cc-quote">'+c.quote+'</div></div></div>';
+        });
+        cards.innerHTML=cardsHtml;
+        vf.style.display='block';
+
+        // Then show text answer below video
+        setTimeout(()=>{
+          he.kAnswerText.innerHTML=s.kAnswer.replace(/<cite>(S\d)<\/cite>/g,'<span class="k-cite">$1</span>');
+          he.kSourceCount.textContent=s.kSources;he.kSearchTime.textContent=s.kTime;
+          he.kAlsoQuestions.innerHTML=s.kAlso.map(q=>'<div class="k-also-q">'+q+'</div>').join('');
+          he.kAnswer.style.display='block';
+          setTimeout(()=>{he.kFooter.style.display='flex';},200);
+          setTimeout(()=>{he.kAlso.style.display='block';},400);
+        },500);
+
+        he.chaosLayer.innerHTML='';he.counter.classList.add('show');
+      },2200);
     }
-    function hAnimProg(dur){let el=0;he.vProgress.style.width='0%';if(hProgInt)clearInterval(hProgInt);hProgInt=setInterval(()=>{el+=50;const pct=Math.min(100,(el/(dur*1000))*100);he.vProgress.style.width=pct+'%';if(pct>=100)clearInterval(hProgInt);},50);}
-    function hBuildVisual(s){he.tVisual.innerHTML='';if(s.visual==='chart'){const mx=Math.max(...s.chartData.map(d=>d.value));let h='<div class="hero-mini-chart">';s.chartData.forEach(d=>{h+='<div style="flex:1;text-align:center"><div class="hero-mini-bar" style="height:'+(d.value/mx*100)+'%;background:'+d.color+';width:100%"></div><div class="hero-mini-label">'+d.label+'</div></div>';});h+='</div>';he.tVisual.innerHTML=h;}else if(s.visual==='quote'){he.tVisual.innerHTML='<div class="hero-highlight-quote">'+s.quoteText+'</div>';}else if(s.visual==='compare'){const c=s.compareData;he.tVisual.innerHTML='<div class="hero-compare"><div class="hero-compare-side hero-compare-before"><div class="hero-compare-label">'+c.before.label+'</div>'+c.before.text+'</div><div class="hero-compare-side hero-compare-after"><div class="hero-compare-label">'+c.after.label+'</div>'+c.after.text+'</div></div>';}else if(s.visual==='table'){let h='<table class="hero-mini-table">';s.tableData.forEach((r,i)=>{h+='<tr>';r.forEach((c,j)=>{h+=i===0?'<th>'+c+'</th>':'<td class="'+(j===1?'hl':'')+'">'+c+'</td>';});h+='</tr>';});h+='</table>';he.tVisual.innerHTML=h;}else if(s.visual==='progress'){let h='';s.progressData.forEach(d=>{h+='<div class="hero-progress-stat"><div class="hero-progress-label"><span>'+d.label+'</span><span style="color:'+d.color+';font-weight:600">'+d.value+'%</span></div><div class="hero-progress-bg"><div class="hero-progress-fill" style="width:'+d.value+'%;background:'+d.color+'"></div></div></div>';});he.tVisual.innerHTML=h;}}
     function hSwitchDomain(d){he.domainLabel.classList.add('exit');setTimeout(()=>{he.domainLabel.textContent=d;he.domainLabel.classList.remove('exit');he.domainLabel.classList.add('enter');setTimeout(()=>he.domainLabel.classList.remove('enter'),50);},300);}
     function hRun(){
       const s=hScenarios[hCurrent];
       if(hAnimId)cancelAnimationFrame(hAnimId);
       he.resultArea.classList.remove('show');he.counter.classList.remove('show');he.searchText.textContent='';he.searchBar.classList.remove('active');
       hSwitchDomain(s.domain);hCreateChaos(s.chaos);
-      he.videoEl.src=videoSources[hCurrent%videoSources.length];he.videoEl.load();
+      /* reset kurious UI */
+      he.kSearching.style.display='block';he.kAnswer.style.display='none';he.kFooter.style.display='none';he.kAlso.style.display='none';
+      var kvf=document.getElementById('kVideoFirst');if(kvf)kvf.style.display='none';
       /* Show chaos + idle drift */
       hPills.forEach((p,i)=>{setTimeout(()=>{p.el.classList.add('show');},i*25);});
       hIdleDrift();
@@ -1940,9 +2180,6 @@
       setTimeout(()=>{let i=0;he.searchBar.classList.add('active');
         const ti=setInterval(()=>{if(i<s.query.length){he.searchText.textContent+=s.query[i];i++;}else{clearInterval(ti);
           /* Prepare answer content */
-          he.vSpeaker.textContent=s.video.speaker;he.vClipTag.textContent=s.video.clipTag;he.vAnswer.textContent=s.video.answer;he.vSource.innerHTML='<span>'+s.video.source+'</span>';
-          he.tType.textContent=s.text.typeLabel;he.tType.className='hero-txt-type '+s.text.type;hBuildVisual(s);he.tCite.textContent=s.text.cite;
-          he.tStats.innerHTML=s.text.stats.map(t=>'<span class="hero-txt-stat">'+t+'</span>').join('');
           he.cNum.textContent=s.counter.num;he.cTime.textContent=s.counter.time;
           /* Start vortex */
           setTimeout(()=>hStartVortex(s),200);
@@ -2622,16 +2859,7 @@
   const legalLoading = document.getElementById('legalLoading');
   const legalAnswer = document.getElementById('legalAnswer');
   const legalMeta = document.getElementById('legalMeta');
-  const legalWave = document.getElementById('legalWave');
-  const legalProgressFill = document.getElementById('legalProgressFill');
-
   if (!njText || !legalText) return;
-
-  for (let i = 0; i < 40; i++) {
-    const bar = document.createElement('div');
-    bar.style.cssText = 'flex:1;background:#a78bfa;border-radius:1px;opacity:0.4;animation:solWaveBar 1.5s ease-in-out infinite;animation-delay:' + (i * 0.04) + 's;height:' + (15 + Math.random() * 85) + '%;';
-    legalWave.appendChild(bar);
-  }
 
   function typeText(el, text, cb) {
     let i = 0;
@@ -2673,7 +2901,6 @@
     legalMeta.style.display = 'none';
     legalMeta.style.opacity = '0';
     legalCursor.style.display = 'inline-block';
-    legalProgressFill.style.width = '0%';
 
     typeText(legalText, legalQuery, () => {
       legalCursor.style.display = 'none';
@@ -2682,15 +2909,9 @@
         legalLoading.style.display = 'none';
         legalAnswer.style.display = 'block';
         setTimeout(() => { legalAnswer.style.opacity = '1'; legalAnswer.style.transform = 'translateY(0)'; }, 50);
-        let prog = 0;
-        const progInterval = setInterval(() => {
-          prog += 0.5;
-          legalProgressFill.style.width = Math.min(prog, 100) + '%';
-          if (prog >= 100) clearInterval(progInterval);
-        }, 20);
         setTimeout(() => { legalMeta.style.display = 'block'; setTimeout(() => { legalMeta.style.opacity = '1'; }, 50); }, 600);
-        setTimeout(runLegalDemo, 6000);
-      }, 1200);
+        setTimeout(runLegalDemo, 8000);
+      }, 1500);
     });
   }
 
