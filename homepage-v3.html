@@ -681,7 +681,7 @@
     @keyframes vortexBurst { 0% { width: 10px; height: 10px; opacity: 0.8; border-width: 2px; } 100% { width: 500px; height: 500px; opacity: 0; border-width: 0.5px; } }
     .vortex-burst { position: absolute; z-index: 12; pointer-events: none; border: 2px solid #00D4FF; border-radius: 50%; transform: translate(-50%,-50%); opacity: 0; }
     .vortex-burst.fire { animation: vortexBurst 0.6s ease-out forwards; }
-    .hero-result-area { position: relative; z-index: 15; margin-top: 12px; opacity: 0; transform: translateY(25px) scale(0.97); transition: all 0.6s cubic-bezier(0.23,1,0.32,1); width: 100%; max-width: 680px; }
+    .hero-result-area { position: relative; z-index: 15; margin-top: 12px; opacity: 0; transform: translateY(25px) scale(0.97); transition: opacity 0.6s cubic-bezier(0.23,1,0.32,1), transform 0.6s cubic-bezier(0.23,1,0.32,1); width: 100%; max-width: 680px; min-height: 420px; }
     .hero-result-area.show { opacity: 1; transform: translateY(0) scale(1); }
     /* Kurious-style UI */
     .k-ui { background: rgba(14,14,14,0.97); border: 1px solid rgba(0,212,255,0.15); border-radius: 14px; overflow: hidden; }
