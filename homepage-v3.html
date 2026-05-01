@@ -2990,69 +2990,121 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 if (window.innerWidth <= 768) {
   document.addEventListener('DOMContentLoaded', function() {
-    // Fix all elements with inline styles
+
+    // 1. HERO: Center brand + tagline properly
+    var hero = document.querySelector('.new-hero');
+    if (hero) {
+      hero.style.padding = '0 16px';
+      hero.style.minHeight = '100vh';
+      hero.style.justifyContent = 'center';
+      hero.style.overflow = 'hidden';
+    }
+    var brand = document.querySelector('.brand');
+    if (brand) {
+      brand.style.marginTop = '80px';
+    }
+    var searchBar = document.querySelector('.search-bar');
+    if (searchBar) {
+      searchBar.style.marginTop = '30px';
+      searchBar.style.maxWidth = '100%';
+      searchBar.style.boxSizing = 'border-box';
+    }
+    var resultArea = document.querySelector('.hero-result-area');
+    if (resultArea) {
+      resultArea.style.maxWidth = '100%';
+      resultArea.style.minHeight = '280px';
+      resultArea.style.overflow = 'hidden';
+    }
+
+    // 2. PROBLEM / SPHERE: Fix text overlap - give fixed height
+    var sphereCanvas = document.getElementById('sphereCanvas');
+    if (sphereCanvas) {
+      sphereCanvas.style.maxWidth = '100%';
+      sphereCanvas.style.height = '250px';
+    }
+    var sphereStatus = document.getElementById('sphereStatus');
+    if (sphereStatus) {
+      sphereStatus.style.minHeight = '80px';
+      sphereStatus.style.fontSize = '14px';
+    }
+
+    // 3. ENGINE: Fixed height container to prevent page jumping
+    var engineCanvas = document.getElementById('engineCanvas');
+    if (engineCanvas) {
+      engineCanvas.style.maxWidth = '100%';
+      engineCanvas.style.height = '250px';
+      var engineParent = engineCanvas.parentElement;
+      if (engineParent) {
+        engineParent.style.minHeight = '400px';
+        engineParent.style.overflow = 'hidden';
+        engineParent.style.padding = '40px 16px';
+      }
+    }
+    var engineCounter = document.getElementById('engineCounter');
+    if (engineCounter) {
+      engineCounter.style.fontSize = '16px';
+      engineCounter.style.minHeight = '30px';
+    }
+
+    // 4. Fix ALL elements with inline styles
     document.querySelectorAll('[style]').forEach(function(el) {
       var s = el.style;
+      var cs = window.getComputedStyle(el);
 
-      // Reduce padding
-      if (parseInt(s.paddingLeft) > 30 || parseInt(s.paddingRight) > 30) {
-        s.paddingLeft = '16px';
-        s.paddingRight = '16px';
-      }
-      if (s.padding && (s.padding.includes('48px') || s.padding.includes('60px') || s.padding.includes('80px'))) {
-        s.padding = '24px 16px';
-      }
+      // Reduce large padding
+      var pl = parseInt(cs.paddingLeft);
+      var pr = parseInt(cs.paddingRight);
+      if (pl > 30) s.paddingLeft = '16px';
+      if (pr > 30) s.paddingRight = '16px';
 
-      // Stack flex rows
-      if (s.display === 'flex' && s.flexDirection !== 'column') {
-        var gap = parseInt(s.gap);
-        if (gap >= 30) {
+      // Stack flex rows with large gaps
+      if (cs.display === 'flex' && cs.flexDirection === 'row') {
+        var gap = parseInt(cs.gap) || parseInt(cs.columnGap) || 0;
+        if (gap >= 28) {
           s.flexDirection = 'column';
           s.gap = '16px';
         }
       }
 
       // Fix grids
-      if (s.display === 'grid' && s.gridTemplateColumns) {
-        if (s.gridTemplateColumns.includes('repeat(3') || s.gridTemplateColumns.includes('repeat(4')) {
+      if (cs.display === 'grid') {
+        var cols = cs.gridTemplateColumns;
+        if (cols && cols.split(' ').length >= 3) {
           s.gridTemplateColumns = '1fr';
           s.gap = '12px';
         }
-        if (s.gridTemplateColumns.includes('repeat(2') && el.closest('#homeRolesDropdown')) {
-          s.gridTemplateColumns = '1fr';
-        }
       }
 
-      // Fix fixed widths
-      var w = parseInt(s.width);
-      if (w > 350 && !s.maxWidth) {
-        s.width = '100%';
-        s.maxWidth = '100%';
+      // Scale down large fonts in inline styles
+      if (s.fontSize) {
+        var fs = parseInt(s.fontSize);
+        if (fs >= 36) s.fontSize = Math.round(fs * 0.6) + 'px';
+        else if (fs >= 28) s.fontSize = Math.round(fs * 0.7) + 'px';
+        else if (fs >= 24) s.fontSize = Math.round(fs * 0.8) + 'px';
       }
-      if (parseInt(s.minWidth) > 200) {
-        s.minWidth = 'auto';
-      }
-
-      // Scale down large fonts
-      var fs = parseInt(s.fontSize);
-      if (fs >= 32) s.fontSize = Math.round(fs * 0.65) + 'px';
-      else if (fs >= 24) s.fontSize = Math.round(fs * 0.75) + 'px';
     });
 
-    // Fix images and videos
+    // 5. Fix images, videos, canvas
     document.querySelectorAll('img, video, canvas').forEach(function(el) {
       el.style.maxWidth = '100%';
-      el.style.height = 'auto';
+      if (el.tagName !== 'CANVAS') el.style.height = 'auto';
     });
 
-    // Hide decorative elements
+    // 6. Hide decorative elements
     document.querySelectorAll('.section-glow, .chaos-layer, .hero-pulse, .vortex-glow, .vortex-ring, .vortex-burst').forEach(function(el) {
       el.style.display = 'none';
     });
 
-    // Fix body overflow
+    // 7. Kill horizontal scroll
     document.body.style.overflowX = 'hidden';
     document.documentElement.style.overflowX = 'hidden';
+    document.body.style.maxWidth = '100vw';
+
+    // 8. Team section: fix Join Team dropdown grid
+    var rolesGrid = document.querySelector('#homeRolesDropdown > div');
+    if (rolesGrid) {
+      rolesGrid.style.gridTemplateColumns = '1fr';
+    }
   });
 }
 </script>
