@@ -728,45 +728,79 @@
     .hero-social-proof span { color: var(--cyan); font-weight: 700; }
     @media (max-width: 768px) {
       /* New Hero */
-      .new-hero .brand h1 { font-size: 28px; letter-spacing: -1px; }
-      .new-hero .brand-tagline { font-size: 11px; }
-      .new-hero .problem-line { font-size: 14px; }
-      .new-hero .search-bar { margin-top: 60px; max-width: 100%; padding: 10px 14px; }
-      .new-hero .search-input { font-size: 12px; }
-      .hero-result-area { flex-direction: column; gap: 10px; max-width: 100%; min-height: 300px; }
-      .k-ui { font-size: 12px; }
-      .k-clip-cards { flex-direction: column; }
-      .k-clip-card { min-width: auto; width: 100%; }
-      .chaos-piece { font-size: 7px !important; padding: 3px 7px; }
-      .hero-counter { font-size: 11px; }
-      .hero-social-proof p { font-size: 12px; }
+      .new-hero { padding: 0 16px; min-height: 80vh; overflow: hidden; }
+      .new-hero .brand h1 { font-size: 26px; letter-spacing: -1px; }
+      .new-hero .brand-tagline { font-size: 10px; letter-spacing: 2px; }
+      .new-hero .problem-line { font-size: 13px; max-width: 90%; }
+      .new-hero .search-bar { margin-top: 40px; max-width: 100%; padding: 10px 14px; }
+      .new-hero .search-input { font-size: 11px; }
+      .new-hero .domain-wrapper { display: none; }
+      .hero-result-area { max-width: 100%; min-height: 250px; overflow: hidden; }
+      .k-ui { font-size: 11px; overflow: hidden; }
+      .k-video-first { overflow: hidden; }
+      .k-clip-cards { display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+      .k-clip-card { min-width: auto !important; width: 100% !important; max-width: 100%; }
+      .k-answer-text { font-size: 12px; }
+      .k-also-q { font-size: 10px; }
+      .chaos-piece { font-size: 6px !important; padding: 2px 5px; }
+      .hero-counter { font-size: 10px; }
+      .hero-social-proof p { font-size: 11px; }
+      .hero-pulse { display: none; }
+      .vortex-glow, .vortex-ring, .vortex-burst { display: none; }
+
+      /* Problem / Sphere */
+      #sphereCanvas { max-width: 100%; height: auto !important; }
+
+      /* Solutions - fix overflow */
+      .sol-row { flex-direction: column !important; gap: 20px; }
+      .sol-row > div { width: 100% !important; max-width: 100%; }
+      .sol-row .k-ui-mini, .sol-row .sol-ui-mock { max-width: 100%; overflow: hidden; transform: none !important; }
+      .sol-stat { font-size: 28px; }
+      .sol-stat-row { gap: 20px; }
+
+      /* From the Lab - blog cards */
+      .lab-grid { grid-template-columns: 1fr !important; gap: 16px; }
+      .lab-card { max-width: 100%; }
+      .lab-card-img { height: 120px; }
+      .lab-name { font-size: 14px; }
+      .lab-desc { font-size: 12px; }
+
+      /* Live Benchmarks */
+      .benchmarks-grid, .bench-grid { display: flex; flex-direction: column; gap: 12px; }
+      .bench-card { width: 100%; }
 
       /* New Team Section */
-      .team-section { padding: 0 16px; }
-      .team-heading h2 { font-size: 22px; }
-      .team-heading p { font-size: 13px; }
-      .t-row { flex-direction: column; align-items: flex-start; padding: 18px 16px; min-height: auto; gap: 12px; }
+      .team-section { padding: 0 12px; }
+      .team-heading h2 { font-size: 20px; }
+      .team-heading p { font-size: 12px; }
+      .t-row { flex-direction: column; align-items: flex-start; padding: 16px 12px; min-height: auto; gap: 10px; }
       .t-info { width: 100%; }
       .t-name { font-size: 14px; }
       .t-role { font-size: 10px; }
-      .t-slots { padding-left: 0; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
-      .t-slot { height: 36px; }
-      .t-slot img { max-height: 20px; max-width: 80px; }
-      .t-slot span { font-size: 10px; padding: 5px 10px; }
+      .t-slots { padding-left: 0; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; overflow: hidden; }
+      .t-slot { height: 32px; overflow: hidden; }
+      .t-slot img { max-height: 18px; max-width: 70px; }
+      .t-slot span { font-size: 9px; padding: 4px 8px; overflow: hidden; text-overflow: ellipsis; }
+      .t-slot span::before { display: none; }
+      .t-slot span::after { display: none; }
+      .t-slot span { border: 1px solid rgba(0,212,255,0.3); }
 
       /* Prior Research */
-      .prior-grid { grid-template-columns: repeat(2, 1fr); }
-      .pi-rank { font-size: 22px; }
+      .prior-grid { grid-template-columns: 1fr 1fr; }
+      .prior-item { padding: 16px 12px; }
+      .pi-rank { font-size: 20px; }
       .pi-name { font-size: 12px; }
-      .pi-desc { font-size: 11px; }
+      .pi-desc { font-size: 10px; }
 
       /* Build With Us / Join Team */
-      #team > div:last-child { padding: 32px 16px; }
-      #team > div:last-child p:first-child { font-size: 20px; }
-      #homeRolesDropdown .grid, #homeRolesDropdown > div { grid-template-columns: 1fr !important; }
+      #team > div:last-child { padding: 28px 16px; margin-top: 32px; }
+      #team > div:last-child p:first-child { font-size: 18px; }
+      #team > div:last-child p:nth-child(2) { font-size: 13px; }
+      #homeRolesDropdown > div { grid-template-columns: 1fr !important; }
 
-      /* Solutions Legal Video UI */
-      .sol-legal-ui { flex-direction: column; }
+      /* General overflow fix */
+      body { overflow-x: hidden; }
+      .section-glow { display: none; }
     }
   </style>
 
