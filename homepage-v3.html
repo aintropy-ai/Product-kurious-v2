@@ -635,8 +635,13 @@
 
       /* Problem / Sphere mobile - keep sphere, fix legend position */
       #sphereCanvas { max-width: 100% !important; height: 220px !important; }
-      #sphereCanvas ~ div[style*="position: absolute"] { position: relative !important; top: auto !important; left: auto !important; display: flex !important; flex-wrap: wrap !important; gap: 8px 16px !important; justify-content: center !important; margin-top: 8px !important; }
-      #sphereStatus { font-size: 14px !important; min-height: 60px !important; }
+      #sphereCanvas ~ div[style*="position: absolute"] {
+        position: relative !important; top: auto !important; left: auto !important;
+        display: grid !important; grid-template-columns: auto auto auto !important;
+        gap: 6px 20px !important; justify-content: center !important;
+        margin-top: 12px !important; font-size: 11px !important;
+      }
+      #sphereStatus { font-size: 16px !important; min-height: 60px !important; }
 
       /* Solutions mobile - stack everything */
       .sol-row { flex-direction: column !important; gap: 20px !important; }
@@ -3156,17 +3161,17 @@ if (window.innerWidth <= 768) {
         sphereContainer.style.overflow = 'hidden';
       }
     }
-    // Move legend from absolute to below the sphere
+    // Move legend from absolute to below the sphere - clean grid
     var legend = sphereCanvas ? sphereCanvas.nextElementSibling : null;
     if (legend && legend.style.position === 'absolute') {
       legend.style.position = 'relative';
       legend.style.top = 'auto';
       legend.style.left = 'auto';
-      legend.style.display = 'flex';
-      legend.style.flexWrap = 'wrap';
-      legend.style.gap = '6px 16px';
+      legend.style.display = 'grid';
+      legend.style.gridTemplateColumns = 'auto auto auto';
+      legend.style.gap = '6px 20px';
       legend.style.justifyContent = 'center';
-      legend.style.marginTop = '8px';
+      legend.style.marginTop = '12px';
       legend.style.fontSize = '11px';
     }
     var sphereStatus = document.getElementById('sphereStatus');
