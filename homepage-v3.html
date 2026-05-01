@@ -3119,6 +3119,43 @@ if (window.innerWidth <= 768) {
     if (rolesGrid) {
       rolesGrid.style.gridTemplateColumns = '1fr';
     }
+
+    // 9. DISABLE ALL ANIMATIONS ON MOBILE - prevents page jumping
+    // Stop hero animation
+    window.hRun = function(){};
+    window.hRunV2 = function(){};
+    // Show static hero content instead
+    var kSearching = document.getElementById('kSearching');
+    if (kSearching) kSearching.style.display = 'none';
+    var kAnswer = document.getElementById('kAnswer');
+    if (kAnswer) { kAnswer.style.display = 'block'; kAnswer.style.opacity = '1'; kAnswer.style.transform = 'none'; }
+    var kAnswerText = document.getElementById('kAnswerText');
+    if (kAnswerText) kAnswerText.innerHTML = 'Ask any question across 85M government records, 4000+ hours of legal video, and structured datasets. Get cited answers with source clips in seconds.';
+    var kFooter = document.getElementById('kFooter');
+    if (kFooter) { kFooter.style.display = 'flex'; kFooter.style.opacity = '1'; }
+    var heroResultArea = document.getElementById('heroResultArea');
+    if (heroResultArea) { heroResultArea.style.opacity = '1'; heroResultArea.style.transform = 'none'; }
+
+    // Stop engine animation
+    var engineCanvas = document.getElementById('engineCanvas');
+    if (engineCanvas) engineCanvas.style.display = 'none';
+    var engineCounter = document.getElementById('engineCounter');
+    if (engineCounter) engineCounter.textContent = '85M+ items perceived';
+
+    // Stop sphere animation
+    var sphereCanvas = document.getElementById('sphereCanvas');
+    if (sphereCanvas) { sphereCanvas.style.height = '200px'; }
+    var sphereStatus = document.getElementById('sphereStatus');
+    if (sphereStatus) { sphereStatus.innerHTML = 'Video. Sensors. Actions. Audio. Images.<br>All perceived. All searchable.'; sphereStatus.style.position = 'relative'; }
+
+    // Stop background canvas
+    var bgCanvas = document.getElementById('bg-canvas');
+    if (bgCanvas) bgCanvas.style.display = 'none';
+
+    // Kill all CSS animations and transitions
+    var noAnim = document.createElement('style');
+    noAnim.textContent = '@media(max-width:768px){*,*::before,*::after{animation:none!important;transition:none!important;}}';
+    document.head.appendChild(noAnim);
   });
 }
 </script>
