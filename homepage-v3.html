@@ -633,8 +633,8 @@
       .hero-social-proof p { font-size: 11px !important; }
       .hero-pulse, .vortex-glow, .vortex-ring, .vortex-burst { display: none !important; }
 
-      /* Problem / Sphere mobile - keep sphere, fix legend position */
-      #sphereCanvas { max-width: 100% !important; height: 220px !important; }
+      /* Problem / Sphere mobile - keep sphere round, natural aspect ratio */
+      #sphereCanvas { max-width: 80% !important; height: auto !important; display: block !important; margin: 0 auto !important; }
       #sphereCanvas ~ div[style*="position: absolute"] {
         position: relative !important; top: auto !important; left: auto !important;
         display: grid !important; grid-template-columns: auto auto auto !important;
@@ -3149,17 +3149,13 @@ if (window.innerWidth <= 768) {
     var engineCounter = document.getElementById('engineCounter');
     if (engineCounter) engineCounter.textContent = '85M+ items perceived';
 
-    // Sphere: keep animation, fix layout - move legend below sphere
+    // Sphere: keep round, natural aspect ratio
     var sphereCanvas = document.getElementById('sphereCanvas');
     if (sphereCanvas) {
-      sphereCanvas.style.maxWidth = '100%';
-      sphereCanvas.style.height = '220px';
-      // Fix the parent container
-      var sphereContainer = sphereCanvas.parentElement;
-      if (sphereContainer) {
-        sphereContainer.style.minHeight = '300px';
-        sphereContainer.style.overflow = 'hidden';
-      }
+      sphereCanvas.style.setProperty('max-width', '80%', 'important');
+      sphereCanvas.style.setProperty('height', 'auto', 'important');
+      sphereCanvas.style.setProperty('display', 'block', 'important');
+      sphereCanvas.style.setProperty('margin', '0 auto', 'important');
     }
     // Move legend from absolute to below the sphere - clean grid
     var legend = sphereCanvas ? sphereCanvas.nextElementSibling : null;
