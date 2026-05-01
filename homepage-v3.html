@@ -2986,79 +2986,76 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- MOBILE OVERRIDE - placed last to override all inline styles -->
-<style>
-@media (max-width: 768px) {
-  /* NUCLEAR: kill all horizontal overflow */
-  html, body { overflow-x: hidden !important; max-width: 100vw !important; width: 100% !important; }
-  * { box-sizing: border-box !important; }
+<!-- MOBILE FIX: JS overrides inline styles directly -->
+<script>
+if (window.innerWidth <= 768) {
+  document.addEventListener('DOMContentLoaded', function() {
+    // Fix all elements with inline styles
+    document.querySelectorAll('[style]').forEach(function(el) {
+      var s = el.style;
 
-  /* ALL large padding → mobile safe */
-  div[style*="padding: 20px 48px"],
-  div[style*="padding: 80px 48px"],
-  div[style*="padding: 60px 48px"],
-  div[style*="padding: 80px 32px"],
-  div[style*="padding: 40px 32px"],
-  div[style*="padding: 48px"],
-  div[style*="padding: 60px"] {
-    padding: 24px 16px !important;
-  }
+      // Reduce padding
+      if (parseInt(s.paddingLeft) > 30 || parseInt(s.paddingRight) > 30) {
+        s.paddingLeft = '16px';
+        s.paddingRight = '16px';
+      }
+      if (s.padding && (s.padding.includes('48px') || s.padding.includes('60px') || s.padding.includes('80px'))) {
+        s.padding = '24px 16px';
+      }
 
-  /* ALL flex rows → stack on mobile */
-  div[style*="display: flex"][style*="gap: 64px"],
-  div[style*="display: flex"][style*="gap: 48px"],
-  div[style*="display: flex"][style*="gap: 40px"],
-  div[style*="display: flex"][style*="gap: 32px"] {
-    flex-direction: column !important; gap: 20px !important;
-  }
+      // Stack flex rows
+      if (s.display === 'flex' && s.flexDirection !== 'column') {
+        var gap = parseInt(s.gap);
+        if (gap >= 30) {
+          s.flexDirection = 'column';
+          s.gap = '16px';
+        }
+      }
 
-  /* ALL flex rows with align-items → stack */
-  div[style*="display: flex"][style*="align-items: center"]:not(nav):not(.nav-logo):not(.t-slot):not(.k-search-step) {
-    flex-wrap: wrap !important;
-  }
+      // Fix grids
+      if (s.display === 'grid' && s.gridTemplateColumns) {
+        if (s.gridTemplateColumns.includes('repeat(3') || s.gridTemplateColumns.includes('repeat(4')) {
+          s.gridTemplateColumns = '1fr';
+          s.gap = '12px';
+        }
+        if (s.gridTemplateColumns.includes('repeat(2') && el.closest('#homeRolesDropdown')) {
+          s.gridTemplateColumns = '1fr';
+        }
+      }
 
-  /* Sphere legend items → wrap */
-  div[style*="display: flex"][style*="align-items: center"][style*="gap: 10px"] {
-    flex-wrap: nowrap !important;
-  }
+      // Fix fixed widths
+      var w = parseInt(s.width);
+      if (w > 350 && !s.maxWidth) {
+        s.width = '100%';
+        s.maxWidth = '100%';
+      }
+      if (parseInt(s.minWidth) > 200) {
+        s.minWidth = 'auto';
+      }
 
-  /* ALL grids → single column or 2-col */
-  div[style*="grid-template-columns: repeat(3"] { grid-template-columns: 1fr !important; }
-  div[style*="grid-template-columns: repeat(4"] { grid-template-columns: repeat(2, 1fr) !important; }
-  div[style*="grid-template-columns: repeat(2, 1fr)"][style*="max-width: 600px"] { grid-template-columns: 1fr !important; }
+      // Scale down large fonts
+      var fs = parseInt(s.fontSize);
+      if (fs >= 32) s.fontSize = Math.round(fs * 0.65) + 'px';
+      else if (fs >= 24) s.fontSize = Math.round(fs * 0.75) + 'px';
+    });
 
-  /* ALL inline font sizes → scale down */
-  p[style*="font-size: 26px"] { font-size: 20px !important; }
-  p[style*="font-size: 24px"] { font-size: 18px !important; }
-  div[style*="font-size: 36px"] { font-size: 24px !important; }
-  div[style*="font-size: 32px"] { font-size: 20px !important; }
-  p[style*="font-size: 24px"] { font-size: 18px !important; }
+    // Fix images and videos
+    document.querySelectorAll('img, video, canvas').forEach(function(el) {
+      el.style.maxWidth = '100%';
+      el.style.height = 'auto';
+    });
 
-  /* Sphere canvas */
-  canvas { max-width: 100% !important; height: auto !important; }
+    // Hide decorative elements
+    document.querySelectorAll('.section-glow, .chaos-layer, .hero-pulse, .vortex-glow, .vortex-ring, .vortex-burst').forEach(function(el) {
+      el.style.display = 'none';
+    });
 
-  /* ALL fixed-width elements → fluid */
-  div[style*="width: 340px"], div[style*="width: 320px"], div[style*="width: 300px"],
-  div[style*="width: 280px"], div[style*="width: 450px"],
-  div[style*="min-width: 340px"], div[style*="min-width: 320px"], div[style*="min-width: 300px"] {
-    width: 100% !important; min-width: auto !important; max-width: 100% !important;
-  }
-
-  /* Team section */
-  #team { padding: 40px 12px !important; }
-
-  /* Footer */
-  footer[style] { flex-direction: column !important; padding: 24px 16px !important; }
-
-  /* Hide decorative effects that waste CPU and cause overflow */
-  .section-glow { display: none !important; }
-  .chaos-layer { display: none !important; }
-  .hero-pulse, .vortex-glow, .vortex-ring, .vortex-burst { display: none !important; }
-
-  /* Images and videos don't overflow */
-  img, video { max-width: 100% !important; height: auto !important; }
+    // Fix body overflow
+    document.body.style.overflowX = 'hidden';
+    document.documentElement.style.overflowX = 'hidden';
+  });
 }
-</style>
+</script>
 
 </body>
 </html>
