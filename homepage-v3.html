@@ -641,7 +641,7 @@
         gap: 6px 20px !important; justify-content: center !important;
         margin-top: 12px !important; font-size: 11px !important;
       }
-      #sphereStatus { font-size: 16px !important; min-height: 60px !important; }
+      #sphereStatus { font-size: 13px !important; min-height: 40px !important; margin-top: 16px !important; }
 
       /* Solutions mobile - stack everything */
       .sol-row { flex-direction: column !important; gap: 20px !important; }
@@ -3176,8 +3176,12 @@ if (window.innerWidth <= 768) {
     }
     var sphereStatus = document.getElementById('sphereStatus');
     if (sphereStatus) {
-      sphereStatus.style.minHeight = '60px';
-      sphereStatus.style.fontSize = '14px';
+      sphereStatus.style.setProperty('min-height', '40px', 'important');
+      sphereStatus.style.setProperty('font-size', '13px', 'important');
+      // Keep overriding every 500ms in case animation JS resets it
+      setInterval(function() {
+        sphereStatus.style.setProperty('font-size', '13px', 'important');
+      }, 500);
     }
 
     // Stop background canvas
