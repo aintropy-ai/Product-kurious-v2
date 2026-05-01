@@ -3064,35 +3064,45 @@ if (window.innerWidth <= 768) {
     // 4. Fix ALL elements with inline styles
     document.querySelectorAll('[style]').forEach(function(el) {
       var s = el.style;
-      var cs = window.getComputedStyle(el);
+      var inlineStyle = el.getAttribute('style') || '';
 
       // Reduce large padding
-      var pl = parseInt(cs.paddingLeft);
-      var pr = parseInt(cs.paddingRight);
+      if (inlineStyle.match(/padding.*48px|padding.*60px|padding.*80px/)) {
+        s.padding = '24px 16px';
+      }
+      var pl = parseInt(window.getComputedStyle(el).paddingLeft);
+      var pr = parseInt(window.getComputedStyle(el).paddingRight);
       if (pl > 30) s.paddingLeft = '16px';
       if (pr > 30) s.paddingRight = '16px';
 
-      // Stack flex rows with large gaps (including row-reverse)
-      if (cs.display === 'flex' && (cs.flexDirection === 'row' || cs.flexDirection === 'row-reverse')) {
-        var gap = parseInt(cs.gap) || parseInt(cs.columnGap) || 0;
-        if (gap >= 24) {
-          s.flexDirection = 'column';
-          s.gap = '16px';
-          s.alignItems = 'stretch';
+      // Stack ALL flex rows - check inline style string directly
+      if (inlineStyle.includes('display: flex') || inlineStyle.includes('display:flex')) {
+        var hasColumn = inlineStyle.includes('flex-direction: column') || inlineStyle.includes('flex-direction:column');
+        if (!hasColumn) {
+          var gapMatch = inlineStyle.match(/gap:\s*(\d+)px/);
+          var gap = gapMatch ? parseInt(gapMatch[1]) : 0;
+          if (gap >= 20) {
+            s.setProperty('flex-direction', 'column', 'important');
+            s.setProperty('gap', '16px', 'important');
+            s.setProperty('align-items', 'stretch', 'important');
+          }
         }
       }
+
       // Fix flex: 1 children to take full width
-      if (s.flex === '1' || cs.flex === '1 1 0%') {
-        s.width = '100%';
-        s.flex = 'none';
+      if (inlineStyle.includes('flex: 1') || inlineStyle.includes('flex:1')) {
+        s.setProperty('width', '100%', 'important');
+        s.setProperty('flex', 'none', 'important');
       }
 
-      // Fix grids
-      if (cs.display === 'grid') {
-        var cols = cs.gridTemplateColumns;
-        if (cols && cols.split(' ').length >= 3) {
-          s.gridTemplateColumns = '1fr';
-          s.gap = '12px';
+      // Fix ALL grids - check inline style string for repeat(3 or repeat(4
+      if (inlineStyle.includes('grid-template-columns')) {
+        if (inlineStyle.includes('repeat(3') || inlineStyle.includes('repeat(4')) {
+          s.setProperty('grid-template-columns', '1fr', 'important');
+          s.setProperty('gap', '12px', 'important');
+        }
+        if (inlineStyle.includes('repeat(2') && el.closest('#homeRolesDropdown')) {
+          s.setProperty('grid-template-columns', '1fr', 'important');
         }
       }
 
@@ -3104,6 +3114,68 @@ if (window.innerWidth <= 768) {
         else if (fs >= 24) s.fontSize = Math.round(fs * 0.8) + 'px';
       }
     });
+
+    // 4b. SPECIFIC FIXES for sections that the generic loop misses
+
+    // Solutions: force BOTH solution rows to stack
+    document.querySelectorAll('#solutions .reveal[style]').forEach(function(el) {
+      var inlineStyle = el.getAttribute('style') || '';
+      if (inlineStyle.includes('display: flex')) {
+        el.style.setProperty('flex-direction', 'column', 'important');
+        el.style.setProperty('gap', '20px', 'important');
+        el.style.setProperty('align-items', 'stretch', 'important');
+      }
+    });
+
+    // Solutions: all inner flex:1 divs get full width
+    document.querySelectorAll('#solutions div[style*="flex: 1"]').forEach(function(el) {
+      el.style.setProperty('width', '100%', 'important');
+      el.style.setProperty('flex', 'none', 'important');
+    });
+
+    // Solutions: demo UI cards - full width, no overflow
+    ['njDemo', 'legalDemo'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.style.setProperty('width', '100%', 'important');
+        el.style.setProperty('max-width', '100%', 'important');
+        el.style.setProperty('overflow', 'hidden', 'important');
+      }
+    });
+
+    // Blog cards: force single column
+    document.querySelectorAll('#lab div[style*="grid-template-columns"]').forEach(function(el) {
+      el.style.setProperty('grid-template-columns', '1fr', 'important');
+      el.style.setProperty('gap', '16px', 'important');
+    });
+
+    // Team: reduce to 2 columns, hide chase animation
+    document.querySelectorAll('.t-slots').forEach(function(el) {
+      el.style.setProperty('grid-template-columns', 'repeat(2, 1fr)', 'important');
+      el.style.setProperty('gap', '6px', 'important');
+      el.style.setProperty('padding-left', '0', 'important');
+    });
+    document.querySelectorAll('.t-slot span').forEach(function(el) {
+      el.style.setProperty('font-size', '8px', 'important');
+      el.style.setProperty('padding', '3px 6px', 'important');
+      el.style.setProperty('white-space', 'nowrap', 'important');
+      el.style.setProperty('overflow', 'hidden', 'important');
+      el.style.setProperty('text-overflow', 'ellipsis', 'important');
+      el.style.setProperty('max-width', '100%', 'important');
+    });
+    document.querySelectorAll('.t-slot img').forEach(function(el) {
+      el.style.setProperty('max-height', '16px', 'important');
+      el.style.setProperty('max-width', '60px', 'important');
+    });
+
+    // Sphere: move status text below legend, prevent overlap
+    var sphereParent = document.getElementById('sphereCanvas');
+    if (sphereParent) {
+      var container = sphereParent.parentElement.parentElement;
+      if (container) {
+        container.style.setProperty('overflow', 'visible', 'important');
+      }
+    }
 
     // 5. Fix images, videos, canvas
     document.querySelectorAll('img, video, canvas').forEach(function(el) {
