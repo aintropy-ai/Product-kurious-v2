@@ -727,11 +727,46 @@
     .hero-social-proof p { font-size: 14px; color: #bbb; font-weight: 400; }
     .hero-social-proof span { color: var(--cyan); font-weight: 700; }
     @media (max-width: 768px) {
-      .new-hero .brand h1 { font-size: 32px; }
-      .new-hero .problem-line { font-size: 15px; }
+      /* New Hero */
+      .new-hero .brand h1 { font-size: 28px; letter-spacing: -1px; }
+      .new-hero .brand-tagline { font-size: 11px; }
+      .new-hero .problem-line { font-size: 14px; }
+      .new-hero .search-bar { margin-top: 60px; max-width: 100%; padding: 10px 14px; }
       .new-hero .search-input { font-size: 12px; }
-      .hero-result-area { flex-direction: column; gap: 10px; }
+      .hero-result-area { flex-direction: column; gap: 10px; max-width: 100%; min-height: 300px; }
+      .k-ui { font-size: 12px; }
+      .k-clip-cards { flex-direction: column; }
+      .k-clip-card { min-width: auto; width: 100%; }
       .chaos-piece { font-size: 7px !important; padding: 3px 7px; }
+      .hero-counter { font-size: 11px; }
+      .hero-social-proof p { font-size: 12px; }
+
+      /* New Team Section */
+      .team-section { padding: 0 16px; }
+      .team-heading h2 { font-size: 22px; }
+      .team-heading p { font-size: 13px; }
+      .t-row { flex-direction: column; align-items: flex-start; padding: 18px 16px; min-height: auto; gap: 12px; }
+      .t-info { width: 100%; }
+      .t-name { font-size: 14px; }
+      .t-role { font-size: 10px; }
+      .t-slots { padding-left: 0; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+      .t-slot { height: 36px; }
+      .t-slot img { max-height: 20px; max-width: 80px; }
+      .t-slot span { font-size: 10px; padding: 5px 10px; }
+
+      /* Prior Research */
+      .prior-grid { grid-template-columns: repeat(2, 1fr); }
+      .pi-rank { font-size: 22px; }
+      .pi-name { font-size: 12px; }
+      .pi-desc { font-size: 11px; }
+
+      /* Build With Us / Join Team */
+      #team > div:last-child { padding: 32px 16px; }
+      #team > div:last-child p:first-child { font-size: 20px; }
+      #homeRolesDropdown .grid, #homeRolesDropdown > div { grid-template-columns: 1fr !important; }
+
+      /* Solutions Legal Video UI */
+      .sol-legal-ui { flex-direction: column; }
     }
   </style>
 
