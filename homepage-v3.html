@@ -3152,6 +3152,42 @@ if (window.innerWidth <= 768) {
     var bgCanvas = document.getElementById('bg-canvas');
     if (bgCanvas) bgCanvas.style.display = 'none';
 
+    // 10. SOLUTIONS: Stop NJ and Legal Video demo animations, show static answer
+    // NJ Demo - show static answer
+    var njQueryText = document.getElementById('njQueryText');
+    if (njQueryText) njQueryText.textContent = 'What was the Route 21 budget allocation?';
+    var njCursor = document.getElementById('njCursor');
+    if (njCursor) njCursor.style.display = 'none';
+    var njLoading = document.getElementById('njLoading');
+    if (njLoading) njLoading.style.display = 'none';
+    var njAnswer = document.getElementById('njAnswer');
+    if (njAnswer) { njAnswer.style.display = 'block'; njAnswer.style.opacity = '1'; njAnswer.style.transform = 'none'; }
+    var njMeta = document.getElementById('njMeta');
+    if (njMeta) { njMeta.style.display = 'block'; njMeta.style.opacity = '1'; }
+    var njDemo = document.getElementById('njDemo');
+    if (njDemo) { njDemo.style.overflow = 'hidden'; njDemo.style.maxHeight = '300px'; }
+
+    // Legal Video Demo - show static answer with one video source
+    var legalQueryText = document.getElementById('legalQueryText');
+    if (legalQueryText) legalQueryText.textContent = 'When did the witness change testimony?';
+    var legalCursor = document.getElementById('legalCursor');
+    if (legalCursor) legalCursor.style.display = 'none';
+    var legalLoading = document.getElementById('legalLoading');
+    if (legalLoading) legalLoading.style.display = 'none';
+    var legalAnswer = document.getElementById('legalAnswer');
+    if (legalAnswer) { legalAnswer.style.display = 'block'; legalAnswer.style.opacity = '1'; legalAnswer.style.transform = 'none'; }
+    var legalMeta = document.getElementById('legalMeta');
+    if (legalMeta) { legalMeta.style.display = 'block'; legalMeta.style.opacity = '1'; }
+    var legalDemo = document.getElementById('legalDemo');
+    if (legalDemo) { legalDemo.style.overflow = 'hidden'; legalDemo.style.maxHeight = '400px'; }
+
+    // Stop all videos on mobile to save battery and prevent layout shifts
+    document.querySelectorAll('video').forEach(function(v) { v.pause(); v.style.display = 'none'; });
+
+    // Stop solution animation functions
+    window.runNJDemo = function(){};
+    window.runLegalDemo = function(){};
+
     // Kill all CSS animations and transitions
     var noAnim = document.createElement('style');
     noAnim.textContent = '@media(max-width:768px){*,*::before,*::after{animation:none!important;transition:none!important;}}';
