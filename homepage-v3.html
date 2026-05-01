@@ -2991,30 +2991,38 @@ document.addEventListener('DOMContentLoaded', function() {
 if (window.innerWidth <= 768) {
   document.addEventListener('DOMContentLoaded', function() {
 
-    // 1. HERO: Center brand + tagline properly
+    // 1. HERO: Fixed height, no page movement
     var hero = document.querySelector('.new-hero');
     if (hero) {
       hero.style.padding = '0 16px';
-      hero.style.minHeight = '100vh';
-      hero.style.justifyContent = 'center';
+      hero.style.height = '100vh';
+      hero.style.maxHeight = '100vh';
       hero.style.overflow = 'hidden';
+      hero.style.justifyContent = 'flex-start';
     }
     var brand = document.querySelector('.brand');
     if (brand) {
-      brand.style.marginTop = '80px';
+      brand.style.marginTop = '60px';
     }
     var searchBar = document.querySelector('.search-bar');
     if (searchBar) {
-      searchBar.style.marginTop = '30px';
+      searchBar.style.marginTop = '20px';
       searchBar.style.maxWidth = '100%';
       searchBar.style.boxSizing = 'border-box';
     }
     var resultArea = document.querySelector('.hero-result-area');
     if (resultArea) {
       resultArea.style.maxWidth = '100%';
-      resultArea.style.minHeight = '280px';
+      resultArea.style.height = '300px';
+      resultArea.style.maxHeight = '300px';
       resultArea.style.overflow = 'hidden';
+      resultArea.style.minHeight = '0';
     }
+    // Hide social proof on mobile to save space
+    var socialProof = document.querySelector('.hero-social-proof');
+    if (socialProof) socialProof.style.display = 'none';
+    var heroCounter = document.querySelector('.hero-counter');
+    if (heroCounter) heroCounter.style.display = 'none';
 
     // 2. PROBLEM / SPHERE: Fix text overlap - give fixed height
     var sphereCanvas = document.getElementById('sphereCanvas');
@@ -3057,13 +3065,19 @@ if (window.innerWidth <= 768) {
       if (pl > 30) s.paddingLeft = '16px';
       if (pr > 30) s.paddingRight = '16px';
 
-      // Stack flex rows with large gaps
-      if (cs.display === 'flex' && cs.flexDirection === 'row') {
+      // Stack flex rows with large gaps (including row-reverse)
+      if (cs.display === 'flex' && (cs.flexDirection === 'row' || cs.flexDirection === 'row-reverse')) {
         var gap = parseInt(cs.gap) || parseInt(cs.columnGap) || 0;
-        if (gap >= 28) {
+        if (gap >= 24) {
           s.flexDirection = 'column';
           s.gap = '16px';
+          s.alignItems = 'stretch';
         }
+      }
+      // Fix flex: 1 children to take full width
+      if (s.flex === '1' || cs.flex === '1 1 0%') {
+        s.width = '100%';
+        s.flex = 'none';
       }
 
       // Fix grids
