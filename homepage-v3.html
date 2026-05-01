@@ -3220,10 +3220,16 @@ if (window.innerWidth <= 768) {
     window.runNJDemo = function(){};
     window.runLegalDemo = function(){};
 
-    // Kill all CSS animations and transitions
+    // Kill CSS animations but KEEP reveal sections visible
     var noAnim = document.createElement('style');
-    noAnim.textContent = '@media(max-width:768px){*,*::before,*::after{animation:none!important;transition:none!important;}}';
+    noAnim.textContent = '@media(max-width:768px){*,*::before,*::after{animation:none!important;transition:none!important;}.reveal{opacity:1!important;transform:none!important;}}';
     document.head.appendChild(noAnim);
+
+    // Force all reveal sections visible immediately
+    document.querySelectorAll('.reveal').forEach(function(el) {
+      el.style.setProperty('opacity', '1', 'important');
+      el.style.setProperty('transform', 'none', 'important');
+    });
   });
 }
 </script>
