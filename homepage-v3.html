@@ -2989,74 +2989,74 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- MOBILE OVERRIDE - placed last to override all inline styles -->
 <style>
 @media (max-width: 768px) {
-  /* Kill horizontal scroll */
-  html, body { overflow-x: hidden !important; max-width: 100vw !important; }
+  /* NUCLEAR: kill all horizontal overflow */
+  html, body { overflow-x: hidden !important; max-width: 100vw !important; width: 100% !important; }
+  * { box-sizing: border-box !important; }
 
-  /* All inline-styled divs with padding */
-  div[style*="padding: 20px 48px"], div[style*="padding: 80px 48px"],
-  div[style*="padding: 60px 48px"], div[style*="padding: 48px"] {
-    padding-left: 16px !important; padding-right: 16px !important;
+  /* ALL large padding → mobile safe */
+  div[style*="padding: 20px 48px"],
+  div[style*="padding: 80px 48px"],
+  div[style*="padding: 60px 48px"],
+  div[style*="padding: 80px 32px"],
+  div[style*="padding: 40px 32px"],
+  div[style*="padding: 48px"],
+  div[style*="padding: 60px"] {
+    padding: 24px 16px !important;
   }
 
-  /* All inline font-size: 26px and above in problem/sphere area */
-  p[style*="font-size: 26px"] { font-size: 20px !important; }
-  p[style*="font-size: 18px"][style*="color: #999"] { font-size: 14px !important; }
-
-  /* Sphere canvas */
-  canvas { max-width: 100% !important; }
-
-  /* Solutions inline grids */
+  /* ALL flex rows → stack on mobile */
+  div[style*="display: flex"][style*="gap: 64px"],
   div[style*="display: flex"][style*="gap: 48px"],
+  div[style*="display: flex"][style*="gap: 40px"],
   div[style*="display: flex"][style*="gap: 32px"] {
     flex-direction: column !important; gap: 20px !important;
   }
 
-  /* Solutions product UI cards */
+  /* ALL flex rows with align-items → stack */
+  div[style*="display: flex"][style*="align-items: center"]:not(nav):not(.nav-logo):not(.t-slot):not(.k-search-step) {
+    flex-wrap: wrap !important;
+  }
+
+  /* Sphere legend items → wrap */
+  div[style*="display: flex"][style*="align-items: center"][style*="gap: 10px"] {
+    flex-wrap: nowrap !important;
+  }
+
+  /* ALL grids → single column or 2-col */
+  div[style*="grid-template-columns: repeat(3"] { grid-template-columns: 1fr !important; }
+  div[style*="grid-template-columns: repeat(4"] { grid-template-columns: repeat(2, 1fr) !important; }
+  div[style*="grid-template-columns: repeat(2, 1fr)"][style*="max-width: 600px"] { grid-template-columns: 1fr !important; }
+
+  /* ALL inline font sizes → scale down */
+  p[style*="font-size: 26px"] { font-size: 20px !important; }
+  p[style*="font-size: 24px"] { font-size: 18px !important; }
+  div[style*="font-size: 36px"] { font-size: 24px !important; }
+  div[style*="font-size: 32px"] { font-size: 20px !important; }
+  p[style*="font-size: 24px"] { font-size: 18px !important; }
+
+  /* Sphere canvas */
+  canvas { max-width: 100% !important; height: auto !important; }
+
+  /* ALL fixed-width elements → fluid */
   div[style*="width: 340px"], div[style*="width: 320px"], div[style*="width: 300px"],
-  div[style*="min-width: 340px"], div[style*="min-width: 320px"] {
+  div[style*="width: 280px"], div[style*="width: 450px"],
+  div[style*="min-width: 340px"], div[style*="min-width: 320px"], div[style*="min-width: 300px"] {
     width: 100% !important; min-width: auto !important; max-width: 100% !important;
   }
 
-  /* Solutions stat text */
-  div[style*="font-size: 36px"] { font-size: 24px !important; }
-  div[style*="font-size: 32px"][style*="font-weight: 900"] { font-size: 22px !important; }
-
-  /* Solutions inline flex rows */
-  div[style*="display: flex"][style*="align-items: center"][style*="gap: 64px"],
-  div[style*="display: flex"][style*="align-items: flex-start"][style*="gap: 64px"],
-  div[style*="display: flex"][style*="gap: 64px"] {
-    flex-direction: column !important; gap: 24px !important;
-  }
-
-  /* Blog cards inline grid */
-  div[style*="grid-template-columns: repeat(3"] {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Benchmarks inline grid */
-  div[style*="display: grid"][style*="repeat(3, 1fr)"] {
-    grid-template-columns: 1fr !important; gap: 12px !important;
-  }
-  div[style*="display: grid"][style*="repeat(2, 1fr)"][style*="max-width: 600px"] {
-    grid-template-columns: 1fr !important;
-  }
-
-  /* Where We Fit icons grid */
-  div[style*="display: grid"][style*="repeat(4, 1fr)"] {
-    grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important;
-  }
-
-  /* Team section #team padding */
+  /* Team section */
   #team { padding: 40px 12px !important; }
 
   /* Footer */
   footer[style] { flex-direction: column !important; padding: 24px 16px !important; }
 
-  /* Hide glow effects */
+  /* Hide decorative effects that waste CPU and cause overflow */
   .section-glow { display: none !important; }
-
-  /* Scale down any absolutely positioned decorative elements */
   .chaos-layer { display: none !important; }
+  .hero-pulse, .vortex-glow, .vortex-ring, .vortex-burst { display: none !important; }
+
+  /* Images and videos don't overflow */
+  img, video { max-width: 100% !important; height: auto !important; }
 }
 </style>
 
