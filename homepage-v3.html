@@ -3142,11 +3142,21 @@ if (window.innerWidth <= 768) {
     var engineCounter = document.getElementById('engineCounter');
     if (engineCounter) engineCounter.textContent = '85M+ items perceived';
 
-    // Stop sphere animation
+    // Stop sphere animation - hide canvas, show static content instead
     var sphereCanvas = document.getElementById('sphereCanvas');
-    if (sphereCanvas) { sphereCanvas.style.height = '200px'; }
+    var sphereParent = sphereCanvas ? sphereCanvas.parentElement : null;
+    if (sphereParent) {
+      // Hide the entire sphere + legend block
+      sphereParent.style.display = 'none';
+    }
     var sphereStatus = document.getElementById('sphereStatus');
-    if (sphereStatus) { sphereStatus.innerHTML = 'Video. Sensors. Actions. Audio. Images.<br>All perceived. All searchable.'; sphereStatus.style.position = 'relative'; }
+    if (sphereStatus) {
+      sphereStatus.innerHTML = '<span style="color: #ef4444;">Unstructured:</span> Video, Sensors, Actions, Audio, Images<br><span style="color: var(--cyan);">Structured:</span> Text, Tables, PDFs<br><br><span style="color: #aaa;">Only 5% has ever been visible to AI.</span>';
+      sphereStatus.style.minHeight = 'auto';
+      sphereStatus.style.fontSize = '14px';
+      sphereStatus.style.lineHeight = '1.8';
+      sphereStatus.style.padding = '20px 0';
+    }
 
     // Stop background canvas
     var bgCanvas = document.getElementById('bg-canvas');
