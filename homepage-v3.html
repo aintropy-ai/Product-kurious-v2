@@ -633,10 +633,10 @@
       .hero-social-proof p { font-size: 11px !important; }
       .hero-pulse, .vortex-glow, .vortex-ring, .vortex-burst { display: none !important; }
 
-      /* Problem / Sphere mobile - HIDE entirely */
-      #sphereCanvas { display: none !important; }
-      #sphereCanvas + div { display: none !important; }
-      #sphereStatus { font-size: 14px !important; line-height: 1.8 !important; min-height: auto !important; padding: 20px 0 !important; }
+      /* Problem / Sphere mobile - keep sphere, fix legend position */
+      #sphereCanvas { max-width: 100% !important; height: 220px !important; }
+      #sphereCanvas ~ div[style*="position: absolute"] { position: relative !important; top: auto !important; left: auto !important; display: flex !important; flex-wrap: wrap !important; gap: 8px 16px !important; justify-content: center !important; margin-top: 8px !important; }
+      #sphereStatus { font-size: 14px !important; min-height: 60px !important; }
 
       /* Solutions mobile - stack everything */
       .sol-row { flex-direction: column !important; gap: 20px !important; }
@@ -3144,20 +3144,35 @@ if (window.innerWidth <= 768) {
     var engineCounter = document.getElementById('engineCounter');
     if (engineCounter) engineCounter.textContent = '85M+ items perceived';
 
-    // Stop sphere animation - hide canvas, show static content instead
+    // Sphere: keep animation, fix layout - move legend below sphere
     var sphereCanvas = document.getElementById('sphereCanvas');
-    var sphereParent = sphereCanvas ? sphereCanvas.parentElement : null;
-    if (sphereParent) {
-      // Hide the entire sphere + legend block
-      sphereParent.style.display = 'none';
+    if (sphereCanvas) {
+      sphereCanvas.style.maxWidth = '100%';
+      sphereCanvas.style.height = '220px';
+      // Fix the parent container
+      var sphereContainer = sphereCanvas.parentElement;
+      if (sphereContainer) {
+        sphereContainer.style.minHeight = '300px';
+        sphereContainer.style.overflow = 'hidden';
+      }
+    }
+    // Move legend from absolute to below the sphere
+    var legend = sphereCanvas ? sphereCanvas.nextElementSibling : null;
+    if (legend && legend.style.position === 'absolute') {
+      legend.style.position = 'relative';
+      legend.style.top = 'auto';
+      legend.style.left = 'auto';
+      legend.style.display = 'flex';
+      legend.style.flexWrap = 'wrap';
+      legend.style.gap = '6px 16px';
+      legend.style.justifyContent = 'center';
+      legend.style.marginTop = '8px';
+      legend.style.fontSize = '11px';
     }
     var sphereStatus = document.getElementById('sphereStatus');
     if (sphereStatus) {
-      sphereStatus.innerHTML = '<span style="color: #ef4444;">Unstructured:</span> Video, Sensors, Actions, Audio, Images<br><span style="color: var(--cyan);">Structured:</span> Text, Tables, PDFs<br><br><span style="color: #aaa;">Only 5% has ever been visible to AI.</span>';
-      sphereStatus.style.minHeight = 'auto';
+      sphereStatus.style.minHeight = '60px';
       sphereStatus.style.fontSize = '14px';
-      sphereStatus.style.lineHeight = '1.8';
-      sphereStatus.style.padding = '20px 0';
     }
 
     // Stop background canvas
