@@ -97,7 +97,7 @@
 
     /* ===== HERO ===== */
     .hero {
-      min-height: 100vh; display: flex; flex-direction: column;
+      height: 130vh; display: flex; flex-direction: column;
       justify-content: center; align-items: center; text-align: center;
       padding: 56px 48px 0; position: relative; overflow: hidden;
     }
@@ -701,6 +701,7 @@
   <nav>
     <div class="nav-logo">
       <a href="#home" class="nav-logo-text"><span class="a">A</span>Intropy</a>
+      <span style="font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.3px; margin-left: 8px;">The Hippocampus of AI</span>
     </div>
     <div class="nav-links">
       <a href="#home">Home</a>
@@ -764,7 +765,7 @@
     @keyframes vortexBurst { 0% { width: 10px; height: 10px; opacity: 0.8; border-width: 2px; } 100% { width: 500px; height: 500px; opacity: 0; border-width: 0.5px; } }
     .vortex-burst { position: absolute; z-index: 12; pointer-events: none; border: 2px solid #00D4FF; border-radius: 50%; transform: translate(-50%,-50%); opacity: 0; }
     .vortex-burst.fire { animation: vortexBurst 0.6s ease-out forwards; }
-    .hero-result-area { position: relative; z-index: 15; margin-top: 12px; opacity: 0; transform: translateY(25px) scale(0.97); transition: opacity 0.6s cubic-bezier(0.23,1,0.32,1), transform 0.6s cubic-bezier(0.23,1,0.32,1); width: 100%; max-width: 680px; min-height: 420px; }
+    .hero-result-area { position: relative; z-index: 15; margin-top: 12px; opacity: 0; transform: translateY(25px) scale(0.97); transition: opacity 0.6s cubic-bezier(0.23,1,0.32,1), transform 0.6s cubic-bezier(0.23,1,0.32,1); width: 100%; max-width: 680px; min-height: 420px; overflow: visible; }
     .hero-result-area.show { opacity: 1; transform: translateY(0) scale(1); }
     /* Kurious-style UI */
     .k-ui { background: rgba(14,14,14,0.97); border: 1px solid rgba(0,212,255,0.15); border-radius: 14px; overflow: hidden; }
@@ -858,7 +859,7 @@
           <div class="k-answer-text" id="kAnswerText"></div>
         </div>
         <div class="k-footer" id="kFooter" style="display: none;">
-          <div class="k-sources"><span id="kSourceCount">3</span> SOURCES &middot; SEARCHED IN <span id="kSearchTime">8.31s</span></div>
+          <div class="k-sources"><span id="kSourceCount">3</span> SOURCES &middot; <span id="kScaleNum"></span> &middot; SEARCHED IN <span id="kSearchTime">8.31s</span></div>
           <div class="k-helpful">Was this helpful? &#128077; &#128078;</div>
         </div>
         <div class="k-also" id="kAlso" style="display: none;">
@@ -913,7 +914,7 @@
   <!-- Problem bridge - consequence line -->
   <div class="reveal" style="text-align: center; padding: 8px 48px 32px; max-width: 750px; margin: 0 auto;">
     <p style="font-size: 15px; color: var(--body); line-height: 1.7;">
-      Truly intelligent machines cannot be built by LLMs alone. They need a <span style="color: var(--cyan); font-weight: 700;">semantic layer</span> for actions, trajectories, and sensory data.
+      Data is doubling every 2 years. LLMs alone can't keep up. Intelligent machines need a <span style="color: var(--cyan); font-weight: 700;">semantic layer</span> for actions, trajectories, and sensory data.
     </p>
   </div>
 
@@ -924,7 +925,6 @@
   <div class="how-section grid-bg reveal" style="padding-bottom: 60px;">
     <div class="how-label">Where we fit</div>
     <div class="how-title">We make AI understand reality.</div>
-    <p style="font-size: 18px; color: var(--body); margin-top: -40px; margin-bottom: 12px; font-weight: 500; letter-spacing: 0.3px;">The Hippocampus of AI</p>
     <p style="font-size: 14px; color: #aaa; margin-bottom: 48px; max-width: 650px; margin-left: auto; margin-right: auto; line-height: 1.6;">Building the semantic infrastructure for Physical AI - making 90% of untapped enterprise data learnable and actionable, beyond language.</p>
 
     <!-- Funnel - AIntropy on top, domains below -->
@@ -1116,38 +1116,76 @@
 <div class="section-glow"></div>
 
 
-  <!-- Prior research / Product Accomplishments -->
-  <div style="max-width: 1100px; margin: 0 auto; padding: 40px 32px;">
-  <!-- Prior research -->
-  <div class="prior">
-    <div class="prior-head">Prior research</div>
-    <div class="prior-grid">
-      <a href="https://arxiv.org/abs/2404.07220" target="_blank" class="prior-item">
-        <div class="pi-rank">#1</div>
-        <div class="pi-name">Blended RAG</div>
-        <div class="pi-desc">94.89% on SQuAD Top-5. No fine-tuning. No frontier model.</div>
-      </a>
-      <a href="https://huggingface.co/spaces/aintropy-ai/NJ-open-data-leaderboard-v1" target="_blank" class="prior-item">
-        <div class="pi-rank">#1</div>
-        <div class="pi-name">NJ Open Data</div>
-        <div class="pi-desc">85M records, 23 agencies. Multi-format government benchmark.</div>
-      </a>
-      <a href="https://huggingface.co/spaces/aintropy-ai/chemRAG-leaderboard-v1" target="_blank" class="prior-item">
-        <div class="pi-rank">#1</div>
-        <div class="pi-name">ChemRAG</div>
-        <div class="pi-desc">Chemical domain retrieval. Published on HuggingFace.</div>
-      </a>
-      <div class="prior-item">
-        <div class="pi-rank">94%</div>
-        <div class="pi-name">Legal Video</div>
-        <div class="pi-desc">4,000+ hours. Deep mode. Video moment retrieval.</div>
+  <!-- CALLING CARDS CAROUSEL -->
+  <div class="section-glow"></div>
+  <div class="reveal" style="padding: 80px 32px;">
+    <div style="text-align: center; margin-bottom: 56px;">
+      <p style="font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px;">What We Have Built</p>
+      <p style="font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -1px; margin-bottom: 8px;">Real data. Real scale. Verified.</p>
+    </div>
+    <style>
+      .cc-carousel { max-width: 580px; margin: 0 auto; position: relative; }
+      .cc-card { position: absolute; top: 0; left: 0; width: 100%; opacity: 0; transform: scale(0.95); transition: opacity 0.5s ease, transform 0.5s ease; background: #0A0A0A; border: 1px solid var(--border); border-radius: 16px; padding: 44px 40px 24px; text-align: center; cursor: pointer; pointer-events: none; }
+      .cc-card.active { opacity: 1; transform: scale(1); pointer-events: auto; }
+      .cc-card:hover { border-color: rgba(0,212,255,0.3); }
+      .cc-type { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; margin-bottom: 18px; }
+      .cc-type.digital { color: var(--cyan); background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.2); }
+      .cc-type.physical { color: #a78bfa; background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.2); }
+      .cc-num { font-size: 56px; font-weight: 900; letter-spacing: -3px; margin-bottom: 6px; }
+      .cc-label { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+      .cc-desc { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+      .cc-dots { display: flex; gap: 8px; justify-content: center; padding-top: 8px; }
+      .cc-dot { width: 8px; height: 8px; border-radius: 50%; background: #333; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+      .cc-dot:hover { background: #555; transform: scale(1.3); }
+      .cc-dot.active { background: var(--cyan); }
+    </style>
+    <div class="cc-carousel" id="ccCarousel" style="height: 260px;">
+      <div class="cc-card active" data-i="0" onclick="ccNext()">
+        <div class="cc-type digital">Digital AI</div>
+        <div class="cc-num" style="color:var(--cyan)">94.89%</div>
+        <div class="cc-label">SQuAD Accuracy</div>
+        <div class="cc-desc">Top-5 retrieval. No fine-tuning. No frontier model. Just a better algorithm.</div>
+        <div class="cc-dots"><div class="cc-dot active" onclick="event.stopPropagation();ccGo(0)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(1)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(2)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(3)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(4)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(5)"></div></div>
+      </div>
+      <div class="cc-card" data-i="1" onclick="ccNext()">
+        <div class="cc-type digital">Digital AI</div>
+        <div class="cc-num" style="color:var(--cyan)">85M</div>
+        <div class="cc-label">Records in 0.2 Seconds</div>
+        <div class="cc-desc">23 NJ agencies. 8+ formats. PDFs, CSVs, scanned docs. One query spans all.</div>
+        <div class="cc-dots"><div class="cc-dot" onclick="event.stopPropagation();ccGo(0)"></div><div class="cc-dot active" onclick="event.stopPropagation();ccGo(1)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(2)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(3)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(4)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(5)"></div></div>
+      </div>
+      <div class="cc-card" data-i="2" onclick="ccNext()">
+        <div class="cc-type digital">Digital AI</div>
+        <div class="cc-num" style="color:var(--cyan)">89.1%</div>
+        <div class="cc-label">Production Accuracy</div>
+        <div class="cc-desc">928 real queries. Deep mode. Agentic reasoning with 3-layer attribution.</div>
+        <div class="cc-dots"><div class="cc-dot" onclick="event.stopPropagation();ccGo(0)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(1)"></div><div class="cc-dot active" onclick="event.stopPropagation();ccGo(2)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(3)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(4)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(5)"></div></div>
+      </div>
+      <div class="cc-card" data-i="3" onclick="ccNext()">
+        <div class="cc-type physical">Physical AI</div>
+        <div class="cc-num" style="color:#a78bfa">4,000+</div>
+        <div class="cc-label">Hours of Video Searched</div>
+        <div class="cc-desc">Legal video moment retrieval. Find exact clips with timestamps across years of footage.</div>
+        <div class="cc-dots"><div class="cc-dot" onclick="event.stopPropagation();ccGo(0)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(1)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(2)"></div><div class="cc-dot active" onclick="event.stopPropagation();ccGo(3)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(4)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(5)"></div></div>
+      </div>
+      <div class="cc-card" data-i="4" onclick="ccNext()">
+        <div class="cc-type physical">Physical AI</div>
+        <div class="cc-num" style="color:#a78bfa">2.4M</div>
+        <div class="cc-label">Chemical Reactions Indexed</div>
+        <div class="cc-desc">ChemRAG benchmark. Retrosynthetic pathways. SMILES input, JSON output.</div>
+        <div class="cc-dots"><div class="cc-dot" onclick="event.stopPropagation();ccGo(0)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(1)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(2)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(3)"></div><div class="cc-dot active" onclick="event.stopPropagation();ccGo(4)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(5)"></div></div>
+      </div>
+      <div class="cc-card" data-i="5" onclick="ccNext()">
+        <div class="cc-type physical">Physical AI</div>
+        <div class="cc-num" style="color:#00E676">20-80x</div>
+        <div class="cc-label">Cheaper Than Fine-Tuning</div>
+        <div class="cc-desc">70B parameter model. No training required. Deploy in days, not months.</div>
+        <div class="cc-dots"><div class="cc-dot" onclick="event.stopPropagation();ccGo(0)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(1)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(2)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(3)"></div><div class="cc-dot" onclick="event.stopPropagation();ccGo(4)"></div><div class="cc-dot active" onclick="event.stopPropagation();ccGo(5)"></div></div>
       </div>
     </div>
   </div>
-  </div>
-  <div class="section-glow"></div>
 
-    <!-- SOLUTIONS (Option A - full-width rows with product UI) -->
+  <!-- SOLUTIONS (Option A - full-width rows with product UI) -->
   <div class="section-glow"></div>
   <div id="solutions" class="reveal" style="padding: 80px 48px;">
     <div style="text-align: center; margin-bottom: 16px;">
@@ -1276,12 +1314,6 @@
         </div>
       </div>
 
-      <!-- Your Data - subtle CTA -->
-      <div style="text-align: center; padding: 48px 0;">
-        <p style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 8px;">Your data. Your questions. Answers in seconds.</p>
-        <p style="font-size: 14px; color: var(--muted); margin-bottom: 20px;">No fine-tuning, no training, no waiting.</p>
-        <a href="mailto:know@aintropy.ai?subject=I%20want%20to%20scale%20AI%20on%20my%20messy%20multimodal%20data" style="display: inline-block; color: #00d4ff; border: 1px solid rgba(0,212,255,0.25); padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none;">Connect Your Data &rarr;</a>
-      </div>
 
     </div>
   </div>
@@ -1369,39 +1401,15 @@
 
       </div>
 
-      <!-- Live Benchmarks -->
-      <div style="text-align: center; margin-bottom: 28px;">
-        <p style="font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px;">Live Benchmarks</p>
-        <p style="font-size: 16px; color: #bbb;">Open results. Verify it yourself.</p>
-        <p style="font-size: 14px; color: #999; margin-top: 8px;">94.89% on SQuAD Top-5 with no fine-tuning. No GPT-4. No frontier model. <span style="color: var(--cyan); font-weight: 700;">Just a better retrieval algorithm.</span></p>
+      <!-- Open Benchmarks -->
+      <div style="text-align: center; margin-bottom: 24px; margin-top: 48px;">
+        <p style="font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px;">Open Benchmarks on HuggingFace</p>
+        <p style="font-size: 14px; color: var(--muted);">Verify our results. Run your own models against our benchmarks.</p>
       </div>
-
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
-
-        <!-- NJ Open Data Leaderboard -->
-        <a href="https://huggingface.co/spaces/aintropy-ai/nj-open-data-leaderboard-v1" target="_blank" style="text-decoration: none; background: #0E0E0E; border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; transition: border-color 0.3s;">
-          <div style="font-size: 32px; font-weight: 900; color: var(--cyan); margin-bottom: 4px;">#1</div>
-          <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px;">NJ Open Data</div>
-          <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">85M records, 23 agencies</div>
-          <div style="font-size: 11px; color: var(--cyan); font-weight: 600;">View on HuggingFace &rarr;</div>
-        </a>
-
-        <!-- ChemRAG Leaderboard -->
-        <a href="https://huggingface.co/spaces/aintropy-ai/chemRAG-leaderboard-v1" target="_blank" style="text-decoration: none; background: #0E0E0E; border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; transition: border-color 0.3s;">
-          <div style="font-size: 32px; font-weight: 900; color: var(--cyan); margin-bottom: 4px;">#2</div>
-          <div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 6px;">ChemRAG</div>
-          <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">Chemical domain leaderboard</div>
-          <div style="font-size: 11px; color: var(--cyan); font-weight: 600;">View on HuggingFace &rarr;</div>
-        </a>
-
-        <!-- Legal Videos Leaderboard (Coming Soon) -->
-        <div style="background: #0E0E0E; border: 1px dashed #333; border-radius: 12px; padding: 24px; text-align: center;">
-          <div style="font-size: 32px; font-weight: 900; color: #999; margin-bottom: 4px;">94%</div>
-          <div style="font-size: 14px; font-weight: 700; color: #999; margin-bottom: 6px;">Legal Videos</div>
-          <div style="font-size: 12px; color: #444; margin-bottom: 12px;">4,000+ hrs video benchmark</div>
-          <div style="font-size: 11px; color: #999; font-weight: 600;">Coming soon</div>
-        </div>
-
+        <a href="https://huggingface.co/spaces/aintropy-ai/nj-open-data-leaderboard-v1" target="_blank" style="text-decoration: none; background: #0A0A0A; border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; transition: border-color 0.3s;"><div style="font-size: 28px; font-weight: 900; color: var(--cyan); margin-bottom: 4px;">#1</div><div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px;">NJ Open Data</div><div style="font-size: 11px; color: var(--muted); margin-bottom: 8px;">85M records, 23 agencies</div><div style="font-size: 10px; color: var(--cyan); font-weight: 600;">View on HuggingFace &rarr;</div></a>
+        <a href="https://huggingface.co/spaces/aintropy-ai/chemRAG-leaderboard-v1" target="_blank" style="text-decoration: none; background: #0A0A0A; border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; transition: border-color 0.3s;"><div style="font-size: 28px; font-weight: 900; color: var(--cyan); margin-bottom: 4px;">#1</div><div style="font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px;">ChemRAG</div><div style="font-size: 11px; color: var(--muted); margin-bottom: 8px;">Chemical domain retrieval</div><div style="font-size: 10px; color: var(--cyan); font-weight: 600;">View on HuggingFace &rarr;</div></a>
+        <a href="https://huggingface.co/spaces/aintropy-ai/legal-videos-leaderboard-v1" target="_blank" style="text-decoration: none; background: #0A0A0A; border: 1px dashed #333; border-radius: 12px; padding: 20px; text-align: center; transition: border-color 0.3s;"><div style="font-size: 28px; font-weight: 900; color: #666; margin-bottom: 4px;">94%</div><div style="font-size: 14px; font-weight: 700; color: #666; margin-bottom: 4px;">Legal Videos</div><div style="font-size: 11px; color: #444; margin-bottom: 8px;">4,000+ hrs video benchmark</div><div style="font-size: 10px; color: #666; font-weight: 600;">Coming soon</div></a>
       </div>
 
     </div>
@@ -1433,7 +1441,7 @@
 .t-row:hover .t-name { color: var(--cyan); }
 .t-role { font-size: 11px; color: var(--cyan); margin-top: 3px; }
 .t-slots {
-  flex: 1; display: grid; grid-template-columns: repeat(5, 1fr);
+  flex: 1; display: grid; grid-template-columns: repeat(4, 1fr);
   gap: 20px; padding-left: 32px;
 }
 .t-slot {
@@ -1483,7 +1491,7 @@
   <div class="team-heading">
     <div class="label">The Team</div>
     <h2>They pre-trained LLMs. Now building the foundation of AI's future.</h2>
-    <p>Our world-class team blends deep expertise in LLM pre-training, multi-modal AI, retrieval systems, and real-world enterprise deployment.</p>
+    <p>Our team blends deep expertise in LLM pre-training, multi-modal AI, retrieval systems, and real-world enterprise deployment.</p>
   </div>
   <div class="team-list" id="teamList"></div>
 </div>
@@ -2084,27 +2092,129 @@ function startAllFading() {
   <script>
     // Kurious-style hero UI - no video elements needed
     const hScenarios=[
-      {domain:'Robotics',query:'What trajectory did the robotic arm follow during the failed assembly?',chaos:['arm_trajectory.ros','assembly_log.csv','gripper_force.bin','camera_feed.mp4','joint_angles.hdf5','error_report.pdf','sensor_dump.bag','calibration.yaml','end_effector.csv','collision_map.pcd','torque_readings.bin','workcell_scan.ply','maintenance.pdf','plc_log.txt','vibration.wav','thermal_cam.tiff','cycle_time.xlsx','robot_config.urdf','depth_frame.png','imu_data.csv','conveyor_speed.log','safety_gate.json','weld_params.xml','production.xlsx','defect_photos.zip','force_torque.bag','vision_model.onnx','workspace.stl','alarm_history.csv','operator_notes.jpg'],
-        kAnswer:'According to <cite>S1</cite>, <cite>S2</cite>, and <cite>S3</cite>, Joint 3 deviated 12 degrees from the planned path at T+4.2s during assembly cycle #847. Gripper force exceeded the 45N threshold, triggering an automatic emergency stop. Root cause: calibration drift in the shoulder actuator detected over the previous 200 cycles.',
-        kClips:[{tag:'S1',title:'Station 4 Camera',dur:'6 sec',quote:'"Joint 3 deviation at T+4.2s..."',vid:'final-robot-1.mp4'},{tag:'S2',title:'Robot Arm Close-up',dur:'4 sec',quote:'"45N threshold exceeded..."',vid:'final-robot-2.mp4'},{tag:'S3',title:'Car Assembly Line',dur:'3 sec',quote:'"Drift detected over 200 cycles"',vid:'final-robot-3.mp4'}],
-        kSources:3,kTime:'4.2s',kDocCount:'847',
-        kAlso:['What was the calibration schedule for Joint 3 in the past month?','How many emergency stops were triggered on Assembly Line 7 this quarter?','Show me similar trajectory deviations across all stations'],
-        counter:{num:'2.4M trajectories indexed',time:'0.1s'}},
-      {domain:'IoT & Sensors',query:'Which sensor readings spiked 30 minutes before the equipment failure?',chaos:['vibration_sensor.csv','temp_log.bin','pressure_readings.hdf5','maintenance.pdf','scada_export.json','alarm_history.csv','thermal_scan.tiff','motor_current.wav','plc_dump.log','oil_analysis.pdf','bearing_freq.csv','camera_feed.mp4','shift_report.docx','calibration.yaml','humidity.csv','power_draw.xlsx','ultrasonic.wav','flow_rate.bin','corrosion_scan.png','operator_log.jpg','warranty.pdf','spec_sheet.pdf','downtime.xlsx','ir_image.tiff','rpm_data.csv','noise_profile.wav','torque.bin','coolant_temp.csv','error_codes.json','blueprint.dwg'],
-        kAnswer:'According to <cite>S1</cite> and <cite>S2</cite>, bearing temperature on Turbine Unit 3 rose from 68C to 94C over 28 minutes before failure. Vibration amplitude doubled at T-12min. Motor current spiked 340% at T-2min before the automated shutdown triggered. <cite>S3</cite> confirms no prior maintenance alerts were issued.',
-        kClips:[{tag:'S1',title:'SCADA Dashboard',dur:'28 min',quote:'"68C to 94C bearing temp rise..."',vid:'final-sensor-1.mp4'},{tag:'S2',title:'Monitoring Room',dur:'12 min',quote:'"Vibration amplitude doubled at T-12min"',vid:'final-sensor-2.mp4'},{tag:'S3',title:'Gauge Readings',dur:'realtime',quote:'"Motor current spiked 340%"',vid:'final-sensor-3.mp4'}],
-        kSources:3,kTime:'0.08s',kDocCount:'18B',
-        kAlso:['Were there similar temperature spikes on other turbine units this month?','What is the average time between bearing temperature rise and failure?','Show me the maintenance history for Turbine Unit 3'],
-        counter:{num:'18B sensor readings',time:'0.08s'}},
-      {domain:'Autonomous',query:'Show me the exact frame where the autonomous vehicle detected the pedestrian',chaos:['lidar_scan.pcd','camera_front.mp4','radar_return.bin','imu_stream.csv','gps_trace.gpx','can_bus.dbc','brake_log.csv','steering_angle.bin','object_detect.json','lane_marking.png','traffic_sign.jpg','weather_data.csv','hd_map.osm','ultrasonic.wav','driver_monitor.mp4','event_log.json','calibration.yaml','point_cloud.las','semantic_seg.png','velocity.csv','yaw_rate.bin','throttle.csv','collision_risk.json','pedestrian_track.csv','depth_map.exr','thermal.tiff','v2x_message.pcap','decision_tree.json','path_plan.csv','safety_score.json'],
-        kAnswer:'According to <cite>S1</cite>, pedestrian was detected at 42m distance at frame 14,847. Classification confidence: 97.3%. <cite>S2</cite> shows brake initiation at T+180ms after detection. Vehicle stopped with 12m clearance. <cite>S3</cite> confirms all sensor fusion channels (LiDAR + camera + radar) agreed on the detection.',
-        kClips:[{tag:'S1',title:'Front Camera',dur:'Frame 14,847',quote:'"Pedestrian detected at 42m, 97.3%"',vid:'final-auto-1.mp4'},{tag:'S2',title:'Street Camera',dur:'180ms',quote:'"Pedestrian walking, tracking active"',vid:'final-auto-2.mp4'},{tag:'S3',title:'Side Camera',dur:'continuous',quote:'"Pedestrian crossing confirmed from angle 2"',vid:'final-auto-3.mp4'}],
-        kSources:3,kTime:'0.05s',kDocCount:'840K',
-        kAlso:['How many pedestrian detections occurred on Route 9 in the past 30 days?','What was the average reaction time across all test drives?','Show me cases where sensor fusion channels disagreed'],
-        counter:{num:'840K drive hours',time:'0.05s'}},
+      {domain:'Legal',query:'How has Mr. Alex\'s position on warehousing zoning laws evolved over the last 2 years, based on his voting records and township ordinances?',chaos:['council_video_2024.mp4','council_video_2025.mp4','ordinance_47B.pdf','voting_record.csv','zoning_map.geojson','meeting_transcript.txt','resolution_draft.docx','public_comment.wav','attendance_log.csv','amendment_history.json','property_tax.xlsx','land_use_plan.pdf','environmental_review.pdf','community_survey.csv','budget_allocation.xlsx','permit_data.csv','census_tract.shp','traffic_study.pdf','developer_proposal.pdf','neighborhood_petition.pdf','council_minutes.docx','agenda_item.json','fiscal_impact.xlsx','legal_opinion.pdf','constituent_email.eml','press_release.docx','annexation_map.dwg','variance_request.pdf','building_code.pdf','compliance_report.xlsx'],
+        kAnswer:'According to <cite>S1</cite> and <cite>S2</cite>, Mr. Alex voted against warehousing zoning 3 times in 2024 but shifted to supporting amended version in 2025 after township ordinance 47-B passed. Cross-referencing 847 meeting hours with 2,300 ordinance documents.',
+        kClips:[{tag:'S1',title:'Township Council',dur:'2 years',quote:'"2 years of meetings analyzed"',vid:'hero-clips-v2/legal-vote1.webp'},{tag:'S2',title:'Legislative Voting',dur:'847 hours',quote:'"Voting record extracted"',vid:'hero-clips-v2/legal-vote.gif'}],
+        kSources:2,kTime:'0.3s',kDocCount:'4,000',
+        kAlso:['Which other council members shifted?','Timeline of ordinance 47-B?'],
+        counter:{num:'4,000 hours + 2,300 docs',time:'0.3s'}},
+      {domain:'Physical AI',query:'From 10,000 hours of gameplay footage, find every clip with a similar action sequence to this one',chaos:['gameplay_001.mp4','gameplay_002.mp4','action_label.json','camera_angle.csv','physics_score.bin','environment_map.usd','character_pose.fbx','episode_reward.csv','frame_index.hdf5','action_embedding.npy','similarity_matrix.csv','clip_metadata.json','render_config.yaml','texture_atlas.png','collision_log.csv','npc_behavior.json','level_design.usd','animation_tree.json','input_sequence.csv','game_state.bin','replay_buffer.hdf5','score_history.csv','achievement_log.json','session_data.csv','player_telemetry.bin','audio_cue.wav','shader_config.json','lighting_preset.yaml','particle_system.json','benchmark_result.csv'],
+        kAnswer:'According to <cite>S1</cite> and <cite>S2</cite>, 47 similar gameplay episodes found across 10,000 hours. Matched on: camera angle (92%), action sequence (87%), environment layout (81%). Filtered by physics consistency score > 0.85.',
+        kClips:[{tag:'S1',title:'Action Sequence Input',dur:'10K hours',quote:'"Source gameplay clip"',vid:'hero-clips-v2/gameplay1.gif'},{tag:'S2',title:'Similar Variations',dur:'47 matches',quote:'"47 matching episodes found"',vid:'hero-clips-v2/gameplay2.webp'}],
+        kSources:2,kTime:'1.2s',kDocCount:'10,000',
+        kAlso:['Curate these into a training set?','Filter by environment type?'],
+        counter:{num:'10,000 hours searched',time:'1.2s'}},
+      {domain:'Bodycam',query:'Compare bodycam video with the court docket filing to verify Miranda rights were read before arrest',chaos:['bodycam_001.mp4','court_docket.pdf','arrest_report.pdf','audio_transcript.txt','miranda_card.jpg','officer_notes.docx','dispatch_log.csv','gps_track.gpx','witness_statement.pdf','evidence_chain.json','booking_record.csv','defendant_info.json','attorney_filing.pdf','judge_order.pdf','hearing_transcript.txt','plea_agreement.pdf','sentencing_record.csv','appeal_brief.pdf','case_timeline.json','video_timestamp.csv','audio_analysis.wav','speech_to_text.json','confidence_score.csv','chain_of_custody.pdf','forensic_report.pdf','internal_affairs.pdf','policy_manual.pdf','training_record.xlsx','complaint_log.csv','review_board.pdf'],
+        kAnswer:'According to <cite>S1</cite>, <cite>S2</cite>, and <cite>S3</cite>, Miranda rights were read at timestamp 14:23:07, 47 seconds before arrest at 14:23:54. Court docket claims reading at 14:22:00 - discrepancy of 67 seconds. Audio transcript confidence: 97.8%.',
+        kClips:[{tag:'S1',title:'Bodycam Footage',dur:'incident',quote:'"Audio + video analyzed"',vid:'hero-clips-v2/Q101.gif'},{tag:'S2',title:'Evidence Review',dur:'multi-angle',quote:'"Docket cross-referenced"',vid:'hero-clips-v2/Q102.gif'},{tag:'S3',title:'Courtroom',dur:'hearing',quote:'"Miranda rights confirmed"',vid:'hero-clips-v2/Q103.gif'}],
+        kSources:3,kTime:'0.4s',kDocCount:'4,700',
+        kAlso:['Find all cases with timing discrepancies?','Which officers have most discrepancies?'],
+        counter:{num:'2,000 hours + 4,700 dockets',time:'0.4s'}},
+      {domain:'Corporate Meetings',query:'What are the top 3 features Customer X needs in our product to choose us over competitors?',chaos:['sales_call_001.mp4','sales_call_002.mp4','meeting_transcript.txt','crm_export.csv','deal_notes.docx','competitor_analysis.xlsx','product_roadmap.pptx','feature_request.json','customer_profile.json','nps_survey.csv','support_tickets.csv','usage_analytics.json','contract_draft.pdf','pricing_model.xlsx','demo_recording.mp4','objection_log.csv','win_loss_report.pdf','stakeholder_map.json','budget_approval.pdf','technical_requirements.docx','integration_spec.pdf','sla_template.pdf','pilot_results.xlsx','reference_check.docx','procurement_process.pdf','security_questionnaire.xlsx','data_residency.pdf','compliance_cert.pdf','roi_calculator.xlsx','executive_summary.pptx'],
+        kAnswer:'According to <cite>S1</cite> and <cite>S2</cite>, across 14 sales calls with Customer X: #1 Real-time API integration (mentioned 9 times), #2 On-prem deployment (mentioned 7 times), #3 Custom model fine-tuning (mentioned 5 times). Competitor mentioned: Databricks (4 times).',
+        kClips:[{tag:'S1',title:'Meeting Analysis',dur:'14 calls',quote:'"Customer requirements extracted"',vid:'hero-clips-v2/corp-earnings.gif'},{tag:'S2',title:'Transcript Intelligence',dur:'23 hours',quote:'"Sentiment + engagement scored"',vid:'hero-clips-v2/knowledge-meeting.gif'}],
+        kSources:2,kTime:'0.4s',kDocCount:'14',
+        kAlso:['Compare with Customer Y requirements?','Win rate by feature?'],
+        counter:{num:'14 calls, 23 hours',time:'0.4s'}},
+      {domain:'Robot Training',query:'Using this 3D simulation environment as ground truth, curate outlier game episodes with spatiotemporal consistency',chaos:['simulation_env.usd','episode_001.mp4','episode_002.mp4','ground_truth.json','spatiotemporal_score.csv','outlier_flag.json','physics_validation.bin','object_position.csv','frame_timestamp.csv','collision_event.json','trajectory_data.hdf5','environment_state.bin','agent_action.csv','reward_signal.csv','observation_space.json','action_space.json','render_output.exr','depth_buffer.exr','segmentation_mask.png','normal_map.exr','velocity_field.csv','acceleration.csv','angular_velocity.csv','joint_state.csv','contact_force.csv','friction_coefficient.csv','material_property.json','lighting_state.yaml','camera_pose.csv','benchmark_metric.json'],
+        kAnswer:'According to <cite>S1</cite>, <cite>S2</cite>, and <cite>S3</cite>, 127 outlier episodes identified from 8,000. Spatiotemporal inconsistencies: object teleportation (34), physics violations (28), impossible trajectories (65). These are high-value edge cases for robust training.',
+        kClips:[{tag:'S1',title:'3D Simulation',dur:'environment',quote:'"Environment model"',vid:'hero-clips-v2/Q51.jpeg'},{tag:'S2',title:'Spatiotemporal Debug',dur:'analysis',quote:'"Octree + RayCast analysis"',vid:'hero-clips-v2/Q52.gif'},{tag:'S3',title:'Game Engine Editor',dur:'outliers',quote:'"127 outlier episodes flagged"',vid:'hero-clips-v2/Q53.gif'}],
+        kSources:3,kTime:'0.8s',kDocCount:'8,000',
+        kAlso:['Use outliers for adversarial training?','Which physics violations are most common?'],
+        counter:{num:'8,000 episodes curated',time:'0.8s'}},
+      {domain:'Chemistry',query:'Find potential reactants for this molecule and return results in JSON: COc1c(N)ccc2c1CCCC(N1CCOCC1)C2',chaos:['reaction_db.hdf5','molecule_index.json','smiles_corpus.csv','retrosynthesis.json','reaction_template.json','yield_prediction.csv','pathway_score.csv','reagent_library.json','solvent_table.csv','catalyst_options.json','temperature_range.csv','pressure_conditions.csv','stereochemistry.json','functional_group.csv','bond_energy.bin','spectral_data.csv','nmr_prediction.json','mass_spec.csv','xray_structure.pdb','dft_calculation.json','toxicity_screen.csv','patent_search.json','literature_ref.bib','cost_estimate.xlsx','availability_check.json','purity_grade.csv','scale_up_plan.pdf','safety_data.pdf','regulatory_status.json','clinical_phase.csv'],
+        kAnswer:'{"molecule": "COc1c([N+])c=O)(O-)(cccc2c1CCCC(N1CCOCC1)C2"} Found 3 viable retrosynthetic pathways. Top pathway: 2 steps, 89% predicted yield. Cross-referenced against 2.4M known reactions in ChemRAG index.',
+        kClips:[{tag:'S1',title:'Product Molecule',dur:'SMILES',quote:'"SMILES input parsed"',vid:'hero-clips-v2/chem-molecule.gif'},{tag:'S2',title:'Reactant Match',dur:'3 pathways',quote:'"3 retrosynthetic pathways"',vid:'hero-clips-v2/chem-lsd.gif'}],
+        kSources:2,kTime:'0.2s',kDocCount:'2.4M',
+        kAlso:['Predict yield for each pathway?','Check patent conflicts?'],
+        counter:{num:'2.4M reactions indexed',time:'0.2s'}},
+      {domain:'Legal',query:'Find every instance across 4,000 hours of council meetings where affordable housing was debated and a vote was taken',chaos:['council_video_001.mp4','council_video_002.mp4','meeting_minutes.pdf','agenda_item.json','voting_record.csv','resolution_text.pdf','public_comment.wav','attendance_log.csv','amendment_history.json','zoning_map.geojson','budget_item.xlsx','community_petition.pdf','developer_proposal.pdf','environmental_review.pdf','traffic_study.pdf','school_impact.pdf','tax_increment.xlsx','affordable_unit_count.csv','income_threshold.csv','density_bonus.json','inclusionary_zoning.pdf','variance_request.pdf','neighborhood_plan.pdf','housing_authority.pdf','hud_compliance.pdf','fair_housing.pdf','rent_control.pdf','tenant_rights.pdf','displacement_risk.csv','gentrification_index.csv'],
+        kAnswer:'According to <cite>S1</cite> and <cite>S2</cite>, 142 instances found across 4,000 hours. 89 resulted in votes (47 passed, 42 rejected). Peak debate: Q3 2024 (34 instances). Key phrases: "affordable housing mandate" (67), "inclusionary zoning" (43), "density bonus" (32).',
+        kClips:[{tag:'S1',title:'Government Officials',dur:'4,000 hrs',quote:'"Council meetings searched"',vid:'hero-clips-v2/Q111.gif'},{tag:'S2',title:'Housing Presentation',dur:'142 instances',quote:'"Affordable housing debates"',vid:'hero-clips-v2/Q112.gif'}],
+        kSources:2,kTime:'0.8s',kDocCount:'4,000',
+        kAlso:['Which council members voted consistently?','Trend over 5 years?'],
+        counter:{num:'4,000 hours searched',time:'0.8s'}},
+      {domain:'Robotic Fleet',query:'Here is a clip of our robot failing - find all similar failures across my global fleet in similar geographies',chaos:['failure_clip.mp4','fleet_registry.json','robot_telemetry.bag','maintenance_log.csv','error_code.json','joint_torque.csv','gripper_force.bin','camera_feed.mp4','calibration_history.csv','firmware_version.json','geography_zone.geojson','environmental_condition.csv','cycle_count.csv','wear_indicator.csv','replacement_part.json','downtime_log.csv','production_impact.xlsx','root_cause.json','corrective_action.pdf','similar_incident.json','fleet_health.csv','predictive_score.csv','sensor_drift.csv','vibration_profile.wav','thermal_image.tiff','operator_report.pdf','warranty_claim.json','spare_inventory.xlsx','service_schedule.csv','cost_per_failure.xlsx'],
+        kAnswer:'According to <cite>S1</cite> and <cite>S2</cite>, 23 similar failures found across 340 robots in North America. Root cause cluster: Joint 3 calibration drift (17), gripper wear (4), sensor occlusion (2). Average time to failure: 847 cycles after last calibration.',
+        kClips:[{tag:'S1',title:'Failure Clip Input',dur:'incident',quote:'"Robot arm malfunction"',vid:'hero-clips-v2/Q61.gif'},{tag:'S2',title:'Fleet Camera Match',dur:'23 matches',quote:'"Similar failure: Camera 0"',vid:'hero-clips-v2/Q62.gif'}],
+        kSources:2,kTime:'0.5s',kDocCount:'340',
+        kAlso:['Schedule preventive maintenance?','Cost of fleet-wide recalibration?'],
+        counter:{num:'340 robots searched',time:'0.5s'}},
+      {domain:'Pharma Compliance',query:'Find all drug interaction risks across 100M clinical records that current labeling doesn\'t cover',chaos:['clinical_record.hdf5','drug_label.pdf','interaction_db.json','adverse_event.csv','patient_demographics.csv','prescription_history.csv','lab_result.xlsx','diagnosis_code.csv','procedure_code.csv','allergy_list.json','medication_list.csv','dosage_record.csv','contraindication.json','fda_label.pdf','pharmacokinetics.csv','metabolic_pathway.json','enzyme_inhibitor.csv','renal_function.csv','hepatic_function.csv','age_group.csv','comorbidity.json','polypharmacy_flag.csv','signal_detection.json','disproportionality.csv','case_narrative.txt','causality_assessment.json','reporter_type.csv','outcome_severity.csv','time_to_onset.csv','rechallenge_data.csv'],
+        kAnswer:'According to <cite>S1</cite> and <cite>S2</cite>, 14 previously unlabeled interaction risks found. Top: Metformin + Lisinopril combination shows 3.2x elevated hypoglycemia risk in patients over 65 (n=24,000). Current FDA labeling: no warning. Evidence strength: high (p<0.001).',
+        kClips:[{tag:'S1',title:'Drug Interaction DB',dur:'100M records',quote:'"Cross-referencing labels"',vid:'hero-clips-v2/Q131.png'},{tag:'S2',title:'Molecular Binding',dur:'14 risks',quote:'"Unlabeled risks found"',vid:'hero-clips-v2/Q132.gif'}],
+        kSources:2,kTime:'1.2s',kDocCount:'100M',
+        kAlso:['Generate FDA submission report?','Which age groups most affected?'],
+        counter:{num:'100M clinical records',time:'1.2s'}},
+      {domain:'Physical AI',query:'Apply physics constraints and curate these driving simulation episodes for diversity across road conditions, weather, and time of day',chaos:['simulation_episode.mp4','physics_engine.log','road_surface.json','weather_condition.csv','time_of_day.csv','traffic_density.csv','vehicle_dynamics.bin','sensor_config.json','camera_feed.mp4','lidar_sim.pcd','radar_sim.bin','gps_trace.gpx','map_data.osm','speed_limit.json','lane_marking.png','traffic_signal.json','pedestrian_model.fbx','cyclist_model.fbx','truck_model.fbx','construction_zone.json','school_zone.json','highway_merge.json','roundabout.json','parking_lot.json','tunnel.json','bridge.json','hill_grade.csv','visibility_range.csv','wind_speed.csv','temperature.csv'],
+        kAnswer:'According to <cite>S1</cite>, <cite>S2</cite>, and <cite>S3</cite>, from 2,400 episodes: 890 pass physics consistency. Diversity coverage: 12 locations, 4 times of day, 6 weather conditions. Gap: nighttime + rain has only 8 episodes. Recommending synthetic fill.',
+        kClips:[{tag:'S1',title:'Source Episodes',dur:'2,400',quote:'"Raw simulation data"',vid:'hero-clips/q2-carla-sim.gif'},{tag:'S2',title:'Physics Filter',dur:'890 valid',quote:'"Consistency applied"',vid:'hero-clips/q5-perception.gif'},{tag:'S3',title:'Diversity Map',dur:'coverage',quote:'"Weather + time + road"',vid:'hero-clips/q2-synthetic-scene.gif'}],
+        kSources:3,kTime:'2.1s',kDocCount:'2,400',
+        kAlso:['Generate synthetic for nighttime + rain?','Which conditions underrepresented?'],
+        counter:{num:'2,400 episodes curated',time:'2.1s'}},
+      {domain:'Corporate Meetings',query:'What did the CEO commit to in the last 4 earnings calls that hasn\'t shown up in any product roadmap document?',chaos:['earnings_q1.mp4','earnings_q2.mp4','earnings_q3.mp4','earnings_q4.mp4','product_roadmap.pptx','sprint_backlog.json','engineering_plan.xlsx','investor_deck.pptx','board_minutes.pdf','press_release.docx','analyst_report.pdf','guidance_update.pdf','sec_filing.pdf','transcript_q1.txt','transcript_q2.txt','transcript_q3.txt','transcript_q4.txt','commitment_tracker.csv','action_item.json','stakeholder_map.json','org_chart.json','budget_allocation.xlsx','resource_plan.xlsx','milestone_tracker.csv','dependency_map.json','risk_register.xlsx','change_request.pdf','approval_chain.json','status_report.docx','retrospective.pdf'],
+        kAnswer:'According to <cite>S1</cite>, <cite>S2</cite>, and <cite>S3</cite>, 3 untracked commitments found. #1 "AI-powered analytics by Q3" (Q1 call), #2 "European data residency" (Q2 call), #3 "Self-service onboarding" (Q3 call). None appear in product roadmap, sprint plans, or engineering backlog.',
+        kClips:[{tag:'S1',title:'CEO Presentation',dur:'stage',quote:'"Commitments made"',vid:'hero-clips-v2/Q123.gif'},{tag:'S2',title:'Earnings Call',dur:'4 quarters',quote:'"4 quarters analyzed"',vid:'hero-clips-v2/Q122.gif'},{tag:'S3',title:'Roadmap Dashboard',dur:'gap analysis',quote:'"3 commitments missing"',vid:'hero-clips-v2/Q121.gif'}],
+        kSources:3,kTime:'0.5s',kDocCount:'12',
+        kAlso:['Who owns these commitments?','Historical delivery rate on earnings promises?'],
+        counter:{num:'4 calls + 12 roadmap docs',time:'0.5s'}},
+      {domain:'Surgical Video',query:'Across 800 surgical videos, find every case where a diabetic patient had anesthesia complications and cross-reference with EHR data',chaos:['surgical_video.mp4','patient_record.pdf','anesthesia_log.csv','vital_signs.bin','blood_glucose.csv','hba1c_result.csv','medication_list.csv','complication_log.json','ehr_extract.json','lab_result.xlsx','imaging_pre.dcm','pathology.pdf','consent_form.pdf','nurse_notes.pdf','surgical_checklist.json','recovery_data.csv','discharge_plan.pdf','follow_up.json','readmission.csv','mortality_flag.json','asa_score.csv','bmi_record.csv','allergy_list.json','procedure_code.csv','diagnosis_code.csv','insurance_claim.json','quality_metric.xlsx','peer_review.pdf','morbidity_conference.pdf','registry_data.csv'],
+        kAnswer:'According to <cite>S1</cite>, <cite>S2</cite>, and <cite>S3</cite>, 23 matching cases found across 800 procedures. Diabetic patients had 3.4x higher anesthesia complication rate. Common pattern: blood glucose spike at T+12min in 78% of cases. EHR correlation: HbA1c > 8.5 predicts complications.',
+        kClips:[{tag:'S1',title:'Surgical Video AI',dur:'800 cases',quote:'"Pose tracking active"',vid:'hero-clips-v2/Q141.gif'},{tag:'S2',title:'EHR Dashboard',dur:'cross-ref',quote:'"Diabetic patient flagged"',vid:'hero-clips-v2/Q142.gif'},{tag:'S3',title:'Video Segmentation',dur:'analysis',quote:'"Complications matched"',vid:'hero-clips-v2/Q143.gif'}],
+        kSources:3,kTime:'0.6s',kDocCount:'800',
+        kAlso:['Pre-operative protocol recommendations?','Which anesthesia types safest for diabetics?'],
+        counter:{num:'800 procedures + EHR',time:'0.6s'}},
+      {domain:'Diverse Open Knowledge',query:'Across 85 million NJ government records and 23 agencies, which townships saw the largest budget increase but worst infrastructure scores?',chaos:['budget_report.pdf','infrastructure_score.csv','agency_data.json','township_map.geojson','census_data.csv','tax_revenue.xlsx','expenditure.csv','bond_rating.csv','audit_finding.pdf','grant_allocation.xlsx','capital_plan.pdf','road_condition.csv','bridge_rating.csv','water_quality.csv','school_rating.csv','crime_stat.csv','unemployment.csv','median_income.csv','poverty_rate.csv','population_trend.csv','permit_data.csv','inspection_report.pdf','complaint_log.csv','meeting_transcript.txt','resolution.pdf','ordinance.pdf','contract_award.json','vendor_payment.csv','employee_count.csv','pension_liability.xlsx'],
+        kAnswer:'According to <cite>S1</cite> and <cite>S2</cite>, 7 townships flagged. Top: Newark (+34% budget, D- infrastructure), Trenton (+28% budget, D infrastructure), Camden (+22% budget, D+ infrastructure). Cross-referenced budget PDFs, inspection CSVs, and meeting transcripts.',
+        kClips:[{tag:'S1',title:'NJ State Data',dur:'85M records',quote:'"23 agencies searched"',vid:'hero-clips-v2/Q91.gif'},{tag:'S2',title:'Geographic Analysis',dur:'cross-ref',quote:'"Budget vs infrastructure"',vid:'hero-clips-v2/Q92-arcgis.gif'}],
+        kSources:2,kTime:'0.2s',kDocCount:'85M',
+        kAlso:['What did the budget increase fund?','5-year trend by township?'],
+        counter:{num:'85M records, 23 agencies',time:'0.2s'}},
+      {domain:'Guardrails',query:'Scan all generated content against corporate policy in real-time and flag anything that violates age restrictions or content guidelines before publishing',chaos:['generated_content.mp4','corporate_policy.pdf','content_guideline.pdf','age_restriction.json','brand_guideline.pdf','compliance_checklist.json','flagged_frame.png','profanity_list.json','nsfw_model.pt','classification_result.csv','confidence_score.csv','human_review.json','appeal_record.csv','policy_version.json','training_material.mp4','caption_text.srt','thumbnail.jpg','metadata.json','distribution_channel.json','audience_rating.csv','legal_review.pdf','takedown_request.json','content_hash.csv','duplicate_check.json','watermark.png','copyright_check.json','fair_use.pdf','attribution.json','accessibility_check.json','publication_queue.json'],
+        kAnswer:'According to <cite>S1</cite> and <cite>S2</cite>, scanned 4,200 generated training frames. 23 flagged: profanity in auto-generated captions (12), inappropriate imagery (7), brand guideline violations (4). All caught before publication. Policy match: Corporate Handbook Section 4.7.',
+        kClips:[{tag:'S1',title:'Age Verification',dur:'realtime',quote:'"Content policy enforced"',vid:'hero-clips-v2/Q181.gif'},{tag:'S2',title:'Violation Appeals',dur:'23 flagged',quote:'"Flagged content blocked"',vid:'hero-clips-v2/Q182.gif'}],
+        kSources:2,kTime:'0.05s',kDocCount:'4,200',
+        kAlso:['Generate compliance report?','False positive rate?'],
+        counter:{num:'4,200 frames scanned',time:'0.05s'}},
+      {domain:'Physical AI',query:'Generate synthetic scenarios to fill gaps in our robotics training data where real-world collection would take 6 months, grounded in 6 months of NYC weather conditions',chaos:['training_gap.json','weather_nyc.csv','synthetic_config.yaml','physics_engine.log','scenario_template.json','snow_condition.csv','rain_profile.csv','fog_density.csv','wind_pattern.csv','temperature_log.csv','road_friction.csv','visibility_range.csv','lighting_model.json','cloud_cover.csv','precipitation.csv','ice_formation.csv','salt_treatment.csv','pedestrian_behavior.json','traffic_pattern.csv','construction_zone.json','emergency_vehicle.json','school_schedule.csv','rush_hour.json','weekend_pattern.csv','holiday_calendar.json','event_schedule.csv','distribution_check.csv','quality_score.csv','validation_set.csv','coverage_report.json'],
+        kAnswer:'According to <cite>S1</cite>, <cite>S2</cite>, and <cite>S3</cite>, 4,200 synthetic scenarios generated in 6 GPU-hours. Grounded in NYC weather data (Oct-Mar): snow (1,200), rain (1,400), fog (800), clear-cold (800). Distribution match with real-world: 94.2%.',
+        kClips:[{tag:'S1',title:'Synthetic Generation',dur:'4,200 scenes',quote:'"Segmented urban environment"',vid:'hero-clips-v2/Q71.webp'},{tag:'S2',title:'Real vs Model',dur:'comparison',quote:'"94.2% distribution match"',vid:'hero-clips/q5-perception.gif'},{tag:'S3',title:'Weather Grounding',dur:'6 months',quote:'"Rain + overcast conditions"',vid:'hero-clips-v2/Q73.webp'}],
+        kSources:3,kTime:'2.1s',kDocCount:'4,200',
+        kAlso:['Validate against held-out real data?','Extend to other cities?'],
+        counter:{num:'4,200 generated in 6 GPU-hrs',time:'2.1s'}},
+      {domain:'Medical',query:'Review patient EHR records and current symptoms against the SOP knowledge base and suggest tele-triage options for this urgent care visit',chaos:['patient_ehr.json','symptom_list.csv','vital_signs.bin','sop_manual.pdf','triage_protocol.json','medication_history.csv','allergy_list.json','lab_result.xlsx','imaging_order.json','insurance_info.json','emergency_contact.csv','advance_directive.pdf','specialist_referral.json','appointment_history.csv','immunization_record.csv','family_history.json','social_history.csv','surgical_history.csv','mental_health.json','substance_use.csv','functional_status.csv','pain_assessment.csv','fall_risk.json','nutrition_screen.csv','discharge_instruction.pdf','follow_up_plan.json','quality_measure.csv','patient_satisfaction.csv','readmission_risk.json','care_coordination.json'],
+        kAnswer:'According to <cite>S1</cite> and <cite>S2</cite>, patient presents with chest pain + shortness of breath. EHR: history of hypertension, statin prescribed. SOP match: Protocol 7B (cardiac evaluation). Triage recommendation: Level 2 - Emergent. Suggest: ECG within 10 min, troponin panel, cardiology consult.',
+        kClips:[{tag:'S1',title:'Patient Risk Dashboard',dur:'EHR',quote:'"Records analyzed"',vid:'hero-clips-v2/Q161.jpg'},{tag:'S2',title:'Case Monitoring',dur:'SOP match',quote:'"Symptoms cross-referenced"',vid:'hero-clips-v2/Q162.gif'}],
+        kSources:2,kTime:'0.2s',kDocCount:'EHR+SOP',
+        kAlso:['Alert on-call cardiologist?','Similar cases in last 30 days?'],
+        counter:{num:'EHR + SOP matched',time:'0.2s'}},
+      {domain:'Corporate Sales',query:'Search all internal product docs, release notes, and benchmarks to compare watsonx.data vs Databricks on latency',chaos:['product_doc.pdf','release_notes.md','benchmark_report.xlsx','api_spec.json','architecture_diagram.png','performance_test.csv','latency_p95.csv','throughput.csv','scalability_test.json','cost_comparison.xlsx','feature_matrix.xlsx','competitor_analysis.pdf','analyst_report.pdf','customer_feedback.csv','support_ticket.csv','deployment_guide.pdf','migration_guide.pdf','pricing_model.xlsx','contract_template.pdf','sla_comparison.csv','security_audit.pdf','compliance_cert.pdf','integration_test.json','data_format.json','query_optimizer.log','index_performance.csv','storage_efficiency.csv','compression_ratio.csv','replication_lag.csv','failover_test.json'],
+        kAnswer:'According to <cite>S1</cite> and <cite>S2</cite>, watsonx.data v4.2 adds: Spark 3.5 native, Iceberg v2 tables, Presto federation. Latency: watsonx.data 340ms (p95) vs Databricks 280ms (p95). Key differentiator: watsonx supports on-prem + hybrid. Source: 47 release docs, 12 benchmarks.',
+        kClips:[{tag:'S1',title:'Product Comparison',dur:'47 docs',quote:'"Feature analysis"',vid:'hero-clips-v2/Q151.gif'},{tag:'S2',title:'Latency Benchmark',dur:'12 reports',quote:'"API latency compared"',vid:'hero-clips-v2/Q153.gif'}],
+        kSources:2,kTime:'0.3s',kDocCount:'47',
+        kAlso:['Generate customer-facing slide?','Historical latency trend?'],
+        counter:{num:'47 docs + 12 benchmarks',time:'0.3s'}},
+      {domain:'AI Glasses',query:'Detect NSFW content in smart glasses recordings in near real-time to prevent privacy violations during employee use',chaos:['glasses_feed.mp4','privacy_policy.pdf','nsfw_model.pt','classification_result.csv','frame_timestamp.csv','location_log.gpx','restricted_zone.geojson','employee_id.json','consent_form.pdf','blur_mask.png','detection_latency.csv','false_positive.csv','false_negative.csv','confidence_threshold.yaml','appeal_record.csv','incident_report.pdf','training_data.hdf5','model_version.json','edge_compute.log','bandwidth_usage.csv','battery_consumption.csv','storage_usage.csv','retention_policy.json','deletion_log.csv','audit_trail.json','gdpr_compliance.pdf','employee_handbook.pdf','union_agreement.pdf','grievance_log.csv','policy_update.json'],
+        kAnswer:'According to <cite>S1</cite> and <cite>S2</cite>, real-time analysis at 30fps. Detection latency: 180ms. In 8 hours of employee recording: 4 privacy violations flagged. Auto-blur applied within 200ms. Zero false negatives in testing.',
+        kClips:[{tag:'S1',title:'Smart Glasses AR',dur:'realtime',quote:'"Real-time recording"',vid:'hero-clips-v2/Q191.gif'},{tag:'S2',title:'First-Person POV',dur:'8 hours',quote:'"Privacy scan active"',vid:'hero-clips-v2/Q192.gif'}],
+        kSources:2,kTime:'0.18s',kDocCount:'8hrs',
+        kAlso:['Customize restricted zones?','False positive rate by zone?'],
+        counter:{num:'30fps, 180ms latency',time:'0.18s'}},
+      {domain:'Real Estate',query:'From 2.4 million listings, find the 10 closest matches to the uploaded property profile and predict the optimal asking price',chaos:['listing_db.hdf5','property_profile.json','comparable_sales.csv','tax_assessment.xlsx','mls_data.csv','neighborhood_stats.csv','school_rating.csv','crime_index.csv','walk_score.json','transit_score.json','zoning_info.json','flood_zone.geojson','hoa_fees.csv','property_tax.csv','renovation_history.json','inspection_report.pdf','appraisal.pdf','mortgage_rate.csv','days_on_market.csv','price_history.csv','seasonal_trend.csv','inventory_level.csv','absorption_rate.csv','new_construction.csv','foreclosure_rate.csv','rental_yield.csv','cap_rate.csv','demographic_trend.csv','employment_data.csv','interest_rate.csv'],
+        kAnswer:'[{"avg_price":"$847,000","range":"$720K-$985K","similarity":0.94}] Top-10 matches based on: sqft (0.95), location (0.92), year built (0.88), lot size (0.91). Median days on market: 23. Price trend: +4.2% QoQ.',
+        kClips:[{tag:'S1',title:'Similar Listings',dur:'2.4M',quote:'"10 closest matches"',vid:'hero-clips-v2/Q171.gif'},{tag:'S2',title:'Price Heatmap',dur:'analysis',quote:'"Optimal price predicted"',vid:'hero-clips-v2/Q172.gif'}],
+        kSources:2,kTime:'0.1s',kDocCount:'2.4M',
+        kAlso:['Predict days to sell?','Neighborhood price forecast?'],
+        counter:{num:'2.4M listings searched',time:'0.1s'}},
+      {domain:'Knowledge Hub',query:'Analyze our entire corpus of sales meetings to extract the winning playbook for responding to competitive technical questions',chaos:['sales_meeting_001.mp4','sales_meeting_002.mp4','meeting_transcript.txt','deal_outcome.csv','competitor_mention.csv','objection_log.json','response_pattern.json','win_rate.csv','talk_ratio.csv','sentiment_score.csv','engagement_metric.csv','question_type.json','feature_comparison.xlsx','pricing_discussion.csv','technical_depth.csv','demo_quality.csv','follow_up_action.json','close_rate.csv','deal_size.csv','sales_cycle.csv','rep_performance.csv','territory.json','industry_vertical.csv','company_size.csv','decision_maker.json','champion_identified.json','budget_confirmed.csv','timeline_agreed.csv','next_step.json','coaching_note.pdf'],
+        kAnswer:'According to <cite>S1</cite>, <cite>S2</cite>, and <cite>S3</cite>, analyzed 340 meetings (890 hours). Top responses: "We differentiate on latency" (67 times, 78% win rate), "Our on-prem option" (43 times, 82% win rate). Worst: "We are cheaper" (23 times, 34% win rate).',
+        kClips:[{tag:'S1',title:'Sales Calls',dur:'340 meetings',quote:'"Meeting corpus analyzed"',vid:'hero-clips-v2/Q201.gif'},{tag:'S2',title:'Team Sync',dur:'890 hours',quote:'"340 meetings processed"',vid:'hero-clips-v2/Q202.webp'},{tag:'S3',title:'Sales Analytics',dur:'playbook',quote:'"Winning patterns extracted"',vid:'hero-clips-v2/Q203.gif'}],
+        kSources:3,kTime:'1.1s',kDocCount:'340',
+        kAlso:['Generate rep onboarding playbook?','Which reps perform best against Databricks?'],
+        counter:{num:'340 meetings, 890 hours',time:'1.1s'}},
     ];
     function getHFileType(f){if(f.match(/\.mp4|\.avi|\.mov|video|surveillance|bodycam|zoom|surgery|conference/i))return'vid';if(f.match(/\.wav|\.m4a|\.mp3|voicemail|audio|dictat|phone|wiretap|jailhouse|lecture/i))return'audio';if(f.match(/handwritten|sticky|post_it|whiteboard|napkin|drawing|sketch/i))return'hand';if(f.match(/\.jpg|\.png|photo|image|screenshot|yearbook/i))return'photo';if(f.match(/scan|fax|\.tiff|microfiche|notarized/i))return'scan';if(f.match(/\.pdf|report|filing|resolution|manual|motion|ruling|compliance/i))return'pdf';if(f.match(/\.xlsx|\.csv|\.xlsm|\.xlsb|data|log|matrix|record|enrollment/i))return'xls';return'img';}
-    const he={searchText:document.getElementById('heroSearchText'),searchBar:document.getElementById('heroSearchBar'),domainLabel:document.getElementById('heroDomainLabel'),resultArea:document.getElementById('heroResultArea'),chaosLayer:document.getElementById('chaosLayer'),counter:document.getElementById('heroCounter'),cNum:document.getElementById('hcNum'),cTime:document.getElementById('hcTime'),pulses:[document.getElementById('hp1'),document.getElementById('hp2'),document.getElementById('hp3')],kSearching:document.getElementById('kSearching'),kStep1:document.getElementById('kStep1'),kStep2:document.getElementById('kStep2'),kStep3:document.getElementById('kStep3'),kDocCount:document.getElementById('kDocCount'),kAnswer:document.getElementById('kAnswer'),kAnswerText:document.getElementById('kAnswerText'),kClips:document.getElementById('kClips'),kFooter:document.getElementById('kFooter'),kSourceCount:document.getElementById('kSourceCount'),kSearchTime:document.getElementById('kSearchTime'),kAlso:document.getElementById('kAlso'),kAlsoQuestions:document.getElementById('kAlsoQuestions')};
+    const he={searchText:document.getElementById('heroSearchText'),searchBar:document.getElementById('heroSearchBar'),domainLabel:document.getElementById('heroDomainLabel'),resultArea:document.getElementById('heroResultArea'),chaosLayer:document.getElementById('chaosLayer'),counter:document.getElementById('heroCounter'),cNum:document.getElementById('hcNum'),cTime:document.getElementById('hcTime'),pulses:[document.getElementById('hp1'),document.getElementById('hp2'),document.getElementById('hp3')],kSearching:document.getElementById('kSearching'),kStep1:document.getElementById('kStep1'),kStep2:document.getElementById('kStep2'),kStep3:document.getElementById('kStep3'),kDocCount:document.getElementById('kDocCount'),kAnswer:document.getElementById('kAnswer'),kAnswerText:document.getElementById('kAnswerText'),kClips:document.getElementById('kClips'),kFooter:document.getElementById('kFooter'),kSourceCount:document.getElementById('kSourceCount'),kSearchTime:document.getElementById('kSearchTime'),kScaleNum:document.getElementById('kScaleNum'),kAlso:document.getElementById('kAlso'),kAlsoQuestions:document.getElementById('kAlsoQuestions')};
     let hCurrent=0,hProgInt=null;
     let hPills=[],hAnimId=null,hAnswerShown=false;
     function hCreateChaos(files){
@@ -2195,7 +2305,7 @@ function startAllFading() {
         const cards=document.getElementById('kClipCards');
         let cardsHtml='';
         s.kClips.forEach(c=>{
-          cardsHtml+='<div class="k-clip-card"><video autoplay muted loop playsinline><source src="'+c.vid+'" type="video/mp4"></video><div class="k-cc-bar"><span class="k-cc-tag">'+c.tag+'</span><span class="k-cc-dur">'+c.dur+'</span></div><div class="k-cc-info"><div class="k-cc-title">'+c.title+'</div><div class="k-cc-quote">'+c.quote+'</div></div></div>';
+          cardsHtml+='<div class="k-clip-card"><img src="'+c.vid+'" alt="'+c.title+'" style="width:100%;height:100%;object-fit:cover;"><div class="k-cc-bar"><span class="k-cc-tag">'+c.tag+'</span><span class="k-cc-dur">'+c.dur+'</span></div><div class="k-cc-info"><div class="k-cc-title">'+c.title+'</div><div class="k-cc-quote">'+c.quote+'</div></div></div>';
         });
         cards.innerHTML=cardsHtml;
         vf.style.display='block';
@@ -2203,7 +2313,7 @@ function startAllFading() {
         // Then show text answer below video
         setTimeout(()=>{
           he.kAnswerText.innerHTML=s.kAnswer.replace(/<cite>(S\d)<\/cite>/g,'<span class="k-cite">$1</span>');
-          he.kSourceCount.textContent=s.kSources;he.kSearchTime.textContent=s.kTime;
+          he.kSourceCount.textContent=s.kSources;he.kScaleNum.textContent=s.counter.num.toUpperCase();he.kSearchTime.textContent=s.kTime;
           he.kAlsoQuestions.innerHTML=s.kAlso.map(q=>'<div class="k-also-q">'+q+'</div>').join('');
           he.kAnswer.style.display='block';
           setTimeout(()=>{he.kFooter.style.display='flex';},200);
@@ -2238,6 +2348,25 @@ function startAllFading() {
       },1500);
     }
     setTimeout(hRun,400);
+  </script>
+
+  <!-- Calling Cards Carousel -->
+  <script>
+    var ccIdx=0,ccTotal=6,ccTimer;
+    function ccGo(i){
+      clearInterval(ccTimer);
+      var cards=document.querySelectorAll('.cc-card');
+      cards[ccIdx].classList.remove('active');
+      ccIdx=i;
+      cards[ccIdx].classList.add('active');
+      cards.forEach(function(card){
+        var dots=card.querySelectorAll('.cc-dot');
+        dots.forEach(function(d,di){ d.classList.toggle('active',di===ccIdx); });
+      });
+      ccTimer=setInterval(ccNext,2000);
+    }
+    function ccNext(){ccGo((ccIdx+1)%ccTotal);}
+    ccTimer=setInterval(ccNext,2000);
   </script>
 
 <script>
