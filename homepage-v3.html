@@ -1419,10 +1419,7 @@
   <div class="section-glow"></div>
   <div id="team" style="max-width: 1100px; margin: 0 auto; padding: 80px 32px;">
 
-    <!-- Old team styles removed -->
-
-
-    <!-- Team section -->
+    <!-- Team section V2 with accordion bios -->
     <style>
 .team-section { max-width: 1100px; margin: 0 auto; }
 .team-heading { text-align: center; margin-bottom: 48px; }
@@ -1430,61 +1427,64 @@
 .team-heading h2 { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 12px; }
 .team-heading p { font-size: 15px; color: #aaa; max-width: 700px; margin: 0 auto; line-height: 1.7; }
 .team-list { border-top: 1px solid #1a1a1a; }
+.t-entry { border-bottom: 1px solid #111; }
 .t-row {
-  display: flex; align-items: center; padding: 22px 24px;
-  border-bottom: 1px solid #111; transition: background 0.3s;
-  min-height: 72px;
+  display: flex; align-items: center; padding: 18px 24px;
+  transition: background 0.3s; cursor: pointer;
 }
 .t-row:hover { background: rgba(0,212,255,0.02); }
-.t-info { width: 180px; flex-shrink: 0; }
-.t-name { font-size: 15px; color: #fff; font-weight: 700; transition: color 0.3s; }
+.t-arrow {
+  color: #666; font-size: 16px; margin-right: 14px; flex-shrink: 0;
+  transition: transform 0.3s, color 0.2s;
+}
+.t-row:hover .t-arrow { color: var(--cyan); }
+.t-entry.open .t-arrow { transform: rotate(180deg); color: var(--cyan); }
+.t-name { font-size: 15px; color: #fff; font-weight: 700; width: 180px; flex-shrink: 0; transition: color 0.3s; }
 .t-row:hover .t-name { color: var(--cyan); }
-.t-role { font-size: 11px; color: var(--cyan); margin-top: 3px; }
-.t-slots {
-  flex: 1; display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 20px; padding-left: 32px;
+.t-creds {
+  flex: 1; display: flex; justify-content: space-evenly; padding-left: 32px;
 }
-.t-slot {
+.t-cell {
+  position: relative; height: 44px; min-width: 120px;
   display: flex; align-items: center; justify-content: center;
-  height: 44px; width: 100%; min-width: 0; overflow: hidden;
-  opacity: 1; transition: opacity 2s ease;
 }
-.t-slot img { height: auto; max-height: 26px; max-width: 110px; object-fit: contain; }
-.t-slot img.invert { filter: invert(1) brightness(1.3); }
+.t-cell .layer {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.6s ease;
+}
+.t-cell .layer.out { opacity: 0; }
+.t-cell .layer.in { opacity: 1; }
+.t-cell img { height: auto; max-height: 26px; max-width: 110px; object-fit: contain; }
+.t-cell img.invert { filter: invert(1) brightness(1.3); }
 @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
 @keyframes chase { to { --angle: 360deg; } }
-.t-slot span {
+.t-cell span {
   font-size: 12px; color: #e0e0e0; font-weight: 500; white-space: nowrap;
   background: #0a0a0a; border-radius: 20px; padding: 8px 14px;
   position: relative; z-index: 0;
 }
-.t-slot span::before {
+.t-cell span::before {
   content: ''; position: absolute; inset: -1.5px; border-radius: 20px;
   background: conic-gradient(from var(--angle), transparent 0%, rgba(0,212,255,0.6) 10%, rgba(168,85,247,0.4) 20%, transparent 30%, transparent 100%);
   z-index: -2; animation: chase 4s linear infinite;
 }
-.t-slot:nth-child(2n) span::before { animation-delay: -1s; }
-.t-slot:nth-child(3n) span::before { animation-delay: -2.5s; }
-.t-slot:nth-child(5n) span::before { animation-delay: -0.8s; }
-.t-slot span::after {
+.t-cell span::after {
   content: ''; position: absolute; inset: 1px; border-radius: 18px;
   background: #0a0a0a; z-index: -1;
 }
-.t-row:hover .t-slot span { color: #fff; }
-
-/* Prior research */
-.prior { border-top: 1px solid #1a1a1a; margin-top: 48px; }
-.prior-head { padding: 14px 24px; font-size: 11px; font-weight: 600; color: var(--cyan); text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #1a1a1a; font-family: 'Inter', sans-serif; }
-.prior-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
-.prior-item {
-  padding: 24px; border-right: 1px solid #111; text-decoration: none; display: block;
-  transition: background 0.2s;
+.t-bio {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+  padding: 0 24px 0 52px;
 }
-.prior-item:last-child { border-right: none; }
-.prior-item:hover { background: rgba(0,212,255,0.02); }
-.pi-rank { font-size: 28px; font-weight: 900; color: var(--cyan); margin-bottom: 6px; font-family: 'Inter', sans-serif; }
-.pi-name { font-size: 14px; font-weight: 700; color: #ccc; margin-bottom: 4px; font-family: 'Inter', sans-serif; }
-.pi-desc { font-size: 12px; color: #aaa; line-height: 1.5; font-family: 'Inter', sans-serif; }
+.t-entry.open .t-bio { max-height: 300px; padding: 0 24px 24px 52px; }
+.t-bio-role { font-size: 12px; color: var(--cyan); margin-bottom: 8px; }
+.t-bio-text { font-size: 13px; color: #999; line-height: 1.7; }
+.t-bio-text strong { color: #ccc; }
+@media (prefers-reduced-motion: reduce) {
+  .t-cell .layer { transition: none; }
+}
 </style>
 
 <div class="team-section">
@@ -1494,37 +1494,57 @@
     <p>Our team blends deep expertise in LLM pre-training, multi-modal AI, retrieval systems, and real-world enterprise deployment.</p>
   </div>
   <div class="team-list" id="teamList"></div>
+
+  <div style="display: flex; justify-content: center; gap: 16px; margin-top: 48px;">
+    <a href="mailto:know@aintropy.ai" style="font-size: 14px; font-weight: 600; padding: 14px 32px; border-radius: 10px; background: var(--cyan); color: #000; text-decoration: none; transition: all 0.2s;">Contact Us</a>
+    <a href="#solutions" style="font-size: 14px; font-weight: 600; padding: 14px 32px; border-radius: 10px; border: 1px solid rgba(0,212,255,0.2); color: var(--cyan); background: none; text-decoration: none; transition: all 0.2s;">See Solutions in Action</a>
+  </div>
 </div>
 
 <script>
 (function() {
 var team = [
-  { name: 'Kunal Sawarkar', role: 'Co-Founder, CEO', items: [
-    '<img src="logo-ibm.png" alt="IBM">', '<img src="logo-harvard-white.png" alt="Harvard">',
-    '<img src="logo-forbes.png" alt="Forbes">', '<img src="logo-ieee.png" alt="IEEE">',
+  { name: 'Kunal Sawarkar', role: 'Co-Founder, CEO',
+    bio: '<strong>23+ patents.</strong> IBM Distinguished Engineer and Chief AI Scientist. Led Enterprise AI to convert research into revenue-making products with <strong>$300M revenue impact</strong>. Harvard, Applied Statistics. Author of "Deep Learning with PyTorch Lightning" (Packt). 40 Under 40. Angel investor. Previously led Watson NLP & Speech.',
+    linkedin: 'https://www.linkedin.com/in/kunalsawarkar/',
+    items: [
+    '<img src="logo-ibm.png" alt="IBM">', '<img src="logo-harvard-white.png" alt="Harvard" style="max-height:46px;">',
+    '<img src="logo-forbes-w.png" alt="Forbes" class="invert">', '<img src="logo-ieee.png" alt="IEEE">',
     '<span>23+ patents</span>', '<span>$300M revenue</span>', '<span>Chief AI Scientist</span>',
     '<span>Book Author</span>', '<span>40 Under 40</span>'
   ]},
-  { name: 'Nirmit Desai', role: 'Co-Founder, CTO', items: [
+  { name: 'Nirmit Desai', role: 'Co-Founder, CTO',
+    bio: '<strong>30+ patents, 90+ papers, 2,669 citations.</strong> Director of Data and Tools for AI Models at IBM Research. Led the global data pipeline for IBM\'s Granite foundation models. Built Mesh Network Alerts reaching millions of users (MIT Tech Review). PhD Computer Science, NC State. IEEE EDGE Chair. NCSU Hall of Fame.',
+    linkedin: 'https://www.linkedin.com/in/nirmitdesai/',
+    items: [
     '<img src="logo-ibm.png" alt="IBM">', '<img src="logo-ncstate.png" alt="NC State">',
     '<img src="logo-mit-white.png" alt="MIT">', '<img src="logo-ieee.png" alt="IEEE">',
     '<span>30+ patents</span>', '<span>90+ papers</span>', '<span>2,669 citations</span>',
     '<span>Granite LLMs</span>', '<span>PhD CS</span>', '<span>NCSU Hall of Fame</span>'
   ]},
-  { name: 'Kevin Park', role: 'AI Research Scientist', items: [
+  { name: 'Kevin Park', role: 'AI Research Scientist',
+    bio: 'Princeton University. Researching rich text and document layout understanding. Multi-modal retrieval systems. Table extraction and layout-aware parsing.',
+    items: [
     '<img src="logo-princeton.png" alt="Princeton" class="invert">',
     '<span>Mechanical Eng.</span>', '<span>ML/RL Systems</span>', '<span>Robotic Sims</span>'
   ]},
-  { name: 'Dongkon Lee', role: 'AI Research Scientist', items: [
+  { name: 'Dongkon Lee', role: 'AI Research Scientist',
+    bio: 'Princeton University. Chemical domain AI specialist. Built the ChemRAG benchmark on HuggingFace. Domain-specific retrieval optimization.',
+    items: [
     '<img src="logo-princeton.png" alt="Princeton" class="invert">',
     '<span>Neuronal Computing</span>', '<span>Bio Computing</span>',
     '<span>Neuroscience</span>', '<span>ChemRAG</span>'
   ]},
-  { name: 'Eric Song', role: 'AI Research Scientist', items: [
-    '<img src="logo-yale.png" alt="Yale">', '<span>NSA Recognized</span>',
+  { name: 'Eric Song', role: 'AI Research Scientist',
+    bio: 'Yale University. Video understanding and indexing. Temporal perception research. Multi-modal embedding models for physical AI. Recognized by NSA for cybersecurity research.',
+    items: [
+    '<img src="logo-yale-w.png" alt="Yale" class="invert">', '<span>NSA Recognized</span>',
     '<span>Cybersecurity</span>', '<span>Electrical Eng.</span>', '<span>Video AI</span>'
   ]},
-  { name: 'Shivangi Mishra', role: 'Lead Product Manager', items: [
+  { name: 'Shivangi Mishra', role: 'Lead Product Manager',
+    bio: 'University of San Francisco. <strong>$600K revenue launched</strong> at Ottonomy (autonomous delivery robots). Founder, AI Founders Dinner Club (SF). Women in AI, CA. Previously: InfoBeans (GTM), Great Learning (ed-tech). <strong>50,000+ customers scaled</strong>. Startup Club President.',
+    linkedin: 'https://www.linkedin.com/in/shivangibuilds/',
+    items: [
     '<img src="logo-usf.png" alt="USF">', '<img src="logo-ottonomy.png" alt="Ottonomy">',
     '<img src="logo-infobeans.png" alt="InfoBeans" style="max-width:110px;">',
     '<img src="logo-greatlearning.png" alt="Great Learning">',
@@ -1533,108 +1553,162 @@ var team = [
     '<span>Founders Club</span>', '<span>WAI CA Community</span>',
     '<span>Startup Club President</span>'
   ]},
-  { name: 'Siri Reddy', role: 'AI Research Scientist', items: [
+  { name: 'Siri Reddy', role: 'AI Research Scientist',
+    bio: 'Cornell University. Valedictorian. Robotics and autonomous systems research. Multi-modal perception and planning.',
+    items: [
     '<img src="logo-cornell-text.png" alt="Cornell">',
     '<span>Valedictorian</span>', '<span>Robotics Research</span>'
   ]},
-  { name: 'Aditya Mahakali', role: 'Senior ML Engineer', items: [
+  { name: 'Aditya Mahakali', role: 'AI Engineer',
+    bio: 'IBM. Building high-performance LLM backends and retrieval systems. Production-grade generative AI infrastructure. Scaling agentic systems for enterprise deployment.',
+    items: [
     '<img src="logo-ibm.png" alt="IBM">', '<span>LLM Backends</span>',
     '<span>High-perf Retrieval</span>', '<span>Production Gen AI</span>',
     '<span>Agents at Scale</span>'
   ]}
 ];
 
+var VISIBLE_PER_PERSON = 3;
 var list = document.getElementById('teamList');
-var allRowData = [];
+var allCells = [];
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
 
 team.forEach(function(person) {
+  var entry = document.createElement('div');
+  entry.className = 't-entry';
+
   var row = document.createElement('div');
   row.className = 't-row';
-  row.innerHTML = '<div class="t-info"><div class="t-name">' + person.name +
-    '</div><div class="t-role">' + person.role + '</div></div><div class="t-slots">' +
-    '<div class="t-slot"></div><div class="t-slot"></div><div class="t-slot"></div>' +
-    '<div class="t-slot"></div><div class="t-slot"></div></div>';
-  list.appendChild(row);
 
-  var slots = row.querySelectorAll('.t-slot');
-  var pool = person.items;
-  var logos = pool.filter(function(item) { return item.indexOf('<img') === 0; });
-  var pills = pool.filter(function(item) { return item.indexOf('<span') === 0; });
-  function shuffle(arr) {
-    for (var s = arr.length - 1; s > 0; s--) {
-      var j = Math.floor(Math.random() * (s + 1));
-      var tmp = arr[s]; arr[s] = arr[j]; arr[j] = tmp;
-    }
-    return arr;
-  }
-  shuffle(logos); shuffle(pills);
-  var shuffled = [];
-  var li = 0, pi = 0;
-  while (li < logos.length || pi < pills.length) {
-    if (li < logos.length) shuffled.push(logos[li++]);
-    if (pi < pills.length) shuffled.push(pills[pi++]);
+  var arrow = document.createElement('span');
+  arrow.className = 't-arrow';
+  arrow.textContent = '\u25BE';
+  row.appendChild(arrow);
+
+  var nameDiv = document.createElement('div');
+  nameDiv.className = 't-name';
+  nameDiv.textContent = person.name;
+  row.appendChild(nameDiv);
+
+  var credsDiv = document.createElement('div');
+  credsDiv.className = 't-creds';
+
+  var items = shuffle(person.items);
+  var cells = [];
+
+  for (var i = 0; i < VISIBLE_PER_PERSON; i++) {
+    var cell = document.createElement('div');
+    cell.className = 't-cell';
+
+    var layerA = document.createElement('div');
+    layerA.className = 'layer in';
+    if (i < items.length) layerA.innerHTML = items[i];
+    cell.appendChild(layerA);
+
+    var layerB = document.createElement('div');
+    layerB.className = 'layer out';
+    cell.appendChild(layerB);
+
+    credsDiv.appendChild(cell);
+    cells.push({
+      el: cell, layerA: layerA, layerB: layerB,
+      showingA: true, currentIndex: i < items.length ? i : -1
+    });
   }
 
-  for (var i = 0; i < 5; i++) {
-    if (i < shuffled.length) slots[i].innerHTML = shuffled[i];
-  }
+  row.appendChild(credsDiv);
+  entry.appendChild(row);
 
-  allRowData.push({ slots: slots, shuffled: shuffled, pool: pool });
+  var bio = document.createElement('div');
+  bio.className = 't-bio';
+  var bioHTML = '<div class="t-bio-role">' + person.role + '</div>';
+  bioHTML += '<div class="t-bio-text">' + person.bio;
+  if (person.linkedin) {
+    bioHTML += ' <a href="' + person.linkedin + '" target="_blank" style="color:var(--cyan);text-decoration:none;font-size:12px;">LinkedIn &rarr;</a>';
+  }
+  bioHTML += '</div>';
+  bio.innerHTML = bioHTML;
+  entry.appendChild(bio);
+
+  row.addEventListener('click', function() {
+    entry.classList.toggle('open');
+  });
+
+  list.appendChild(entry);
+  allCells.push({ cells: cells, items: items });
 });
 
-// Start fading only when team section scrolls into view
-var fadingStarted = false;
-var teamObs = new IntersectionObserver(function(entries) {
-  if (entries[0].isIntersecting && !fadingStarted) {
-    fadingStarted = true;
-    teamObs.disconnect();
-    startAllFading();
+var isVisible = false;
+var timers = [];
+
+function getNextIndex(personData, cellIndex) {
+  var usedIndices = [];
+  for (var c = 0; c < personData.cells.length; c++) {
+    if (c !== cellIndex && personData.cells[c].currentIndex >= 0) usedIndices.push(personData.cells[c].currentIndex);
   }
-}, { threshold: 0.2 });
-teamObs.observe(document.querySelector('.team-section'));
+  var candidates = [];
+  for (var i = 0; i < personData.items.length; i++) {
+    if (usedIndices.indexOf(i) === -1 && i !== personData.cells[cellIndex].currentIndex) candidates.push(i);
+  }
+  if (candidates.length === 0) return personData.cells[cellIndex].currentIndex;
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
 
-function startAllFading() {
-  allRowData.forEach(function(data) {
-    var slots = data.slots;
-    var shuffled = data.shuffled;
-    if (shuffled.length <= 5) return;
+function crossFadeCell(personData, cellIndex) {
+  var cell = personData.cells[cellIndex];
+  var nextIdx = getNextIndex(personData, cellIndex);
+  cell.currentIndex = nextIdx;
+  var incoming = cell.showingA ? cell.layerB : cell.layerA;
+  var outgoing = cell.showingA ? cell.layerA : cell.layerB;
+  incoming.innerHTML = personData.items[nextIdx];
+  outgoing.classList.remove('in'); outgoing.classList.add('out');
+  incoming.classList.remove('out'); incoming.classList.add('in');
+  cell.showingA = !cell.showingA;
+  scheduleSwap(personData, cellIndex);
+}
 
-    var visible = [];
-    for (var vi = 0; vi < 5 && vi < shuffled.length; vi++) visible[vi] = vi;
+function scheduleSwap(personData, cellIndex) {
+  var delay = 3000 + Math.random() * 4000;
+  var t = setTimeout(function() {
+    if (isVisible) crossFadeCell(personData, cellIndex);
+    else scheduleSwap(personData, cellIndex);
+  }, delay);
+  timers.push(t);
+}
 
-    function getUnusedItem(excludeSlot) {
-      var usedIndices = [];
-      for (var v = 0; v < visible.length; v++) {
-        if (v !== excludeSlot && visible[v] !== undefined) usedIndices.push(visible[v]);
-      }
-      var candidates = [];
-      for (var c = 0; c < shuffled.length; c++) {
-        if (usedIndices.indexOf(c) === -1) candidates.push(c);
-      }
-      if (candidates.length === 0) return visible[excludeSlot];
-      return candidates[Math.floor(Math.random() * candidates.length)];
-    }
-
-    for (var si = 0; si < 5; si++) {
-      (function(slotIdx) {
-        function cycleSlot() {
-          var slot = slots[slotIdx];
-          slot.style.transition = 'opacity 2s ease';
-          slot.style.opacity = '0';
-          setTimeout(function() {
-            var newIdx = getUnusedItem(slotIdx);
-            visible[slotIdx] = newIdx;
-            slot.innerHTML = shuffled[newIdx];
-            slot.offsetHeight;
-            slot.style.transition = 'opacity 2s ease';
-            slot.style.opacity = '1';
-            setTimeout(function() { cycleSlot(); }, 4000 + Math.random() * 4000);
-          }, 2200);
-        }
-        setTimeout(function() { cycleSlot(); }, 2000 + Math.random() * 8000);
-      })(si);
+function startAll() {
+  allCells.forEach(function(personData) {
+    if (personData.items.length <= VISIBLE_PER_PERSON) return;
+    for (var c = 0; c < personData.cells.length; c++) {
+      (function(pd, ci) {
+        var initialDelay = 1000 + Math.random() * 5000;
+        var t = setTimeout(function() {
+          if (isVisible) crossFadeCell(pd, ci);
+          else scheduleSwap(pd, ci);
+        }, initialDelay);
+        timers.push(t);
+      })(personData, c);
     }
   });
+}
+
+var started = false;
+var obs = new IntersectionObserver(function(entries) {
+  isVisible = entries[0].isIntersecting;
+  if (isVisible && !started) { started = true; startAll(); }
+}, { threshold: 0.2 });
+obs.observe(document.querySelector('.team-section'));
+
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  isVisible = false;
 }
 })();
 </script><!-- Join CTA with dropdown -->
